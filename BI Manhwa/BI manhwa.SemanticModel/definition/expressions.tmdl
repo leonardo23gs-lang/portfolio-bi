@@ -1,13 +1,17 @@
 expression Fonte =
 		let
 		    // =====================================================================
-		    // FONTE - Planilha de controle de leitura (Google Sheets)
+		    // FONTE - Planilha de controle de leitura (Excel local)
 		    // Base única usada por Fato_Leitura, Dim_Genero e Dim_Status
+		    // O caminho do arquivo fica no parâmetro CaminhoBase
 		    // =====================================================================
-		    Fonte = GoogleSheets.Contents("https://docs.google.com/spreadsheets/d/1RJ8s_nIkKXHOqbrGR5Cdt1806Qlhq7VuawvSKV1QQjY/edit?usp=sharing"),
-		    Página1_Table = Fonte{[name="Página1",ItemKind="Table"]}[Data],
-		    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(Página1_Table, [PromoteAllScalars=true]),
-		    #"Colunas Renomeadas" = Table.RenameColumns(#"Cabeçalhos Promovidos",{{"Manhwas/Mangás", "Nome"}}),
+		    Fonte = Excel.Workbook(File.Contents(CaminhoBase), null, true),
+		    Página1_Sheet = Fonte{[Item="Página1",Kind="Sheet"]}[Data],
+		    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(Página1_Sheet, [PromoteAllScalars=true]),
+		
+		    // Mantém só as 8 colunas da base (ignora colunas vazias que o Excel possa trazer)
+		    #"Outras Colunas Removidas" = Table.SelectColumns(#"Cabeçalhos Promovidos",{"Origem", "Manhwas/Mangás", "Capitulo", "Gênero 1", "Gênero 2", "Status", "Nota", "Data"}),
+		    #"Colunas Renomeadas" = Table.RenameColumns(#"Outras Colunas Removidas",{{"Manhwas/Mangás", "Nome"}}),
 		
 		    // Colunas de texto que recebem limpeza
 		    ColunasTexto = {"Origem", "Nome", "Gênero 1", "Gênero 2", "Status"},
@@ -53,4 +57,10 @@ expression 'Dim_Genero aux' =
 	annotation PBI_NavigationStepName = Navegação
 
 	annotation PBI_ResultType = Table
+
+/// Caminho completo do Excel com a base de leitura (Mangas_manhwas.xlsx). Quem baixar o projeto troca só este valor.
+expression CaminhoBase = "C:\Bases port\Mangas_manhwas.xlsx" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 6b0f2c1e-8d4a-4f7b-9c31-2a5e7d9b4f10
+
+	annotation PBI_ResultType = Text
 
