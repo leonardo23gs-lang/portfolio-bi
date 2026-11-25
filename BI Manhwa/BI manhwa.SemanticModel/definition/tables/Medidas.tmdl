@@ -253,6 +253,13 @@ table Medidas
 			.block + .block { margin-top: 22px; }
 			.block-lbl { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
 			
+			/* ---------- Card que preenche a altura da linha ----------
+			   O grid deixa os cards da mesma linha com a mesma altura.
+			   Com .fx o conteúdo do card (gráfico/lista) estica para ocupar
+			   o espaço que sobra, em vez de deixar um vão embaixo. */
+			.card.fx { display: flex; flex-direction: column; }
+			.card.fx .fill { flex: 1; }
+			
 			/* ---------- KPIs ---------- */
 			.kpi .lbl  { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
 			.kpi .val  { font-size: 30px; font-weight: 600; margin-top: 6px; font-variant-numeric: tabular-nums; }
@@ -264,11 +271,14 @@ table Medidas
 			    display: flex; align-items: flex-end; gap: 2px;
 			    height: 160px; border-bottom: 1px solid var(--line);
 			}
+			.cols.fill { height: auto; min-height: 160px; gap: 6px; }   /* altura vem do card (.fx) */
 			.col   { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
 			.col i { display: block; width: 100%; background: var(--s1); border-radius: 4px 4px 0 0; }
 			.col:hover i { filter: brightness(1.3); }
 			.col b { font-size: 10.5px; font-weight: 500; color: var(--ink-2); margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+			.cols.fill .col b { font-size: 12px; }
 			.col-x { display: flex; gap: 2px; margin-top: 6px; }
+			.cols.fill + .col-x { gap: 6px; }
 			.col-x span { flex: 1; font-size: 10px; color: var(--ink-3); text-align: center; white-space: nowrap; }
 			
 			/* ---------- Barras horizontais ---------- */
@@ -285,6 +295,11 @@ table Medidas
 			.hb .v  { text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
 			.hb .v2 { text-align: right; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 			.hb.th  { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); padding-bottom: 6px; }
+			
+			/* Lista de barras que estica (usada com .fill): linhas distribuídas na altura, barra mais grossa */
+			.hb-list { display: flex; flex-direction: column; justify-content: space-around; }
+			.hb-list .hb { font-size: 13.5px; }
+			.hb-list .hb .tr { height: 20px; }
 			
 			/* ---------- Barra segmentada (parte do todo) ---------- */
 			.seg   { display: flex; gap: 2px; height: 26px; }
@@ -601,6 +616,7 @@ table Medidas
 	measure 'HTML Notas' =
 			// =====================================================================
 			// HTML Notas - distribuição das notas (1 a 10)
+			// Card .fx + colunas .fill: o gráfico estica até a altura do card de Gêneros
 			// =====================================================================
 			VAR _media = [Nota Média]
 			VAR _notas =
@@ -624,10 +640,10 @@ table Medidas
 			VAR _eixo = CONCATENATEX( _notas, "<span>" & [Value] & "</span>", "", [Value], ASC )
 			
 			RETURN
-			    "<div class='card c5'>" &
+			    "<div class='card c5 fx'>" &
 			        "<div class='card-hd'><h3>Como você avalia</h3>" &
 			        "<div class='sub'>Obras por nota · média " & FORMAT( _media, "0.0", "pt-BR" ) & " · nota mais comum: " & _moda & "</div></div>" &
-			        "<div class='cols'>" & _barras & "</div>" &
+			        "<div class='cols fill'>" & _barras & "</div>" &
 			        "<div class='col-x'>" & _eixo & "</div>" &
 			    "</div>"
 		displayFolder: 03 HTML\2 Blocos
@@ -687,11 +703,11 @@ table Medidas
 			VAR _recentes = SUMX( FILTER( _tab, [Ordem] <= 3 ), [@q] )
 			
 			RETURN
-			    "<div class='card c5'>" &
+			    "<div class='card c5 fx'>" &
 			        "<div class='card-hd'><h3>Saúde da lista</h3>" &
 			        "<div class='sub'>Obras em Acompanhando por tempo sem leitura* · " &
 			            FORMAT( DIVIDE( _recentes, _total ), "0%", "pt-BR" ) & " lidas nos últimos 6 meses</div></div>" &
-			        _linhas &
+			        "<div class='hb-list fill'>" & _linhas & "</div>" &
 			        "<div class='note'>Muita obra em ‘mais de 1 ano’ = boa hora para dropar ou retomar.</div>" &
 			    "</div>"
 		displayFolder: 03 HTML\2 Blocos
