@@ -1,0 +1,36 @@
+table Dim_Status
+	lineageTag: b3ef540f-c2a6-43de-823b-254bc6b66d86
+
+	column Status
+		dataType: string
+		lineageTag: 4e48e308-2644-43c7-83d5-521a66dba382
+		summarizeBy: none
+		sourceColumn: Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column Índice
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 4d0078b7-3b16-47b3-822d-46580642a73c
+		summarizeBy: none
+		sourceColumn: Índice
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Status = m
+		mode: import
+		source =
+				let
+				    Fonte = Fonte,
+				    #"Outras Colunas Removidas" = Table.SelectColumns(Fonte,{"Status"}),
+				    #"Duplicatas Removidas" = Table.Distinct(#"Outras Colunas Removidas"),
+				    #"Índice Adicionado" = Table.AddIndexColumn(#"Duplicatas Removidas", "Índice", 1, 1, Int64.Type)
+				in
+				    #"Índice Adicionado"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

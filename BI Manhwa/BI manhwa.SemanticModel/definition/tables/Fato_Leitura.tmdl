@@ -1,0 +1,97 @@
+table Fato_Leitura
+	lineageTag: b7a63b6c-13fc-4e1f-be60-6fb19343c5ec
+
+	column Origem
+		dataType: string
+		lineageTag: 2e3d31cc-988f-4e67-9824-800da729c508
+		summarizeBy: none
+		sourceColumn: Origem
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nome
+		dataType: string
+		lineageTag: 95a74a9c-bb1a-48cc-aeb7-d55821719b3e
+		summarizeBy: none
+		sourceColumn: Nome
+
+		annotation SummarizationSetBy = Automatic
+
+	column Capitulo
+		dataType: int64
+		formatString: 0
+		lineageTag: ff9945cd-d3dd-447d-9b60-d2798cc4dde6
+		summarizeBy: none
+		sourceColumn: Capitulo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nota
+		dataType: int64
+		formatString: 0
+		lineageTag: 7a929330-589c-4529-82df-cc527a8089d4
+		summarizeBy: none
+		sourceColumn: Nota
+
+		annotation SummarizationSetBy = Automatic
+
+	column Data
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 72b3c37e-3866-45bb-8db0-2f933414d149
+		summarizeBy: none
+		sourceColumn: Data
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Dim_Genero.Índice'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: fd5ddf58-3056-4dd7-aa2c-0e5e2ed0ce54
+		summarizeBy: none
+		sourceColumn: Dim_Genero.Índice
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Genero.Índice.1'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 444b31ca-d1eb-4e81-8d14-a8364cab3a1a
+		summarizeBy: none
+		sourceColumn: Dim_Genero.Índice.1
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dim_Status.Índice'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 582bb10e-d06c-4a04-aaeb-c821cd9d60ba
+		summarizeBy: none
+		sourceColumn: Dim_Status.Índice
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fato_Leitura = m
+		mode: import
+		source =
+				let
+				    Fonte = Fonte,
+				    #"Consultas Mescladas" = Table.NestedJoin(Fonte, {"Gênero 1"}, Dim_Genero, {"Gênero"}, "Dim_Genero", JoinKind.LeftOuter),
+				    #"Dim_Genero Expandido" = Table.ExpandTableColumn(#"Consultas Mescladas", "Dim_Genero", {"Índice"}, {"Dim_Genero.Índice"}),
+				    #"Consultas Mescladas1" = Table.NestedJoin(#"Dim_Genero Expandido", {"Gênero 2"}, Dim_Genero, {"Gênero"}, "Dim_Genero", JoinKind.LeftOuter),
+				    #"Dim_Genero Expandido1" = Table.ExpandTableColumn(#"Consultas Mescladas1", "Dim_Genero", {"Índice"}, {"Dim_Genero.Índice.1"}),
+				    #"Consultas Mescladas2" = Table.NestedJoin(#"Dim_Genero Expandido1", {"Status"}, Dim_Status, {"Status"}, "Dim_Status", JoinKind.LeftOuter),
+				    #"Dim_Status Expandido" = Table.ExpandTableColumn(#"Consultas Mescladas2", "Dim_Status", {"Índice"}, {"Dim_Status.Índice"}),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Dim_Status Expandido",{"Gênero 1", "Gênero 2", "Status"})
+				in
+				    #"Colunas Removidas"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

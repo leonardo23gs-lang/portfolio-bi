@@ -1,0 +1,109 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.4.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "Fluent2-CY26SU11",
+      "reportVersionAtImport": {
+        "visual": "2.15.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "tema-combustiveis.json",
+      "reportVersionAtImport": {
+        "visual": "2.15.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "RegisteredResources"
+    }
+  },
+  "objects": {
+    "section": [
+      {
+        "properties": {
+          "verticalAlignment": {
+            "expr": {
+              "Literal": {
+                "Value": "'Top'"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "expanded": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "resourcePackages": [
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "Fluent2-CY26SU11",
+          "path": "BaseThemes/Fluent2-CY26SU11.json",
+          "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "01_Vis_o_Geral1524145868258534.png",
+          "path": "01_Vis_o_Geral1524145868258534.png",
+          "type": "Image"
+        },
+        {
+          "name": "02_Regional1817924486495136.png",
+          "path": "02_Regional1817924486495136.png",
+          "type": "Image"
+        },
+        {
+          "name": "03_Postos_e_Bandeiras4671847322300462.png",
+          "path": "03_Postos_e_Bandeiras4671847322300462.png",
+          "type": "Image"
+        },
+        {
+          "name": "04_Etanol_x_Gasolina05129956528787638.png",
+          "path": "04_Etanol_x_Gasolina05129956528787638.png",
+          "type": "Image"
+        },
+        {
+          "name": "05_Painel_de_filtros4466998005408179.png",
+          "path": "05_Painel_de_filtros4466998005408179.png",
+          "type": "Image"
+        },
+        {
+          "name": "tema-combustiveis.json",
+          "path": "tema-combustiveis.json",
+          "type": "CustomTheme"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized",
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true,
+    "useDefaultAggregateDisplayName": true
+  },
+  "linguisticSchemaSyncVersion": 2
+}

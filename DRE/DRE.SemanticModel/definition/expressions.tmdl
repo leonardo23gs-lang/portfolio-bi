@@ -1,0 +1,8 @@
+/// Caminho completo do arquivo Excel com a base da DRE (aba/tabela fDRE). Troque aqui se mover o arquivo.
+expression CaminhoBaseDRE = "C:\Bases port\Base_DRE.xlsx" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: d7e68a1a-4680-43fc-b073-d0c818ac98a9
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Text
+

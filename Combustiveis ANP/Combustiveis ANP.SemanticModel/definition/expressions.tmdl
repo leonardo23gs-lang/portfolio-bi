@@ -1,0 +1,55 @@
+/// Primeiro mês baixado da ANP. Quanto mais antigo, mais demorada a atualização.
+expression DataInicial = #date(2025, 1, 1) meta [IsParameterQuery=true, Type="Date", IsParameterQueryRequired=true]
+	lineageTag: 5f6dfc27-c1a6-416e-8a93-58753ed67ea4
+
+	annotation PBI_ResultType = Date
+
+	annotation PBI_NavigationStepName = Navegação
+
+/// Baixa um CSV mensal da ANP a partir do link da página (ex.: .../dsan/2025/precos-gasolina-etanol-01.csv). Link quebrado (404) volta vazio.
+expression fxBaixarArquivo =
+		(Link as text) =>
+		let
+		    Fonte = Csv.Document(Web.Contents("https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/shpc/dsan/", [RelativePath = Text.AfterDelimiter(Link, "/dsan/"), ManualStatusHandling = {404}]), [Delimiter=";", Columns=16, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+		    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(Fonte, [PromoteAllScalars=true])
+		in
+		    #"Cabeçalhos Promovidos"
+	lineageTag: dc756564-3f6c-4a68-97e8-ad7f4d318f14
+
+/// Consulta de preparação (não carregada): junta todos os CSVs e trata os tipos. fPrecos e dLocal referenciam esta consulta.
+expression 'Base ANP' =
+		let
+		    Fonte = #"Links ANP",
+		    #"Função Personalizada Invocada" = Table.AddColumn(Fonte, "fxBaixarArquivo", each fxBaixarArquivo([Link])),
+		    #"Outras Colunas Removidas" = Table.SelectColumns(#"Função Personalizada Invocada",{"fxBaixarArquivo"}),
+		    #"fxBaixarArquivo Expandido" = Table.ExpandTableColumn(#"Outras Colunas Removidas", "fxBaixarArquivo", {"Regiao - Sigla", "Estado - Sigla", "Municipio", "Revenda", "CNPJ da Revenda", "Nome da Rua", "Numero Rua", "Complemento", "Bairro", "Cep", "Produto", "Data da Coleta", "Valor de Venda", "Valor de Compra", "Unidade de Medida", "Bandeira"}, {"Regiao - Sigla", "Estado - Sigla", "Municipio", "Revenda", "CNPJ da Revenda", "Nome da Rua", "Numero Rua", "Complemento", "Bairro", "Cep", "Produto", "Data da Coleta", "Valor de Venda", "Valor de Compra", "Unidade de Medida", "Bandeira"}),
+		    #"Colunas Removidas" = Table.RemoveColumns(#"fxBaixarArquivo Expandido",{"Nome da Rua", "Numero Rua", "Complemento", "Bairro", "Cep", "Valor de Compra", "Unidade de Medida"}),
+		    #"Tipo Alterado com Localidade" = Table.TransformColumnTypes(#"Colunas Removidas", {{"Data da Coleta", type date}, {"Valor de Venda", type number}}, "pt-BR"),
+		    #"Tipo Alterado" = Table.TransformColumnTypes(#"Tipo Alterado com Localidade",{{"Regiao - Sigla", type text}, {"Estado - Sigla", type text}, {"Municipio", type text}, {"Revenda", type text}, {"CNPJ da Revenda", type text}, {"Produto", type text}, {"Bandeira", type text}}),
+		    #"Erros Removidos" = Table.RemoveRowsWithErrors(#"Tipo Alterado", {"Data da Coleta", "Valor de Venda"}),
+		    #"Linhas Filtradas" = Table.SelectRows(#"Erros Removidos", each [Valor de Venda] <> null and [Data da Coleta] <> null),
+		    #"Texto Aparado" = Table.TransformColumns(#"Linhas Filtradas",{{"Municipio", Text.Trim, type text}, {"Revenda", Text.Trim, type text}, {"Produto", Text.Trim, type text}, {"Bandeira", Text.Trim, type text}}),
+		    #"Coluna Mesclada Inserida" = Table.AddColumn(#"Texto Aparado", "Mesclado", each Text.Combine({[#"Estado - Sigla"], [Municipio]}, " - "), type text),
+		    #"Colunas Renomeadas" = Table.RenameColumns(#"Coluna Mesclada Inserida",{{"Mesclado", "Chave Local"}})
+		in
+		    #"Colunas Renomeadas"
+	lineageTag: a4ce3e86-5913-4b68-adfa-893256f3254c
+
+/// Lê a página da Série Histórica da ANP e lista os links mensais (gasolina/etanol e diesel/GNV) a partir de DataInicial. Os nomes dos arquivos mudam de mês pra mês, por isso o link vem da própria página.
+expression 'Links ANP' =
+		let
+		    Fonte = Html.Table(Text.FromBinary(Web.Contents("https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/serie-historica-de-precos-de-combustiveis")), {{"Texto", "a"}, {"Link", "a", each [Attributes][href]}}, [RowSelector="li"]),
+		    #"Linhas Filtradas" = Table.SelectRows(Fonte, each [Link] <> null and Text.Contains([Link], "/shpc/dsan/") and (Text.Contains([Link], "gasolina") or Text.Contains([Link], "diesel"))),
+		    #"Duplicatas Removidas" = Table.Distinct(#"Linhas Filtradas", {"Link"}),
+		    #"Texto Aparado" = Table.TransformColumns(#"Duplicatas Removidas",{{"Texto", Text.Trim, type text}}),
+		    #"Personalização Adicionada" = Table.AddColumn(#"Texto Aparado", "Mês Referência", each try Date.FromText([Texto], [Format="MMMM 'de' yyyy", Culture="pt-BR"]) otherwise null),
+		    #"Tipo Alterado" = Table.TransformColumnTypes(#"Personalização Adicionada",{{"Mês Referência", type date}, {"Link", type text}}),
+		    #"Linhas Filtradas1" = Table.SelectRows(#"Tipo Alterado", each [Mês Referência] <> null and [Mês Referência] >= DataInicial)
+		in
+		    #"Linhas Filtradas1"
+	lineageTag: d7d9fc98-b4fb-4c62-a26b-548f653b3c57
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

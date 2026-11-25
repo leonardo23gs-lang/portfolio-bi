@@ -1,0 +1,78 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/1.3.0/schema.json",
+  "displayName": "Filtros abertos - Visão Geral",
+  "name": "bmFiltrosAbertos1",
+  "options": {
+    "targetVisualNames": [
+      "e645916442b3cee543c5",
+      "pnMunicipio",
+      "pnBandeira",
+      "pnTipoBandeira",
+      "pnFaixaPreco",
+      "pnFechar",
+      "pnLimpar",
+      "pnAplicar"
+    ],
+    "suppressData": true,
+    "applyOnlyToTargetVisuals": true
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "c2d4eea0318d5a0e311d",
+    "sections": {
+      "c2d4eea0318d5a0e311d": {
+        "visualContainers": {
+          "e645916442b3cee543c5": {
+            "singleVisual": {
+              "visualType": "image",
+              "objects": {}
+            }
+          },
+          "pnMunicipio": {
+            "singleVisual": {
+              "visualType": "slicer",
+              "objects": {}
+            }
+          },
+          "pnBandeira": {
+            "singleVisual": {
+              "visualType": "slicer",
+              "objects": {}
+            }
+          },
+          "pnTipoBandeira": {
+            "singleVisual": {
+              "visualType": "slicer",
+              "objects": {}
+            }
+          },
+          "pnFaixaPreco": {
+            "singleVisual": {
+              "visualType": "slicer",
+              "objects": {}
+            }
+          },
+          "pnFechar": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {}
+            }
+          },
+          "pnLimpar": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {}
+            }
+          },
+          "pnAplicar": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {}
+            }
+          }
+        }
+      }
+    },
+    "objects": {}
+  }
+}

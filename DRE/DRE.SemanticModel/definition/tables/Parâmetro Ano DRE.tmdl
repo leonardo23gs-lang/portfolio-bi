@@ -1,0 +1,14 @@
+/// Tabela desconectada com os anos disponíveis para seleção no filtro do relatório de DRE.
+table 'Parâmetro Ano DRE'
+	lineageTag: 2c7a208d-ab37-4580-b390-2a91f0d933ad
+
+	column Ano
+		lineageTag: 6367b597-b889-400b-9c18-d4d54f62531d
+		sourceColumn: [Value]
+
+	partition 'Parâmetro Ano DRE' = calculated
+		mode: import
+		source =
+				-- Anos disponíveis = do 1º ao último ano com lançamento na fDRE
+				GENERATESERIES(YEAR(MIN(fDRE[DATA])), YEAR(MAX(fDRE[DATA])), 1)
+

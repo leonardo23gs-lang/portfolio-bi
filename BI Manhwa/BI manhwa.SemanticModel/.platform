@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "BI manhwa"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "94e2db75-657f-4d3d-9dc4-9a8a48de2e85"
+  }
+}

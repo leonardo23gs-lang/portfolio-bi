@@ -1,0 +1,12 @@
+relationship 'fPrecos_Data da Coleta_dCalendario_Date'
+	fromColumn: fPrecos.'Data da Coleta'
+	toColumn: dCalendario.Date
+
+relationship 'fPrecos_Chave Local_dLocal_Chave Local'
+	fromColumn: fPrecos.'Chave Local'
+	toColumn: dLocal.'Chave Local'
+
+relationship fPrecos_Produto_dProduto_Produto
+	fromColumn: fPrecos.Produto
+	toColumn: dProduto.Produto
+

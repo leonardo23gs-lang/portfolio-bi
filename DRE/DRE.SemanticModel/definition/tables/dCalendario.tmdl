@@ -1,0 +1,123 @@
+/// Calendário dedicado para o relatório de DRE
+table dCalendario
+	lineageTag: f439807d-d9ee-47de-9f64-2df7b0467168
+	dataCategory: Time
+
+	column Date
+		isUnique
+		lineageTag: aeae2ae2-c748-4fea-9cdc-6fc1aec35bf7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ano
+		lineageTag: c028d55e-9cf0-46bf-ac9b-cb498173f596
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Ano]
+
+		annotation SummarizationSetBy = Automatic
+
+	column NumMes
+		lineageTag: 57556fe7-c72d-47fe-bc14-4515de65a68b
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [NumMes]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mês
+		lineageTag: 52066541-e4f4-4671-b693-a5756b2cc5a0
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mês]
+
+		annotation SummarizationSetBy = Automatic
+
+	column MêsAbrev
+		lineageTag: 7ae26f10-cdd7-4504-b631-ebcd35ab32c9
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [MêsAbrev]
+
+		annotation SummarizationSetBy = Automatic
+
+	column AnoMes
+		lineageTag: 3ac8851e-1799-42b6-862a-1c0362b7b1f8
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [AnoMes]
+		sortByColumn: AnoMesOrdenacao
+
+		annotation SummarizationSetBy = Automatic
+
+	column MêsAno
+		lineageTag: 0cbc73b1-68d8-4248-a41a-be62ebf30e0f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [MêsAno]
+		sortByColumn: AnoMesOrdenacao
+
+		annotation SummarizationSetBy = Automatic
+
+	column Trimestre
+		lineageTag: 2b498293-4388-4173-a5e0-50b0a82b31e6
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Trimestre]
+
+		annotation SummarizationSetBy = Automatic
+
+	column NumTrimestre
+		lineageTag: e65bfc6f-ccb2-4ef7-8b5f-18eca7e36d32
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [NumTrimestre]
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiaSemana
+		lineageTag: 3c8abfe7-e955-4d99-93c2-1793886bcca5
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [DiaSemana]
+
+		annotation SummarizationSetBy = Automatic
+
+	column FimDeSemana
+		lineageTag: bcd5c3d1-2b4a-4090-bdd9-2888dfe335bb
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [FimDeSemana]
+
+		annotation SummarizationSetBy = Automatic
+
+	column AnoMesOrdenacao
+		isHidden
+		lineageTag: 0f2f8ae7-6b95-42d7-9a8d-1dbf34dea3fe
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [AnoMesOrdenacao]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dCalendario = calculated
+		mode: import
+		source =
+				ADDCOLUMNS(
+				    CALENDAR(DATE(2023,1,1), DATE(2027,12,31)),
+				    "Ano", YEAR([Date]),
+				    "NumMes", MONTH([Date]),
+				    "Mês", FORMAT([Date],"MMMM"),
+				    "MêsAbrev", FORMAT([Date],"mmm"),
+				    "AnoMes", FORMAT([Date],"YYYY-MM"),
+				    "MêsAno", FORMAT([Date],"mmm/yy"),
+				    "Trimestre", "T" & FORMAT([Date],"Q") & "-" & YEAR([Date]),
+				    "NumTrimestre", QUOTIENT(MONTH([Date])-1,3)+1,
+				    "DiaSemana", FORMAT([Date],"dddd"),
+				    "FimDeSemana", WEEKDAY([Date],2) > 5,
+				    "AnoMesOrdenacao", YEAR([Date])*100 + MONTH([Date])
+				)
+

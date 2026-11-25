@@ -1,0 +1,56 @@
+expression Fonte =
+		let
+		    // =====================================================================
+		    // FONTE - Planilha de controle de leitura (Google Sheets)
+		    // Base única usada por Fato_Leitura, Dim_Genero e Dim_Status
+		    // =====================================================================
+		    Fonte = GoogleSheets.Contents("https://docs.google.com/spreadsheets/d/1RJ8s_nIkKXHOqbrGR5Cdt1806Qlhq7VuawvSKV1QQjY/edit?usp=sharing"),
+		    Página1_Table = Fonte{[name="Página1",ItemKind="Table"]}[Data],
+		    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(Página1_Table, [PromoteAllScalars=true]),
+		    #"Colunas Renomeadas" = Table.RenameColumns(#"Cabeçalhos Promovidos",{{"Manhwas/Mangás", "Nome"}}),
+		
+		    // Colunas de texto que recebem limpeza
+		    ColunasTexto = {"Origem", "Nome", "Gênero 1", "Gênero 2", "Status"},
+		
+		    // Remove espaços sobrando no início/fim (evita "Sistema " virar outro gênero)
+		    #"Texto Limpo" = Table.TransformColumns(
+		        #"Colunas Renomeadas",
+		        List.Transform(ColunasTexto, (col) => {col, each if _ is text then Text.Trim(_) else _})
+		    ),
+		
+		    // Célula vazia ("") vira null (evita gênero/status em branco nas dimensões)
+		    #"Vazios para Nulo" = Table.ReplaceValue(#"Texto Limpo", "", null, Replacer.ReplaceValue, ColunasTexto),
+		
+		    #"Tipo Alterado" = Table.TransformColumnTypes(
+		        #"Vazios para Nulo",
+		        {
+		            {"Origem", type text}, {"Nome", type text}, {"Capitulo", Int64.Type},
+		            {"Gênero 1", type text}, {"Gênero 2", type text}, {"Status", type text},
+		            {"Nota", Int64.Type}, {"Data", type date}
+		        }
+		    ),
+		
+		    // Descarta linhas sem nome (linhas em branco no fim da planilha)
+		    #"Linhas sem Nome Removidas" = Table.SelectRows(#"Tipo Alterado", each [Nome] <> null)
+		in
+		    #"Linhas sem Nome Removidas"
+	lineageTag: 4444d539-ca0e-4f8d-9d3e-3d5a34f3dfdd
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
+expression 'Dim_Genero aux' =
+		let
+		    Fonte = Fonte,
+		    #"Outras Colunas Removidas" = Table.SelectColumns(Fonte,{"Gênero 1", "Gênero 2"}),
+		    #"Colunas Removidas" = Table.RemoveColumns(#"Outras Colunas Removidas",{"Gênero 1"}),
+		    #"Colunas Renomeadas" = Table.RenameColumns(#"Colunas Removidas",{{"Gênero 2", "Gênero"}})
+		in
+		    #"Colunas Renomeadas"
+	lineageTag: fc0d3849-f737-4369-9616-aa92d6261ddd
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

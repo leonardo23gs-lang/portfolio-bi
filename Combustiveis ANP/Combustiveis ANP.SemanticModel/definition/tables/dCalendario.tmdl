@@ -1,0 +1,73 @@
+/// Calendário (DAX) do 1º ao último ano com coleta.
+table dCalendario
+	lineageTag: f08fc506-9ce0-426d-8d0f-e239b82fc640
+	dataCategory: Time
+
+	column Date
+		isUnique
+		formatString: dd/mm/yyyy
+		lineageTag: aad0b0e5-6216-44d8-8081-321fd6494ec9
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+	column Ano
+		lineageTag: 5e120c4f-d796-4b5c-af3c-028c2b2129ee
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Ano]
+
+	column 'Mês Nº'
+		isHidden
+		lineageTag: 173f2962-92b9-441b-9351-7b6b4a1022b3
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mês Nº]
+
+	column Mês
+		lineageTag: d61baad7-7350-4e77-a459-c6720ecda49f
+		isNameInferred
+		sourceColumn: [Mês]
+		sortByColumn: 'Mês Nº'
+
+	column Mês/Ano
+		lineageTag: cdfd0dcb-214d-4dad-8377-f87a94eefa9d
+		isNameInferred
+		sourceColumn: [Mês/Ano]
+		sortByColumn: AnoMês
+
+	column AnoMês
+		isHidden
+		lineageTag: 802705fe-f7a5-4501-a8bc-ef5e3a8011d1
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [AnoMês]
+
+	column Trimestre
+		lineageTag: 3023388f-3145-4060-864d-a6764d69511a
+		isNameInferred
+		sourceColumn: [Trimestre]
+
+	column 'Semana do Ano'
+		lineageTag: 75058df7-7b90-4371-ac70-32ed0eba3e68
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Semana do Ano]
+
+	partition dCalendario = calculated
+		mode: import
+		source =
+				VAR _Inicio = DATE(YEAR(MIN(fPrecos[Data da Coleta])), 1, 1)
+				VAR _Fim    = DATE(YEAR(MAX(fPrecos[Data da Coleta])), 12, 31)
+				RETURN
+				    ADDCOLUMNS(
+				        CALENDAR(_Inicio, _Fim),
+				        "Ano", YEAR([Date]),
+				        "Mês Nº", MONTH([Date]),
+				        "Mês", FORMAT([Date], "mmm"),
+				        "Mês/Ano", FORMAT([Date], "mmm/yy"),
+				        "AnoMês", YEAR([Date]) * 100 + MONTH([Date]),
+				        "Trimestre", "T" & QUARTER([Date]),
+				        "Semana do Ano", WEEKNUM([Date], 2)
+				    )
+

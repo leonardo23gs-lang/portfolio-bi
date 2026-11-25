@@ -1,0 +1,89 @@
+{
+  "name": "Nardo's Reading Dark",
+  "dataColors": [
+    "#3987e5",
+    "#d95926",
+    "#199e70",
+    "#c98500",
+    "#8a63d2",
+    "#e06c9f",
+    "#5fb7c9",
+    "#9a9a92"
+  ],
+  "foreground": "#f0efec",
+  "foregroundNeutralSecondary": "#8d8c86",
+  "foregroundNeutralTertiary": "#8d8c86",
+  "background": "#1a1a19",
+  "backgroundLight": "#232321",
+  "backgroundNeutral": "#2e2e2b",
+  "tableAccent": "#3987e5",
+  "good": "#199e70",
+  "bad": "#d95926",
+  "neutral": "#c98500",
+  "textClasses": {
+    "callout": {
+      "fontSize": 26,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#f0efec"
+    },
+    "title": {
+      "fontSize": 12,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#f0efec"
+    },
+    "header": {
+      "fontSize": 11,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#f0efec"
+    },
+    "label": {
+      "fontSize": 10,
+      "fontFace": "Segoe UI",
+      "color": "#c3c2b7"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [
+          {
+            "show": false
+          }
+        ],
+        "border": [
+          {
+            "show": false
+          }
+        ],
+        "dropShadow": [
+          {
+            "show": false
+          }
+        ],
+        "title": [
+          {
+            "show": false
+          }
+        ],
+        "valueAxis": [
+          {
+            "gridlineColor": {
+              "solid": {
+                "color": "#2e2e2b"
+              }
+            }
+          }
+        ],
+        "categoryAxis": [
+          {
+            "gridlineColor": {
+              "solid": {
+                "color": "#2e2e2b"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Combustiveis ANP"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "e38778f0-792e-4954-bb95-6e85f570b08c"
+  }
+}

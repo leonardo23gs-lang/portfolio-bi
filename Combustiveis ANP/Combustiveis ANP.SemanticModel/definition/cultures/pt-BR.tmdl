@@ -1,0 +1,4185 @@
+cultureInfo pt-BR
+
+	linguisticMetadata =
+			{
+			  "Version": "4.1.0",
+			  "Language": "en-US",
+			  "Entities": {
+			    "d_local.município": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dLocal",
+			          "ConceptualProperty": "Município"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "município": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "city": {
+			            "State": "Generated",
+			            "Weight": 0.7
+			          }
+			        }
+			      ],
+			      "SemanticType": "Location"
+			    },
+			    "d_local.uf": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dLocal",
+			          "ConceptualProperty": "UF"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "uf": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "state or province": {
+			            "State": "Generated",
+			            "Weight": 0.7
+			          }
+			        }
+			      ],
+			      "SemanticType": "Location"
+			    },
+			    "entity__medida.preço_top_10_municípios_caros": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Preço Top 10 Municípios Caros"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "preço top 10 municípios caros": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "preço best 10 município caro": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        },
+			        {
+			          "preço first 10 município caro": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        },
+			        {
+			          "preço leading 10 município caro": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        },
+			        {
+			          "preço maximum 10 município caro": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        },
+			        {
+			          "preço peak 10 município caro": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        },
+			        {
+			          "preço upper 10 município caro": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        },
+			        {
+			          "Preço": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.ranking_UF": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Ranking UF"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "ranking UF": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Ranking": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.preço_médio": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Preço Médio"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "preço médio": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.dif__vs_brasil": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Dif % vs Brasil"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "dif % vs brasil": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "dif percentage vs brasil": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.617
+			          }
+			        },
+			        {
+			          "dif pct vs brasil": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.599
+			          }
+			        },
+			        {
+			          "vs Brasil": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.var__ano": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Var % Ano"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "var % ano": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "var percentage ano": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.609
+			          }
+			        },
+			        {
+			          "var pct ano": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.591
+			          }
+			        },
+			        {
+			          "Var. ano": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.preço_top_10_postos_baratos": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Preço Top 10 Postos Baratos"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "preço top 10 postos baratos": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "preço best 10 posto barato": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        },
+			        {
+			          "preço first 10 posto barato": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        },
+			        {
+			          "preço leading 10 posto barato": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        },
+			        {
+			          "preço maximum 10 posto barato": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        },
+			        {
+			          "preço peak 10 posto barato": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        },
+			        {
+			          "preço upper 10 posto barato": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        },
+			        {
+			          "Preço": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "f_preco.revenda": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "fPrecos",
+			          "ConceptualProperty": "Revenda"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "revenda": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Posto": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "f_preco.chave_local": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "fPrecos",
+			          "ConceptualProperty": "Chave Local"
+			        }
+			      },
+			      "State": "Generated",
+			      "Visibility": {
+			        "Value": "Hidden"
+			      },
+			      "Terms": [
+			        {
+			          "chave local": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Local": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "f_preco.bandeira": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "fPrecos",
+			          "ConceptualProperty": "Bandeira"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "bandeira": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "f_preco": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "fPrecos"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "f preco": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "fPrecos": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
+			    },
+			    "f_preco.data_da_coleta": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "fPrecos",
+			          "ConceptualProperty": "Data da Coleta"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "data da coleta": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "date": {
+			            "State": "Generated",
+			            "Weight": 0.7
+			          }
+			        },
+			        {
+			          "information da coleta": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.609
+			          }
+			        },
+			        {
+			          "fact da coleta": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.609
+			          }
+			        },
+			        {
+			          "info da coleta": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.609
+			          }
+			        },
+			        {
+			          "statistic da coleta": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.609
+			          }
+			        },
+			        {
+			          "document da coleta": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.591
+			          }
+			        },
+			        {
+			          "figure da coleta": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.591
+			          }
+			        },
+			        {
+			          "record da coleta": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.591
+			          }
+			        }
+			      ],
+			      "SemanticType": "Time"
+			    },
+			    "f_preco.CNPJ_da_revenda": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "fPrecos",
+			          "ConceptualProperty": "CNPJ da Revenda"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "CNPJ da revenda": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "f_preco.produto": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "fPrecos",
+			          "ConceptualProperty": "Produto"
+			        }
+			      },
+			      "State": "Generated",
+			      "Visibility": {
+			        "Value": "Hidden"
+			      },
+			      "Terms": [
+			        {
+			          "produto": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "f_preco.valor_de_venda": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "fPrecos",
+			          "ConceptualProperty": "Valor de Venda"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "valor de venda": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "f_preco.tipo_de_bandeira": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "fPrecos",
+			          "ConceptualProperty": "Tipo de Bandeira"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "tipo de bandeira": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "d_local": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dLocal"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "d local": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "dLocal": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        },
+			        {
+			          "local": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
+			          "native": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.476
+			          }
+			        },
+			        {
+			          "resident": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.476
+			          }
+			        },
+			        {
+			          "home-grown": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.476
+			          }
+			        },
+			        {
+			          "narrow": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.452
+			          }
+			        }
+			      ]
+			    },
+			    "d_local.chave_local": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dLocal",
+			          "ConceptualProperty": "Chave Local"
+			        }
+			      },
+			      "State": "Generated",
+			      "Visibility": {
+			        "Value": "Hidden"
+			      },
+			      "Terms": [
+			        {
+			          "chave local": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "d_local.regiao__sigla": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dLocal",
+			          "ConceptualProperty": "Regiao - Sigla"
+			        }
+			      },
+			      "State": "Generated",
+			      "Visibility": {
+			        "Value": "Hidden"
+			      },
+			      "Terms": [
+			        {
+			          "regiao - sigla": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "regiao sigla": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        }
+			      ]
+			    },
+			    "d_local.região": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dLocal",
+			          "ConceptualProperty": "Região"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "região": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "d_produto": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dProduto"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "d produto": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "dProduto": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
+			    },
+			    "d_produto.produto": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dProduto",
+			          "ConceptualProperty": "Produto"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "produto": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "d_produto.grupo": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dProduto",
+			          "ConceptualProperty": "Grupo"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "grupo": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "d_produto.unidade": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dProduto",
+			          "ConceptualProperty": "Unidade"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "unidade": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "d_produto.ordem": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dProduto",
+			          "ConceptualProperty": "Ordem"
+			        }
+			      },
+			      "State": "Generated",
+			      "Visibility": {
+			        "Value": "Hidden"
+			      },
+			      "Terms": [
+			        {
+			          "ordem": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "d_calendario": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dCalendario"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "d calendario": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "dCalendario": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
+			    },
+			    "d_calendario.date": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dCalendario",
+			          "ConceptualProperty": "Date"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "date": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "moment": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.736
+			          }
+			        },
+			        {
+			          "period": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.714
+			          }
+			        }
+			      ],
+			      "SemanticType": "Time"
+			    },
+			    "d_calendario.ano": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dCalendario",
+			          "ConceptualProperty": "Ano"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "ano": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "d_calendario.mês_nº": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dCalendario",
+			          "ConceptualProperty": "Mês Nº"
+			        }
+			      },
+			      "State": "Generated",
+			      "Visibility": {
+			        "Value": "Hidden"
+			      },
+			      "Terms": [
+			        {
+			          "mês nº": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "mê nº": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.78
+			          }
+			        }
+			      ]
+			    },
+			    "d_calendario.mê": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dCalendario",
+			          "ConceptualProperty": "Mês"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "mê": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "d_calendario.mês_ano": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dCalendario",
+			          "ConceptualProperty": "Mês/Ano"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "mês/ano": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "mê/ano": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.78
+			          }
+			        },
+			        {
+			          "mês": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
+			          "mê": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.7566
+			          }
+			        },
+			        {
+			          "mês ano": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
+			          "mê ano": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.7566
+			          }
+			        }
+			      ]
+			    },
+			    "d_calendario.ano_mê": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dCalendario",
+			          "ConceptualProperty": "AnoMês"
+			        }
+			      },
+			      "State": "Generated",
+			      "Visibility": {
+			        "Value": "Hidden"
+			      },
+			      "Terms": [
+			        {
+			          "ano mê": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "AnoMês": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
+			    },
+			    "d_calendario.trimestre": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dCalendario",
+			          "ConceptualProperty": "Trimestre"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "trimestre": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "d_calendario.semana_do_ano": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "dCalendario",
+			          "ConceptualProperty": "Semana do Ano"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "semana do ano": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "_medida": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.coluna": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Coluna"
+			        }
+			      },
+			      "State": "Generated",
+			      "Visibility": {
+			        "Value": "Hidden"
+			      },
+			      "Terms": [
+			        {
+			          "coluna": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.preço_mínimo": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Preço Mínimo"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "preço mínimo": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.preço_máximo": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Preço Máximo"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "preço máximo": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.amplitude_de_preço": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Amplitude de Preço"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "amplitude de preço": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.coef__de_variação": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Coef. de Variação"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "coef. de variação": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.qtd_coletas": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Qtd Coletas"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "qtd coletas": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.qtd_postos": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Qtd Postos"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "qtd postos": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.qtd_municípios": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Qtd Municípios"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "qtd municípios": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.data_última_coleta": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Data Última Coleta"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "data última coleta": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "date": {
+			            "State": "Generated",
+			            "Weight": 0.7
+			          }
+			        },
+			        {
+			          "information última coleta": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.609
+			          }
+			        },
+			        {
+			          "fact última coleta": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.609
+			          }
+			        },
+			        {
+			          "info última coleta": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.609
+			          }
+			        },
+			        {
+			          "statistic última coleta": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.609
+			          }
+			        },
+			        {
+			          "document última coleta": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.591
+			          }
+			        },
+			        {
+			          "figure última coleta": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.591
+			          }
+			        },
+			        {
+			          "record última coleta": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.591
+			          }
+			        }
+			      ],
+			      "SemanticType": "Time"
+			    },
+			    "entity__medida.preço_última_coleta": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Preço Última Coleta"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "preço última coleta": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.preço_médio_mês_anterior": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Preço Médio Mês Anterior"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "preço médio mês anterior": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.var__mês": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Var % Mês"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "var % mês": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "var percentage mê": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.609
+			          }
+			        },
+			        {
+			          "var pct mê": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.591
+			          }
+			        },
+			        {
+			          "Var. Mês": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.preço_médio_ano_anterior": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Preço Médio Ano Anterior"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "preço médio ano anterior": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.média_móvel_3_meses": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Média Móvel 3 Meses"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "média móvel 3 meses": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.variação_no_período": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Variação no Período"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "variação no período": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "variação number período": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.591
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.preço_médio_brasil": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Preço Médio Brasil"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "preço médio brasil": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.preço_bandeira_branca": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Preço Bandeira Branca"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "preço bandeira branca": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.preço_bandeirado": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Preço Bandeirado"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "preço bandeirado": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.dif__branca_vs_bandeirado": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Dif % Branca vs Bandeirado"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "dif % branca vs bandeirado": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "dif percentage branca vs bandeirado": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.624
+			          }
+			        },
+			        {
+			          "dif pct branca vs bandeirado": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.postos_abaixo_da_média": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "% Postos Abaixo da Média"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "% postos abaixo da média": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "percentage posto abaixo da média": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.624
+			          }
+			        },
+			        {
+			          "pct posto abaixo da média": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.605
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.preço_etanol": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Preço Etanol"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "preço etanol": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.preço_gasolina": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Preço Gasolina"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "preço gasolina": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.paridade_etanol_gasolina": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Paridade Etanol/Gasolina"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "paridade etanol/gasolina": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "paridade etanol": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
+			          "paridade etanol gasolina": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        },
+			        {
+			          "gasolina": {
+			            "State": "Generated",
+			            "Weight": 0.97
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.qual_compensa": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Qual Compensa"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "qual compensa": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.cor_paridade": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Cor Paridade"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "cor paridade": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.cor_variação": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Cor Variação"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "cor variação": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.título_página": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Título Página"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "título página": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.subtítulo_atualização": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Subtítulo Atualização"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "subtítulo atualização": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.filtros_ativos": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Filtros Ativos"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "filtros ativos": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.texto_botão_filtros": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Texto Botão Filtros"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "texto botão filtros": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.cor_dif_brasil": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Cor Dif Brasil"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "cor dif brasil": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.preço_top_15_bandeiras": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Preço Top 15 Bandeiras"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "preço top 15 bandeiras": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "preço best 15 bandeira": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.599
+			          }
+			        },
+			        {
+			          "preço first 15 bandeira": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.599
+			          }
+			        },
+			        {
+			          "preço leading 15 bandeira": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.599
+			          }
+			        },
+			        {
+			          "preço maximum 15 bandeira": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.599
+			          }
+			        },
+			        {
+			          "preço peak 15 bandeira": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.599
+			          }
+			        },
+			        {
+			          "preço upper 15 bandeira": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.599
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.var__mês_texto": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Var % Mês Texto"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "var % mês texto": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "var percentage mê texto": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.617
+			          }
+			        },
+			        {
+			          "var pct mê texto": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.599
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.var__ano_texto": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Var % Ano Texto"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "var % ano texto": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "var percentage ano texto": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.617
+			          }
+			        },
+			        {
+			          "var pct ano texto": {
+			            "Type": "Noun",
+			            "State": "Suggested",
+			            "Source": {
+			              "Agent": "Thesaurus"
+			            },
+			            "Weight": 0.599
+			          }
+			        }
+			      ]
+			    },
+			    "entity__medida.cor_variação_ano": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Medidas",
+			          "ConceptualProperty": "Cor Variação Ano"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "cor variação ano": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    }
+			  },
+			  "Relationships": {
+			    "f_preco_has_d_local": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "d_local": {
+			          "Target": {
+			            "Entity": "d_local"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "d_local"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_d_locals"
+			        },
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_local"
+			            },
+			            "Object": {
+			              "Role": "f_preco"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_locals_have_f_precos"
+			        }
+			      ]
+			    },
+			    "f_preco_has_d_calendario": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "d_calendario": {
+			          "Target": {
+			            "Entity": "d_calendario"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "d_calendario"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_d_calendarios"
+			        },
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_calendario"
+			            },
+			            "Object": {
+			              "Role": "f_preco"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_calendarios_have_f_precos"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_cor_variação_ano": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.cor_variação_ano": {
+			          "Target": {
+			            "Entity": "entity__medida.cor_variação_ano"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.cor_variação_ano"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_cor_variação_ano"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_var__ano_texto": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.var__ano_texto": {
+			          "Target": {
+			            "Entity": "entity__medida.var__ano_texto"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.var__ano_texto"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_var__ano_texto"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_var__mês_texto": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.var__mês_texto": {
+			          "Target": {
+			            "Entity": "entity__medida.var__mês_texto"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.var__mês_texto"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_var__mês_texto"
+			        }
+			      ]
+			    },
+			    "entity__medida_has_preço_top_15_bandeiras": {
+			      "Binding": {
+			        "ConceptualEntity": "_Medidas"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity__medida": {
+			          "Target": {
+			            "Entity": "entity__medida"
+			          }
+			        },
+			        "entity__medida.preço_top_15_bandeiras": {
+			          "Target": {
+			            "Entity": "entity__medida.preço_top_15_bandeiras"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity__medida"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.preço_top_15_bandeiras"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing_medidas_have_preço_top_15_bandeiras"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_cor_dif_brasil": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.cor_dif_brasil": {
+			          "Target": {
+			            "Entity": "entity__medida.cor_dif_brasil"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.cor_dif_brasil"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_cor_dif_brasil"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_texto_botão_filtros": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.texto_botão_filtros": {
+			          "Target": {
+			            "Entity": "entity__medida.texto_botão_filtros"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.texto_botão_filtros"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_texto_botão_filtros"
+			        }
+			      ]
+			    },
+			    "d_local_has_entity__medida_texto_botão_filtros": {
+			      "Binding": {
+			        "ConceptualEntity": "dLocal"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_local": {
+			          "Target": {
+			            "Entity": "d_local"
+			          }
+			        },
+			        "entity__medida.texto_botão_filtros": {
+			          "Target": {
+			            "Entity": "entity__medida.texto_botão_filtros"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_local"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.texto_botão_filtros"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_locals_have_texto_botão_filtros"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_filtros_ativos": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.filtros_ativos": {
+			          "Target": {
+			            "Entity": "entity__medida.filtros_ativos"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.filtros_ativos"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_filtros_ativos"
+			        }
+			      ]
+			    },
+			    "d_local_has_entity__medida_filtros_ativos": {
+			      "Binding": {
+			        "ConceptualEntity": "dLocal"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_local": {
+			          "Target": {
+			            "Entity": "d_local"
+			          }
+			        },
+			        "entity__medida.filtros_ativos": {
+			          "Target": {
+			            "Entity": "entity__medida.filtros_ativos"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_local"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.filtros_ativos"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_locals_have_filtros_ativos"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_subtítulo_atualização": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.subtítulo_atualização": {
+			          "Target": {
+			            "Entity": "entity__medida.subtítulo_atualização"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.subtítulo_atualização"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_subtítulo_atualização"
+			        }
+			      ]
+			    },
+			    "d_produto_has_entity__medida_título_página": {
+			      "Binding": {
+			        "ConceptualEntity": "dProduto"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_produto": {
+			          "Target": {
+			            "Entity": "d_produto"
+			          }
+			        },
+			        "entity__medida.título_página": {
+			          "Target": {
+			            "Entity": "entity__medida.título_página"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_produto"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.título_página"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_produtos_have_título_página"
+			        }
+			      ]
+			    },
+			    "d_local_has_entity__medida_título_página": {
+			      "Binding": {
+			        "ConceptualEntity": "dLocal"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_local": {
+			          "Target": {
+			            "Entity": "d_local"
+			          }
+			        },
+			        "entity__medida.título_página": {
+			          "Target": {
+			            "Entity": "entity__medida.título_página"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_local"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.título_página"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_locals_have_título_página"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_cor_variação": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.cor_variação": {
+			          "Target": {
+			            "Entity": "entity__medida.cor_variação"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.cor_variação"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_cor_variação"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_cor_paridade": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.cor_paridade": {
+			          "Target": {
+			            "Entity": "entity__medida.cor_paridade"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.cor_paridade"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_cor_paridade"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_qual_compensa": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.qual_compensa": {
+			          "Target": {
+			            "Entity": "entity__medida.qual_compensa"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.qual_compensa"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_qual_compensa"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_paridade_etanol_gasolina": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.paridade_etanol_gasolina": {
+			          "Target": {
+			            "Entity": "entity__medida.paridade_etanol_gasolina"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.paridade_etanol_gasolina"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_paridade_etanol_gasolina"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_preço_gasolina": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.preço_gasolina": {
+			          "Target": {
+			            "Entity": "entity__medida.preço_gasolina"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.preço_gasolina"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_preço_gasolina"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_preço_etanol": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.preço_etanol": {
+			          "Target": {
+			            "Entity": "entity__medida.preço_etanol"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.preço_etanol"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_preço_etanol"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_postos_abaixo_da_média": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.postos_abaixo_da_média": {
+			          "Target": {
+			            "Entity": "entity__medida.postos_abaixo_da_média"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.postos_abaixo_da_média"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have__postos_abaixo_da_média"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_dif__branca_vs_bandeirado": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.dif__branca_vs_bandeirado": {
+			          "Target": {
+			            "Entity": "entity__medida.dif__branca_vs_bandeirado"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.dif__branca_vs_bandeirado"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_dif__branca_vs_bandeirado"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_preço_bandeirado": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.preço_bandeirado": {
+			          "Target": {
+			            "Entity": "entity__medida.preço_bandeirado"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.preço_bandeirado"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_preço_bandeirado"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_preço_bandeira_branca": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.preço_bandeira_branca": {
+			          "Target": {
+			            "Entity": "entity__medida.preço_bandeira_branca"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.preço_bandeira_branca"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_preço_bandeira_branca"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_preço_médio_brasil": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.preço_médio_brasil": {
+			          "Target": {
+			            "Entity": "entity__medida.preço_médio_brasil"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.preço_médio_brasil"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_preço_médio_brasil"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_variação_no_período": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.variação_no_período": {
+			          "Target": {
+			            "Entity": "entity__medida.variação_no_período"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.variação_no_período"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_variação_no_período"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_média_móvel_3_meses": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.média_móvel_3_meses": {
+			          "Target": {
+			            "Entity": "entity__medida.média_móvel_3_meses"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.média_móvel_3_meses"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_média_móvel_3_meses"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_preço_médio_ano_anterior": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.preço_médio_ano_anterior": {
+			          "Target": {
+			            "Entity": "entity__medida.preço_médio_ano_anterior"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.preço_médio_ano_anterior"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_preço_médio_ano_anterior"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_var__mês": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.var__mês": {
+			          "Target": {
+			            "Entity": "entity__medida.var__mês"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.var__mês"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_var__mês"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_preço_médio_mês_anterior": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.preço_médio_mês_anterior": {
+			          "Target": {
+			            "Entity": "entity__medida.preço_médio_mês_anterior"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.preço_médio_mês_anterior"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_preço_médio_mês_anterior"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_preço_última_coleta": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.preço_última_coleta": {
+			          "Target": {
+			            "Entity": "entity__medida.preço_última_coleta"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.preço_última_coleta"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_preço_última_coleta"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_data_última_coleta": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.data_última_coleta": {
+			          "Target": {
+			            "Entity": "entity__medida.data_última_coleta"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.data_última_coleta"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_data_última_coleta"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_qtd_municípios": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.qtd_municípios": {
+			          "Target": {
+			            "Entity": "entity__medida.qtd_municípios"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.qtd_municípios"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_qtd_municípios"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_qtd_postos": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.qtd_postos": {
+			          "Target": {
+			            "Entity": "entity__medida.qtd_postos"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.qtd_postos"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_qtd_postos"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_qtd_coletas": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.qtd_coletas": {
+			          "Target": {
+			            "Entity": "entity__medida.qtd_coletas"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.qtd_coletas"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_qtd_coletas"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_coef__de_variação": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.coef__de_variação": {
+			          "Target": {
+			            "Entity": "entity__medida.coef__de_variação"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.coef__de_variação"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_coef__de_variação"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_amplitude_de_preço": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.amplitude_de_preço": {
+			          "Target": {
+			            "Entity": "entity__medida.amplitude_de_preço"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.amplitude_de_preço"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_amplitude_de_preço"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_preço_máximo": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.preço_máximo": {
+			          "Target": {
+			            "Entity": "entity__medida.preço_máximo"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.preço_máximo"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_preço_máximo"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_preço_mínimo": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.preço_mínimo": {
+			          "Target": {
+			            "Entity": "entity__medida.preço_mínimo"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.preço_mínimo"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_preço_mínimo"
+			        }
+			      ]
+			    },
+			    "d_calendario_has_semana_do_ano": {
+			      "Binding": {
+			        "ConceptualEntity": "dCalendario"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_calendario": {
+			          "Target": {
+			            "Entity": "d_calendario"
+			          }
+			        },
+			        "d_calendario.semana_do_ano": {
+			          "Target": {
+			            "Entity": "d_calendario.semana_do_ano"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_calendario"
+			            },
+			            "Object": {
+			              "Role": "d_calendario.semana_do_ano"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_calendarios_have_semana_do_anos"
+			        }
+			      ]
+			    },
+			    "d_calendario_has_trimestre": {
+			      "Binding": {
+			        "ConceptualEntity": "dCalendario"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_calendario": {
+			          "Target": {
+			            "Entity": "d_calendario"
+			          }
+			        },
+			        "d_calendario.trimestre": {
+			          "Target": {
+			            "Entity": "d_calendario.trimestre"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_calendario"
+			            },
+			            "Object": {
+			              "Role": "d_calendario.trimestre"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_calendarios_have_trimestres"
+			        }
+			      ]
+			    },
+			    "d_calendario_has_mês_ano": {
+			      "Binding": {
+			        "ConceptualEntity": "dCalendario"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_calendario": {
+			          "Target": {
+			            "Entity": "d_calendario"
+			          }
+			        },
+			        "d_calendario.mês_ano": {
+			          "Target": {
+			            "Entity": "d_calendario.mês_ano"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_calendario"
+			            },
+			            "Object": {
+			              "Role": "d_calendario.mês_ano"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_calendarios_have_mês_anos"
+			        }
+			      ]
+			    },
+			    "d_calendario_has_mê": {
+			      "Binding": {
+			        "ConceptualEntity": "dCalendario"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_calendario": {
+			          "Target": {
+			            "Entity": "d_calendario"
+			          }
+			        },
+			        "d_calendario.mê": {
+			          "Target": {
+			            "Entity": "d_calendario.mê"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_calendario"
+			            },
+			            "Object": {
+			              "Role": "d_calendario.mê"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_calendarios_have_mê"
+			        }
+			      ]
+			    },
+			    "d_calendario_has_ano": {
+			      "Binding": {
+			        "ConceptualEntity": "dCalendario"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_calendario": {
+			          "Target": {
+			            "Entity": "d_calendario"
+			          }
+			        },
+			        "d_calendario.ano": {
+			          "Target": {
+			            "Entity": "d_calendario.ano"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_calendario"
+			            },
+			            "Object": {
+			              "Role": "d_calendario.ano"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_calendarios_have_anos"
+			        }
+			      ]
+			    },
+			    "d_calendario_has_date": {
+			      "Binding": {
+			        "ConceptualEntity": "dCalendario"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_calendario": {
+			          "Target": {
+			            "Entity": "d_calendario"
+			          }
+			        },
+			        "d_calendario.date": {
+			          "Target": {
+			            "Entity": "d_calendario.date"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_calendario"
+			            },
+			            "Object": {
+			              "Role": "d_calendario.date"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_calendarios_have_dates"
+			        }
+			      ]
+			    },
+			    "d_produto_has_unidade": {
+			      "Binding": {
+			        "ConceptualEntity": "dProduto"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_produto": {
+			          "Target": {
+			            "Entity": "d_produto"
+			          }
+			        },
+			        "d_produto.unidade": {
+			          "Target": {
+			            "Entity": "d_produto.unidade"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_produto"
+			            },
+			            "Object": {
+			              "Role": "d_produto.unidade"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_produtos_have_unidades"
+			        }
+			      ]
+			    },
+			    "d_produto_has_grupo": {
+			      "Binding": {
+			        "ConceptualEntity": "dProduto"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_produto": {
+			          "Target": {
+			            "Entity": "d_produto"
+			          }
+			        },
+			        "d_produto.grupo": {
+			          "Target": {
+			            "Entity": "d_produto.grupo"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_produto"
+			            },
+			            "Object": {
+			              "Role": "d_produto.grupo"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_produtos_have_grupos"
+			        }
+			      ]
+			    },
+			    "d_produto_has_produto": {
+			      "Binding": {
+			        "ConceptualEntity": "dProduto"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_produto": {
+			          "Target": {
+			            "Entity": "d_produto"
+			          }
+			        },
+			        "d_produto.produto": {
+			          "Target": {
+			            "Entity": "d_produto.produto"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_produto"
+			            },
+			            "Object": {
+			              "Role": "d_produto.produto"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_produtos_have_produtos"
+			        }
+			      ]
+			    },
+			    "d_local_has_região": {
+			      "Binding": {
+			        "ConceptualEntity": "dLocal"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_local": {
+			          "Target": {
+			            "Entity": "d_local"
+			          }
+			        },
+			        "d_local.região": {
+			          "Target": {
+			            "Entity": "d_local.região"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_local"
+			            },
+			            "Object": {
+			              "Role": "d_local.região"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_locals_have_regiãos"
+			        }
+			      ]
+			    },
+			    "f_preco_has_tipo_de_bandeira": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "f_preco.tipo_de_bandeira": {
+			          "Target": {
+			            "Entity": "f_preco.tipo_de_bandeira"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "f_preco.tipo_de_bandeira"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_tipo_de_bandeiras"
+			        }
+			      ]
+			    },
+			    "f_preco_has_valor_de_venda": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "f_preco.valor_de_venda": {
+			          "Target": {
+			            "Entity": "f_preco.valor_de_venda"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "f_preco.valor_de_venda"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_valor_de_venda"
+			        },
+			        {
+			          "Adjective": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Adjectives": [
+			              {
+			                "expensive": {
+			                  "State": "Generated"
+			                }
+			              }
+			            ],
+			            "Antonyms": [
+			              {
+			                "cheap": {
+			                  "State": "Generated"
+			                }
+			              }
+			            ],
+			            "Measurement": {
+			              "Role": "f_preco.valor_de_venda"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "valor_de_venda_indicates_how_expensive_f_precos_are"
+			        }
+			      ]
+			    },
+			    "f_preco_has_CNPJ_da_revenda": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "f_preco.CNPJ_da_revenda": {
+			          "Target": {
+			            "Entity": "f_preco.CNPJ_da_revenda"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "f_preco.CNPJ_da_revenda"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_CNPJ_da_revendas"
+			        }
+			      ]
+			    },
+			    "f_preco_has_data_da_coleta": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "f_preco.data_da_coleta": {
+			          "Target": {
+			            "Entity": "f_preco.data_da_coleta"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "f_preco.data_da_coleta"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_data_da_coletas"
+			        }
+			      ]
+			    },
+			    "f_preco_has_bandeira": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "f_preco.bandeira": {
+			          "Target": {
+			            "Entity": "f_preco.bandeira"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "f_preco.bandeira"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_bandeiras"
+			        }
+			      ]
+			    },
+			    "f_preco_has_revenda": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "f_preco.revenda": {
+			          "Target": {
+			            "Entity": "f_preco.revenda"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "f_preco.revenda"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_revendas"
+			        }
+			      ]
+			    },
+			    "entity__medida_has_preço_top_10_postos_baratos": {
+			      "Binding": {
+			        "ConceptualEntity": "_Medidas"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity__medida": {
+			          "Target": {
+			            "Entity": "entity__medida"
+			          }
+			        },
+			        "entity__medida.preço_top_10_postos_baratos": {
+			          "Target": {
+			            "Entity": "entity__medida.preço_top_10_postos_baratos"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity__medida"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.preço_top_10_postos_baratos"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing_medidas_have_preço_top_10_postos_baratos"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_var__ano": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.var__ano": {
+			          "Target": {
+			            "Entity": "entity__medida.var__ano"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.var__ano"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_var__ano"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_dif__vs_brasil": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.dif__vs_brasil": {
+			          "Target": {
+			            "Entity": "entity__medida.dif__vs_brasil"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.dif__vs_brasil"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_dif__vs_brasil"
+			        }
+			      ]
+			    },
+			    "f_preco_has_entity__medida_preço_médio": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "entity__medida.preço_médio": {
+			          "Target": {
+			            "Entity": "entity__medida.preço_médio"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.preço_médio"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_preço_médio"
+			        }
+			      ]
+			    },
+			    "entity__medida_has_ranking_UF": {
+			      "Binding": {
+			        "ConceptualEntity": "_Medidas"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity__medida": {
+			          "Target": {
+			            "Entity": "entity__medida"
+			          }
+			        },
+			        "entity__medida.ranking_UF": {
+			          "Target": {
+			            "Entity": "entity__medida.ranking_UF"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity__medida"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.ranking_UF"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing_medidas_have_ranking_UF"
+			        }
+			      ]
+			    },
+			    "entity__medida_has_preço_top_10_municípios_caros": {
+			      "Binding": {
+			        "ConceptualEntity": "_Medidas"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "entity__medida": {
+			          "Target": {
+			            "Entity": "entity__medida"
+			          }
+			        },
+			        "entity__medida.preço_top_10_municípios_caros": {
+			          "Target": {
+			            "Entity": "entity__medida.preço_top_10_municípios_caros"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "entity__medida"
+			            },
+			            "Object": {
+			              "Role": "entity__medida.preço_top_10_municípios_caros"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "Phrasing_medidas_have_preço_top_10_municípios_caros"
+			        }
+			      ]
+			    },
+			    "d_local_has_uf": {
+			      "Binding": {
+			        "ConceptualEntity": "dLocal"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_local": {
+			          "Target": {
+			            "Entity": "d_local"
+			          }
+			        },
+			        "d_local.uf": {
+			          "Target": {
+			            "Entity": "d_local.uf"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_local"
+			            },
+			            "Object": {
+			              "Role": "d_local.uf"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_locals_have_ufs"
+			        }
+			      ]
+			    },
+			    "d_local_has_município": {
+			      "Binding": {
+			        "ConceptualEntity": "dLocal"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_local": {
+			          "Target": {
+			            "Entity": "d_local"
+			          }
+			        },
+			        "d_local.município": {
+			          "Target": {
+			            "Entity": "d_local.município"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_local"
+			            },
+			            "Object": {
+			              "Role": "d_local.município"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_locals_have_municípios"
+			        }
+			      ]
+			    },
+			    "d_local_in_uf": {
+			      "Binding": {
+			        "ConceptualEntity": "dLocal"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_local": {
+			          "Target": {
+			            "Entity": "d_local"
+			          }
+			        },
+			        "d_local.uf": {
+			          "Target": {
+			            "Entity": "d_local.uf"
+			          }
+			        }
+			      },
+			      "SemanticSlots": {
+			        "Where": {
+			          "Role": "d_local.uf"
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Preposition": {
+			            "Subject": {
+			              "Role": "d_local"
+			            },
+			            "Prepositions": [
+			              {
+			                "in": {
+			                  "State": "Generated"
+			                }
+			              }
+			            ],
+			            "Object": {
+			              "Role": "d_local.uf"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_locals_are_in_ufs"
+			        }
+			      ]
+			    },
+			    "d_local_in_município": {
+			      "Binding": {
+			        "ConceptualEntity": "dLocal"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "d_local": {
+			          "Target": {
+			            "Entity": "d_local"
+			          }
+			        },
+			        "d_local.município": {
+			          "Target": {
+			            "Entity": "d_local.município"
+			          }
+			        }
+			      },
+			      "SemanticSlots": {
+			        "Where": {
+			          "Role": "d_local.município"
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Preposition": {
+			            "Subject": {
+			              "Role": "d_local"
+			            },
+			            "Prepositions": [
+			              {
+			                "in": {
+			                  "State": "Generated"
+			                }
+			              }
+			            ],
+			            "Object": {
+			              "Role": "d_local.município"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_locals_are_in_municípios"
+			        }
+			      ]
+			    },
+			    "f_preco_has_d_produto": {
+			      "Binding": {
+			        "ConceptualEntity": "fPrecos"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "f_preco": {
+			          "Target": {
+			            "Entity": "f_preco"
+			          }
+			        },
+			        "d_produto": {
+			          "Target": {
+			            "Entity": "d_produto"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "f_preco"
+			            },
+			            "Object": {
+			              "Role": "d_produto"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "f_precos_have_d_produtos"
+			        },
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "d_produto"
+			            },
+			            "Object": {
+			              "Role": "f_preco"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "d_produtos_have_f_precos"
+			        }
+			      ]
+			    }
+			  },
+			  "Agents": {
+			    "Internal": {
+			      "Version": "1.1.0"
+			    }
+			  }
+			}
+		contentType: json
+

@@ -1,0 +1,49 @@
+table Dim_Genero
+	lineageTag: 645eb499-bf67-4796-a4ac-dfe5ae2ec28a
+
+	column Gênero
+		dataType: string
+		lineageTag: 7353f140-645b-498b-a32a-98ca0958b9da
+		summarizeBy: none
+		sourceColumn: Gênero
+
+		annotation SummarizationSetBy = Automatic
+
+	column Índice
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: f94e817b-9060-4c95-ad17-0e9fc40c5290
+		summarizeBy: none
+		sourceColumn: Índice
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Genero = m
+		mode: import
+		source =
+				let
+				    // =====================================================================
+				    // DIM_GENERO - Lista única de gêneros (Gênero 1 + Gênero 2)
+				    // =====================================================================
+				    Fonte = Fonte,
+				    #"Outras Colunas Removidas" = Table.SelectColumns(Fonte,{"Gênero 1"}),
+				    #"Colunas Renomeadas" = Table.RenameColumns(#"Outras Colunas Removidas",{{"Gênero 1", "Gênero"}}),
+				
+				    // Junta com os gêneros secundários (consulta Dim_Genero aux)
+				    #"Consulta Acrescentada" = Table.Combine({#"Colunas Renomeadas", #"Dim_Genero aux"}),
+				
+				    // Remove nulos (obra sem Gênero 2) para não gerar gênero em branco
+				    #"Nulos Removidos" = Table.SelectRows(#"Consulta Acrescentada", each [Gênero] <> null),
+				
+				    #"Duplicatas Removidas" = Table.Distinct(#"Nulos Removidos"),
+				
+				    // Chave numérica usada nos relacionamentos com a fato
+				    #"Índice Adicionado" = Table.AddIndexColumn(#"Duplicatas Removidas", "Índice", 1, 1, Int64.Type)
+				in
+				    #"Índice Adicionado"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,55 @@
+/// Dimensão de localidade (município, UF, região).
+table dLocal
+	lineageTag: eac4f4f6-c427-48fe-a8d8-762215f22ffa
+
+	column 'Chave Local'
+		dataType: string
+		isHidden
+		lineageTag: c6bf7334-64fb-4420-9d2d-8e0db503ff06
+		summarizeBy: none
+		sourceColumn: Chave Local
+
+	column 'Regiao - Sigla'
+		dataType: string
+		isHidden
+		lineageTag: 7a6774e9-04cc-48fc-8bb1-1f2ea7cff77c
+		summarizeBy: none
+		sourceColumn: Regiao - Sigla
+
+	column UF
+		dataType: string
+		lineageTag: befc5e10-935d-4495-a00d-1d942e29e161
+		dataCategory: StateOrProvince
+		summarizeBy: none
+		sourceColumn: UF
+
+	column Município
+		dataType: string
+		lineageTag: 31e8c8a3-08dc-46f2-909e-225aa2e6f5b7
+		dataCategory: City
+		summarizeBy: none
+		sourceColumn: Município
+
+	column Região
+		dataType: string
+		lineageTag: 88f353ac-7211-4645-b374-dfa4b6d88c3d
+		summarizeBy: none
+		sourceColumn: Região
+
+	partition dLocal = m
+		mode: import
+		source =
+				let
+				    Fonte = #"Base ANP",
+				    #"Outras Colunas Removidas" = Table.SelectColumns(Fonte,{"Chave Local", "Regiao - Sigla", "Estado - Sigla", "Municipio"}),
+				    #"Duplicatas Removidas" = Table.Distinct(#"Outras Colunas Removidas", {"Chave Local"}),
+				    #"Coluna Condicional Adicionada" = Table.AddColumn(#"Duplicatas Removidas", "Região", each if [#"Regiao - Sigla"] = "N" then "Norte" else if [#"Regiao - Sigla"] = "NE" then "Nordeste" else if [#"Regiao - Sigla"] = "CO" then "Centro-Oeste" else if [#"Regiao - Sigla"] = "SE" then "Sudeste" else if [#"Regiao - Sigla"] = "S" then "Sul" else null),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Coluna Condicional Adicionada",{{"Região", type text}}),
+				    #"Colunas Renomeadas" = Table.RenameColumns(#"Tipo Alterado",{{"Estado - Sigla", "UF"}, {"Municipio", "Município"}})
+				in
+				    #"Colunas Renomeadas"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

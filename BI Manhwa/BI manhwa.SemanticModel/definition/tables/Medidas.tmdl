@@ -1,0 +1,824 @@
+table Medidas
+	lineageTag: 398690a6-54ef-4ced-a7cf-749ff90c2fff
+
+	measure 'Total Capitulos' = SUM(Fato_Leitura[Capitulo])
+		formatString: #,##0
+		displayFolder: 01 Base
+		lineageTag: 177f667c-7bd6-4b3f-a588-49a6b5836c58
+
+	measure 'Qtde Obras' = DISTINCTCOUNT(Fato_Leitura[Nome])
+		formatString: #,##0
+		displayFolder: 01 Base
+		lineageTag: 69ea4aab-2224-498e-9fca-e900013e5338
+
+	measure 'Tempo sem ler' =
+			
+			DATEDIFF(MAX(Fato_Leitura[Data]),TODAY(),DAY)
+		formatString: #,##0
+		displayFolder: 01 Base
+		lineageTag: e0f03662-4e12-41dc-befb-3ad9a2b1d6b7
+
+	measure 'Qtde por Genero Secundario' =
+			
+			CALCULATE(
+			    [Qtde Obras],
+			    USERELATIONSHIP(Fato_Leitura[Dim_Genero.Índice.1], Dim_Genero[Índice])
+			)
+		formatString: #,##0
+		displayFolder: 01 Base
+		lineageTag: 404d8afc-b11b-409d-9adb-d78c124b2125
+
+	measure 'Qtde Generos' = COUNT(Dim_Genero[Índice])
+		formatString: #,##0
+		displayFolder: 01 Base
+		lineageTag: 3aa100a4-d464-419c-b941-e9e4b4f0e539
+
+	measure '% do total' = DIVIDE([Total Capitulos],[all capitulos])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: 01 Base
+		lineageTag: 436146a0-f80a-43f4-95cd-de71eeafce8b
+
+	measure 'all capitulos' = CALCULATE([Total Capitulos],ALL(Fato_Leitura))
+		formatString: #,##0
+		displayFolder: 01 Base
+		lineageTag: 0b21f41f-1fb1-44a9-87ad-2d573117f2f8
+
+	/// Minutos estimados de leitura: 5 min/cap (manhwa e manhua) e 7 min/cap (manga).
+	measure 'Tempo gasto' =
+			
+			SUMX(
+			    Fato_Leitura,
+			    Fato_Leitura[Capitulo] *
+			        SWITCH(
+			            TRUE(),
+			            Fato_Leitura[Origem] IN {"Manhwa", "Manhua"}, 5,
+			            Fato_Leitura[Origem] = "Manga", 7,
+			            0
+			        )
+			)
+		formatString: #,##0
+		displayFolder: 01 Base
+		lineageTag: c48019ba-3b66-4e84-9aa5-d853784384f0
+
+	measure 'Tempo Lido (horas)' =
+			
+			DIVIDE([Tempo gasto], 60, 0)
+		formatString: #,##0
+		displayFolder: 01 Base
+		lineageTag: a2e9725b-7424-4871-a6d0-370eda9d9e32
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Medida usada no visual HTML Content. Só monta a página: cada bloco fica na sua própria medida em 03 HTML\2 Blocos.
+	measure 'Visual HTML' =
+			// =====================================================================
+			// VISUAL HTML - monta a página inteira
+			// Ordem: estilo > cabeçalho > KPIs > grid de cards > rodapé
+			// Para mexer em um bloco, edite a medida dele (pasta 03 HTML\2 Blocos)
+			// =====================================================================
+			"<div class='nr'>" &
+			
+			    [HTML CSS] &
+			    [HTML Cabeçalho] &
+			    [HTML KPIs] &
+			
+			    "<div class='grid'>" &
+			        // Linha 1: ritmo (8) + coleção (4)
+			        [HTML Ritmo] &
+			        [HTML Coleção] &
+			        // Linha 2: gêneros (7) + notas (5)
+			        [HTML Gêneros] &
+			        [HTML Notas] &
+			        // Linha 3: saúde da lista (5) + maratonas (7)
+			        [HTML Saúde] &
+			        [HTML Maratonas] &
+			        // Linha 4: vale retomar (8) + fila (4)
+			        [HTML Retomar] &
+			        [HTML Fila] &
+			    "</div>" &
+			
+			    [HTML Rodapé] &
+			
+			"</div>"
+		displayFolder: 03 HTML\0 Página
+		lineageTag: 938311f4-48eb-42a1-b681-15a4f8c2b695
+
+	/// Data da leitura mais recente registrada em toda a base. Serve de referência para medir há quanto tempo cada obra está parada.
+	measure 'Data Referência' =
+			// Última data registrada na planilha, ignorando qualquer filtro
+			CALCULATE(
+			    MAX(Fato_Leitura[Data]),
+			    REMOVEFILTERS()
+			)
+		formatString: dd/mm/yyyy
+		displayFolder: 02 Análise
+		lineageTag: d05a4bdc-fdc1-49f1-90bb-19016dbc0ea9
+
+	/// Dias entre a última leitura registrada e hoje. Se estiver alto, a planilha está desatualizada.
+	measure 'Dias Sem Atualizar Base' = DATEDIFF( [Data Referência], TODAY(), DAY )
+		formatString: #,##0
+		displayFolder: 02 Análise
+		lineageTag: b10c45d4-194f-4e8a-bf1c-75209bf39b55
+
+	/// Dias entre a última leitura da obra e a Data Referência (não depende de hoje).
+	measure 'Dias Parada (Ref)' =
+			VAR _ultima = MAX( Fato_Leitura[Data] )
+			RETURN
+			    IF(
+			        NOT ISBLANK( _ultima ),
+			        DATEDIFF( _ultima, [Data Referência], DAY )
+			    )
+		formatString: #,##0
+		displayFolder: 02 Análise
+		lineageTag: 8f71d449-f962-458a-a764-0d9384dfae43
+
+	/// Média das notas. Obras sem nota (pendentes) são ignoradas.
+	measure 'Nota Média' = AVERAGE( Fato_Leitura[Nota] )
+		formatString: 0.0
+		displayFolder: 02 Análise
+		lineageTag: 021675ac-25e6-45c7-8809-2411131f4a4c
+
+	measure 'Obras Iniciadas' =
+			// Tudo que já começou a ser lido (exclui Pendente)
+			CALCULATE( [Qtde Obras], Dim_Status[Status] <> "Pendente" )
+		formatString: #,##0
+		displayFolder: 02 Análise
+		lineageTag: fdaa04c3-0159-44f6-8bc4-3fd842cdbb1e
+
+	measure 'Obras Pendentes' = CALCULATE( [Qtde Obras], Dim_Status[Status] = "Pendente" )
+		formatString: #,##0
+		displayFolder: 02 Análise
+		lineageTag: fbeacc54-b7cf-4330-a26b-44cc2f7584e2
+
+	measure 'Obras Acompanhando' = CALCULATE( [Qtde Obras], Dim_Status[Status] = "Acompanhando" )
+		formatString: #,##0
+		displayFolder: 02 Análise
+		lineageTag: f1ae0190-5e23-4c7f-8a63-520a51138edd
+
+	/// Obras em Acompanhando sem leitura há mais de 365 dias (em relação à Data Referência).
+	measure 'Obras Paradas +1 Ano' =
+			VAR _ref = [Data Referência]
+			RETURN
+			    COUNTROWS(
+			        FILTER(
+			            Fato_Leitura,
+			            RELATED( Dim_Status[Status] ) = "Acompanhando"
+			                && NOT ISBLANK( Fato_Leitura[Data] )
+			                && DATEDIFF( Fato_Leitura[Data], _ref, DAY ) > 365
+			        )
+			    ) + 0
+		formatString: #,##0
+		displayFolder: 02 Análise
+		lineageTag: 7bc26c50-c51d-4a2f-a88f-bb17108e912b
+
+	/// Nota média das obras que têm o gênero filtrado como principal OU secundário.
+	measure 'Nota Média (Gênero Qualquer)' =
+			VAR _generos = VALUES( Dim_Genero[Índice] )
+			RETURN
+			    CALCULATE(
+			        [Nota Média],
+			        REMOVEFILTERS( Dim_Genero ),
+			        FILTER(
+			            ALL( Fato_Leitura[Dim_Genero.Índice], Fato_Leitura[Dim_Genero.Índice.1] ),
+			            Fato_Leitura[Dim_Genero.Índice] IN _generos
+			                || Fato_Leitura[Dim_Genero.Índice.1] IN _generos
+			        )
+			    )
+		formatString: 0.0
+		displayFolder: 02 Análise
+		lineageTag: 6bb2566a-633c-4b15-8ebe-6a8d4ebebf4c
+
+	/// Folha de estilo da página (tokens de cor, grid, cards, gráficos e tabela).
+	measure 'HTML CSS' =
+			// =====================================================================
+			// HTML CSS - estilo global da página
+			// Cores ficam em variáveis (--s1, --ink...) para trocar o tema em um lugar só
+			// =====================================================================
+			"<style>
+			
+			/* ---------- Tokens (tema escuro) ---------- */
+			.nr {
+			    --bg:        #0f0f0e;
+			    --surface:   #1a1a19;
+			    --surface-2: #232321;
+			    --line:      #2e2e2b;
+			    --ink:       #f0efec;
+			    --ink-2:     #c3c2b7;
+			    --ink-3:     #8d8c86;
+			    --s1:        #3987e5;   /* série 1 - azul    */
+			    --s2:        #d95926;   /* série 2 - laranja */
+			    --s3:        #199e70;   /* série 3 - verde-água */
+			    --s4:        #c98500;   /* série 4 - amarelo */
+			    --warn:      #fab219;
+			    font-family: 'Segoe UI', system-ui, sans-serif;
+			    color: var(--ink);
+			    background: var(--bg);
+			    padding: 28px 32px 32px;
+			    min-height: 100%;
+			    box-sizing: border-box;
+			}
+			.nr * { box-sizing: border-box; }
+			
+			/* ---------- Cabeçalho ---------- */
+			.hd {
+			    display: flex; justify-content: space-between; align-items: flex-end;
+			    border-bottom: 1px solid var(--line);
+			    padding-bottom: 18px; margin-bottom: 20px;
+			}
+			.hd-kicker { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); }
+			.hd-title  { font-size: 30px; font-weight: 700; letter-spacing: -.01em; margin-top: 4px; }
+			.hd-title span { color: var(--s1); }
+			.hd-meta   { text-align: right; font-size: 12px; color: var(--ink-3); line-height: 1.8; }
+			.pill {
+			    display: inline-block; padding: 4px 10px; border-radius: 999px;
+			    border: 1px solid var(--line); font-size: 12px; color: var(--ink-2);
+			}
+			.pill.warn { border-color: #5a4410; color: var(--warn); }
+			
+			/* ---------- Grid de cards ---------- */
+			.kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 16px; }
+			.grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+			.c4 { grid-column: span 4; }  .c5 { grid-column: span 5; }
+			.c7 { grid-column: span 7; }  .c8 { grid-column: span 8; }
+			
+			.card {
+			    background: var(--surface);
+			    border: 1px solid var(--line);
+			    border-radius: 12px;
+			    padding: 18px 20px;
+			}
+			.card-hd { margin-bottom: 16px; }
+			.card h3 { margin: 0; font-size: 14px; font-weight: 600; color: var(--ink); }
+			.card .sub { font-size: 11.5px; color: var(--ink-3); margin-top: 3px; }
+			.block + .block { margin-top: 22px; }
+			.block-lbl { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px; }
+			
+			/* ---------- KPIs ---------- */
+			.kpi .lbl  { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+			.kpi .val  { font-size: 30px; font-weight: 600; margin-top: 6px; font-variant-numeric: tabular-nums; }
+			.kpi .val small { font-size: 14px; color: var(--ink-2); font-weight: 500; margin-left: 4px; }
+			.kpi .foot { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
+			
+			/* ---------- Colunas verticais ---------- */
+			.cols {
+			    display: flex; align-items: flex-end; gap: 2px;
+			    height: 160px; border-bottom: 1px solid var(--line);
+			}
+			.col   { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+			.col i { display: block; width: 100%; background: var(--s1); border-radius: 4px 4px 0 0; }
+			.col:hover i { filter: brightness(1.3); }
+			.col b { font-size: 10.5px; font-weight: 500; color: var(--ink-2); margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+			.col-x { display: flex; gap: 2px; margin-top: 6px; }
+			.col-x span { flex: 1; font-size: 10px; color: var(--ink-3); text-align: center; white-space: nowrap; }
+			
+			/* ---------- Barras horizontais ---------- */
+			.hb {
+			    display: grid; grid-template-columns: 150px 1fr 40px; gap: 10px;
+			    align-items: center; font-size: 12.5px; padding: 4px 0;
+			}
+			.hb.g4 { grid-template-columns: 130px 1fr 34px 40px; }
+			.hb .nm { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+			.hb .tr { height: 10px; display: flex; gap: 2px; }
+			.hb .tr i { display: block; height: 100%; }
+			.hb .tr i:last-child { border-radius: 0 4px 4px 0; }
+			.hb:hover .tr i { filter: brightness(1.3); }
+			.hb .v  { text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
+			.hb .v2 { text-align: right; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+			.hb.th  { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); padding-bottom: 6px; }
+			
+			/* ---------- Barra segmentada (parte do todo) ---------- */
+			.seg   { display: flex; gap: 2px; height: 26px; }
+			.seg i { display: block; height: 100%; }
+			.seg i:first-child { border-radius: 6px 0 0 6px; }
+			.seg i:last-child  { border-radius: 0 6px 6px 0; }
+			.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 12px; color: var(--ink-2); }
+			.legend b { color: var(--ink); font-weight: 600; margin-left: 4px; }
+			.dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
+			
+			/* ---------- Tabela ---------- */
+			.tb { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+			.tb th {
+			    text-align: left; font-weight: 500; font-size: 10.5px; color: var(--ink-3);
+			    text-transform: uppercase; letter-spacing: .06em;
+			    padding: 0 8px 8px; border-bottom: 1px solid var(--line);
+			}
+			.tb td { padding: 8px; border-bottom: 1px solid var(--line); color: var(--ink-2); }
+			.tb tr:last-child td { border-bottom: 0; }
+			.tb .t { color: var(--ink); font-weight: 500; }
+			.tb .n, .tb th.n { text-align: right; font-variant-numeric: tabular-nums; }
+			.tb .n { color: var(--ink); }
+			
+			/* ---------- Chips e notas ---------- */
+			.chip {
+			    display: inline-block; margin: 0 6px 8px 0; padding: 5px 10px;
+			    border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line);
+			    font-size: 12px; color: var(--ink-2);
+			}
+			.note { font-size: 11px; color: var(--ink-3); margin-top: 12px; }
+			.foot { font-size: 11px; color: var(--ink-3); margin-top: 18px; text-align: center; }
+			
+			</style>"
+		displayFolder: 03 HTML\1 Estilo
+		lineageTag: 1788ad5a-ae16-4d0d-a253-78088cace7a9
+
+	/// Título da página + aviso de base desatualizada.
+	measure 'HTML Cabeçalho' =
+			// =====================================================================
+			// HTML Cabeçalho
+			// =====================================================================
+			VAR _ref      = [Data Referência]
+			VAR _diasBase = [Dias Sem Atualizar Base]
+			
+			// Aviso amarelo quando a planilha passa de 30 dias sem atualização
+			VAR _status =
+			    IF(
+			        _diasBase > 30,
+			        "<span class='pill warn'>⚠ Planilha sem atualização há " & FORMAT( _diasBase, "#,##0", "pt-BR" ) & " dias</span>",
+			        "<span class='pill'>✔ Base em dia</span>"
+			    )
+			
+			RETURN
+			    "<div class='hd'>" &
+			        "<div>" &
+			            "<div class='hd-kicker'>Painel de leitura · Manhwa · Manga · Manhua</div>" &
+			            "<div class='hd-title'>Nardo's <span>Reading</span></div>" &
+			        "</div>" &
+			        "<div class='hd-meta'>" &
+			            _status & "<br>" &
+			            "Última leitura registrada em " & FORMAT( _ref, "dd/mm/yyyy" ) &
+			        "</div>" &
+			    "</div>"
+		displayFolder: 03 HTML\2 Blocos
+		lineageTag: fceb57e8-8ac5-40ca-9092-d48aa4479756
+
+	/// Linha com os 5 indicadores principais.
+	measure 'HTML KPIs' =
+			// =====================================================================
+			// HTML KPIs - 5 cartões de destaque
+			// =====================================================================
+			VAR _caps     = [Total Capitulos]
+			VAR _horas    = [Tempo Lido (horas)]
+			VAR _dias     = DIVIDE( _horas, 24 )
+			VAR _obras    = [Qtde Obras]
+			VAR _iniciad  = [Obras Iniciadas]
+			VAR _pend     = [Obras Pendentes]
+			VAR _nota     = [Nota Média]
+			VAR _nota9    = CALCULATE( [Qtde Obras], Fato_Leitura[Nota] >= 9 )
+			VAR _acomp    = [Obras Acompanhando]
+			VAR _parados  = [Obras Paradas +1 Ano]
+			VAR _capObra  = DIVIDE( _caps, _iniciad )
+			
+			// Modelo de um cartão: rótulo | valor | rodapé
+			VAR _k1 =
+			    "<div class='card kpi'><div class='lbl'>Capítulos lidos</div>" &
+			    "<div class='val'>" & FORMAT( _caps, "#,##0", "pt-BR" ) & "</div>" &
+			    "<div class='foot'>~" & FORMAT( _capObra, "#,##0", "pt-BR" ) & " por obra iniciada</div></div>"
+			
+			VAR _k2 =
+			    "<div class='card kpi'><div class='lbl'>Tempo de leitura</div>" &
+			    "<div class='val'>" & FORMAT( _horas, "#,##0", "pt-BR" ) & "<small>h</small></div>" &
+			    "<div class='foot'>≈ " & FORMAT( _dias, "#,##0", "pt-BR" ) & " dias seguidos lendo</div></div>"
+			
+			VAR _k3 =
+			    "<div class='card kpi'><div class='lbl'>Obras na coleção</div>" &
+			    "<div class='val'>" & FORMAT( _obras, "#,##0", "pt-BR" ) & "</div>" &
+			    "<div class='foot'>" & _iniciad & " iniciadas · " & _pend & " na fila</div></div>"
+			
+			VAR _k4 =
+			    "<div class='card kpi'><div class='lbl'>Nota média</div>" &
+			    "<div class='val'>" & FORMAT( _nota, "0.0", "pt-BR" ) & "<small>/ 10</small></div>" &
+			    "<div class='foot'>" & _nota9 & " obras com nota 9 ou 10</div></div>"
+			
+			VAR _k5 =
+			    "<div class='card kpi'><div class='lbl'>Acompanhando</div>" &
+			    "<div class='val'>" & FORMAT( _acomp, "#,##0", "pt-BR" ) & "</div>" &
+			    "<div class='foot'>" & _parados & " paradas há mais de 1 ano</div></div>"
+			
+			RETURN
+			    "<div class='kpis'>" & _k1 & _k2 & _k3 & _k4 & _k5 & "</div>"
+		displayFolder: 03 HTML\2 Blocos
+		lineageTag: 2b93abe1-2af7-4944-9dc3-3d87943213b4
+
+	/// Notas de metodologia no fim da página.
+	measure 'HTML Rodapé' =
+			// =====================================================================
+			// HTML Rodapé - premissas usadas nos cálculos
+			// =====================================================================
+			"<div class='foot'>" &
+			    "Tempo estimado: 5 min/cap (manhwa e manhua) e 7 min/cap (manga) · " &
+			    "* Dias parada contados até a última leitura registrada (" & FORMAT( [Data Referência], "dd/mm/yyyy" ) & ")" &
+			"</div>"
+		displayFolder: 03 HTML\2 Blocos
+		lineageTag: 23bc1053-bf0c-4be8-ab91-94e0aa4c5bda
+
+	/// Colunas: quantas obras tiveram a última leitura em cada mês (últimos 24 meses).
+	measure 'HTML Ritmo' =
+			// =====================================================================
+			// HTML Ritmo - atividade de leitura por mês (24 meses até a Data Referência)
+			// =====================================================================
+			VAR _ref = [Data Referência]
+			VAR _fim = EOMONTH( _ref, 0 )
+			VAR _ini = EOMONTH( _ref, -24 ) + 1
+			
+			// Uma linha por mês com a qtde de obras lidas por último naquele mês
+			VAR _meses =
+			    ADDCOLUMNS(
+			        SUMMARIZE(
+			            FILTER( ALL( dCalendario ), dCalendario[Data] >= _ini && dCalendario[Data] <= _fim ),
+			            dCalendario[Mês e Ano Num], dCalendario[Nome do Mês], dCalendario[Mês], dCalendario[Ano]
+			        ),
+			        "@obras", CALCULATE( COUNTROWS( Fato_Leitura ) ) + 0
+			    )
+			VAR _max  = MAXX( _meses, [@obras] )
+			VAR _pico = TOPN( 1, _meses, [@obras], DESC, [Mês e Ano Num], DESC )
+			VAR _picoTxt = MAXX( _pico, [Nome do Mês] & "/" & RIGHT( [Ano], 2 ) & " (" & [@obras] & " obras)" )
+			
+			// Colunas: altura em % do mês de pico; valor só no pico e no último mês
+			VAR _barras =
+			    CONCATENATEX(
+			        _meses,
+			        "<div class='col' title='" & [Nome do Mês] & "/" & [Ano] & ": " & [@obras] & " obras'>" &
+			            IF( [@obras] = _max || [Mês e Ano Num] = MAXX( _meses, [Mês e Ano Num] ), "<b>" & [@obras] & "</b>" ) &
+			            "<i style='height:" & FORMAT( DIVIDE( [@obras], _max ) * 100, "0.0", "en-US" ) & "%'></i>" &
+			        "</div>",
+			        "",
+			        [Mês e Ano Num], ASC
+			    )
+			
+			// Eixo X: rótulo a cada 3 meses para não poluir
+			VAR _eixo =
+			    CONCATENATEX(
+			        _meses,
+			        "<span>" & IF( MOD( [Mês], 3 ) = 1, [Nome do Mês] & "/" & RIGHT( [Ano], 2 ) ) & "</span>",
+			        "",
+			        [Mês e Ano Num], ASC
+			    )
+			
+			RETURN
+			    "<div class='card c8'>" &
+			        "<div class='card-hd'><h3>Ritmo de leitura</h3>" &
+			        "<div class='sub'>Obras pela data da última leitura · últimos 24 meses · pico em " & _picoTxt & "</div></div>" &
+			        "<div class='cols'>" & _barras & "</div>" &
+			        "<div class='col-x'>" & _eixo & "</div>" &
+			    "</div>"
+		displayFolder: 03 HTML\2 Blocos
+		lineageTag: df3e4fb6-31bb-4075-9e60-e774d27fa37c
+
+	/// Barras segmentadas de Status e Origem (parte do todo).
+	measure 'HTML Coleção' =
+			// =====================================================================
+			// HTML Coleção - composição por Status e por Origem
+			// Cor fixa por categoria (não muda com filtro)
+			// =====================================================================
+			
+			// ---------- Status ----------
+			VAR _cfgStatus =
+			    DATATABLE(
+			        "Status", STRING, "Rotulo", STRING, "Ordem", INTEGER, "Cor", STRING,
+			        {
+			            { "Acompanhando", "Acompanhando", 1, "var(--s1)" },
+			            { "Concluido",    "Concluído",    2, "var(--s3)" },
+			            { "Pendente",     "Na fila",      3, "var(--s2)" },
+			            { "Drop",         "Dropado",      4, "var(--s4)" }
+			        }
+			    )
+			VAR _st =
+			    ADDCOLUMNS(
+			        _cfgStatus,
+			        "@q", VAR _s = [Status] RETURN CALCULATE( [Qtde Obras], Dim_Status[Status] = _s ) + 0
+			    )
+			VAR _totSt = SUMX( _st, [@q] )
+			
+			// ---------- Origem ----------
+			VAR _cfgOrig =
+			    DATATABLE(
+			        "Origem", STRING, "Ordem", INTEGER, "Cor", STRING,
+			        {
+			            { "Manhwa", 1, "var(--s1)" },
+			            { "Manga",  2, "var(--s2)" },
+			            { "Manhua", 3, "var(--s3)" }
+			        }
+			    )
+			VAR _or =
+			    ADDCOLUMNS(
+			        _cfgOrig,
+			        "@q", VAR _o = [Origem] RETURN CALCULATE( [Qtde Obras], Fato_Leitura[Origem] = _o ) + 0
+			    )
+			VAR _totOr = SUMX( _or, [@q] )
+			
+			// ---------- Montagem: segmentos (flex = qtde) + legenda ----------
+			VAR _segSt =
+			    CONCATENATEX(
+			        FILTER( _st, [@q] > 0 ),
+			        "<i style='flex:" & [@q] & ";background:" & [Cor] & "' title='" & [Rotulo] & ": " & [@q] & "'></i>",
+			        "", [Ordem], ASC
+			    )
+			VAR _legSt =
+			    CONCATENATEX(
+			        _st,
+			        "<span><i class='dot' style='background:" & [Cor] & "'></i>" & [Rotulo] &
+			        "<b>" & [@q] & "</b> · " & FORMAT( DIVIDE( [@q], _totSt ), "0%", "pt-BR" ) & "</span>",
+			        "", [Ordem], ASC
+			    )
+			VAR _segOr =
+			    CONCATENATEX(
+			        FILTER( _or, [@q] > 0 ),
+			        "<i style='flex:" & [@q] & ";background:" & [Cor] & "' title='" & [Origem] & ": " & [@q] & "'></i>",
+			        "", [Ordem], ASC
+			    )
+			VAR _legOr =
+			    CONCATENATEX(
+			        _or,
+			        "<span><i class='dot' style='background:" & [Cor] & "'></i>" & [Origem] &
+			        "<b>" & [@q] & "</b> · " & FORMAT( DIVIDE( [@q], _totOr ), "0%", "pt-BR" ) & "</span>",
+			        "", [Ordem], ASC
+			    )
+			
+			RETURN
+			    "<div class='card c4'>" &
+			        "<div class='card-hd'><h3>Coleção</h3><div class='sub'>Como as " & _totSt & " obras se dividem</div></div>" &
+			        "<div class='block'><div class='block-lbl'>Status</div>" &
+			            "<div class='seg'>" & _segSt & "</div><div class='legend'>" & _legSt & "</div></div>" &
+			        "<div class='block'><div class='block-lbl'>Origem</div>" &
+			            "<div class='seg'>" & _segOr & "</div><div class='legend'>" & _legOr & "</div></div>" &
+			    "</div>"
+		displayFolder: 03 HTML\2 Blocos
+		lineageTag: 9cbbf203-9f17-4498-911c-20189991d9fe
+
+	/// Top 12 gêneros: barra empilhada principal + secundário e nota média.
+	measure 'HTML Gêneros' =
+			// =====================================================================
+			// HTML Gêneros - top 12 considerando gênero principal E secundário
+			// =====================================================================
+			VAR _base =
+			    ADDCOLUMNS(
+			        FILTER( VALUES( Dim_Genero[Gênero] ), Dim_Genero[Gênero] <> "" ),
+			        "@p", CALCULATE( [Qtde Obras] ) + 0,                 // como gênero principal
+			        "@s", [Qtde por Genero Secundario] + 0,              // como gênero secundário
+			        "@n", [Nota Média (Gênero Qualquer)]
+			    )
+			VAR _tab  = ADDCOLUMNS( _base, "@t", [@p] + [@s] )
+			VAR _top  = TOPN( 12, FILTER( _tab, [@t] > 0 ), [@t], DESC, Dim_Genero[Gênero], ASC )
+			VAR _max  = MAXX( _top, [@t] )
+			
+			// Cabeçalho das colunas
+			VAR _th =
+			    "<div class='hb g4 th'><span>Gênero</span><span></span><span style='text-align:right'>Obras</span><span style='text-align:right'>Nota</span></div>"
+			
+			// Linhas: segmento azul (principal) + laranja (secundário), largura relativa ao maior
+			VAR _linhas =
+			    CONCATENATEX(
+			        _top,
+			        "<div class='hb g4' title='" & Dim_Genero[Gênero] & ": " & [@p] & " principal + " & [@s] & " secundário'>" &
+			            "<span class='nm'>" & Dim_Genero[Gênero] & "</span>" &
+			            "<span class='tr'>" &
+			                IF( [@p] > 0, "<i style='width:" & FORMAT( DIVIDE( [@p], _max ) * 100, "0.0", "en-US" ) & "%;background:var(--s1)'></i>" ) &
+			                IF( [@s] > 0, "<i style='width:" & FORMAT( DIVIDE( [@s], _max ) * 100, "0.0", "en-US" ) & "%;background:var(--s2)'></i>" ) &
+			            "</span>" &
+			            "<span class='v'>" & [@t] & "</span>" &
+			            "<span class='v2'>" & FORMAT( [@n], "0.0", "pt-BR" ) & "</span>" &
+			        "</div>",
+			        "",
+			        [@t], DESC, Dim_Genero[Gênero], ASC
+			    )
+			
+			VAR _legenda =
+			    "<div class='legend'>" &
+			        "<span><i class='dot' style='background:var(--s1)'></i>Gênero principal</span>" &
+			        "<span><i class='dot' style='background:var(--s2)'></i>Gênero secundário</span>" &
+			    "</div>"
+			
+			RETURN
+			    "<div class='card c7'>" &
+			        "<div class='card-hd'><h3>Gêneros mais lidos</h3>" &
+			        "<div class='sub'>Top 12 somando gênero principal e secundário · nota média das obras do gênero</div></div>" &
+			        _th & _linhas & _legenda &
+			    "</div>"
+		displayFolder: 03 HTML\2 Blocos
+		lineageTag: 2080a728-bd31-471d-81bd-047217a6fb5d
+
+	/// Histograma das notas de 1 a 10.
+	measure 'HTML Notas' =
+			// =====================================================================
+			// HTML Notas - distribuição das notas (1 a 10)
+			// =====================================================================
+			VAR _media = [Nota Média]
+			VAR _notas =
+			    ADDCOLUMNS(
+			        GENERATESERIES( 1, 10, 1 ),
+			        "@q", VAR _n = [Value] RETURN CALCULATE( [Qtde Obras], Fato_Leitura[Nota] = _n ) + 0
+			    )
+			VAR _max = MAXX( _notas, [@q] )
+			VAR _moda = MAXX( TOPN( 1, _notas, [@q], DESC, [Value], DESC ), [Value] )
+			
+			// Colunas com o valor em cima (são só 10, dá para ler todas)
+			VAR _barras =
+			    CONCATENATEX(
+			        _notas,
+			        "<div class='col' title='Nota " & [Value] & ": " & [@q] & " obras'>" &
+			            "<b>" & IF( [@q] > 0, [@q] ) & "</b>" &
+			            "<i style='height:" & FORMAT( DIVIDE( [@q], _max ) * 100, "0.0", "en-US" ) & "%'></i>" &
+			        "</div>",
+			        "", [Value], ASC
+			    )
+			VAR _eixo = CONCATENATEX( _notas, "<span>" & [Value] & "</span>", "", [Value], ASC )
+			
+			RETURN
+			    "<div class='card c5'>" &
+			        "<div class='card-hd'><h3>Como você avalia</h3>" &
+			        "<div class='sub'>Obras por nota · média " & FORMAT( _media, "0.0", "pt-BR" ) & " · nota mais comum: " & _moda & "</div></div>" &
+			        "<div class='cols'>" & _barras & "</div>" &
+			        "<div class='col-x'>" & _eixo & "</div>" &
+			    "</div>"
+		displayFolder: 03 HTML\2 Blocos
+		lineageTag: 7ee605c6-e3b5-43ff-9390-f620a66c8e3b
+
+	/// Obras em Acompanhando por faixa de tempo parada (rampa azul: mais claro = mais recente).
+	measure 'HTML Saúde' =
+			// =====================================================================
+			// HTML Saúde da lista - obras "Acompanhando" por tempo sem leitura
+			// =====================================================================
+			VAR _ref = [Data Referência]
+			
+			// Obras acompanhando com data, já com os dias parada calculados
+			VAR _obras =
+			    ADDCOLUMNS(
+			        FILTER(
+			            Fato_Leitura,
+			            RELATED( Dim_Status[Status] ) = "Acompanhando" && NOT ISBLANK( Fato_Leitura[Data] )
+			        ),
+			        "@dias", DATEDIFF( Fato_Leitura[Data], _ref, DAY )
+			    )
+			VAR _total = COUNTROWS( _obras )
+			
+			// Faixas (cor ordinal: do mais recente ao mais antigo)
+			VAR _faixas =
+			    DATATABLE(
+			        "Ordem", INTEGER, "Faixa", STRING, "Min", INTEGER, "Max", INTEGER, "Cor", STRING,
+			        {
+			            { 1, "Até 30 dias",   0,   30,    "#cde2fb" },
+			            { 2, "31 a 90 dias",  31,  90,    "#86b6ef" },
+			            { 3, "91 a 180 dias", 91,  180,   "#3987e5" },
+			            { 4, "181 a 365 dias",181, 365,   "#256abf" },
+			            { 5, "Mais de 1 ano", 366, 99999, "#184f95" }
+			        }
+			    )
+			VAR _tab =
+			    ADDCOLUMNS(
+			        _faixas,
+			        "@q",
+			            VAR _mn = [Min]
+			            VAR _mx = [Max]
+			            RETURN COUNTROWS( FILTER( _obras, [@dias] >= _mn && [@dias] <= _mx ) ) + 0
+			    )
+			VAR _max = MAXX( _tab, [@q] )
+			
+			VAR _linhas =
+			    CONCATENATEX(
+			        _tab,
+			        "<div class='hb'>" &
+			            "<span class='nm'>" & [Faixa] & "</span>" &
+			            "<span class='tr'><i style='width:" & FORMAT( DIVIDE( [@q], _max ) * 100, "0.0", "en-US" ) & "%;background:" & [Cor] & "'></i></span>" &
+			            "<span class='v'>" & [@q] & "</span>" &
+			        "</div>",
+			        "", [Ordem], ASC
+			    )
+			
+			VAR _recentes = SUMX( FILTER( _tab, [Ordem] <= 3 ), [@q] )
+			
+			RETURN
+			    "<div class='card c5'>" &
+			        "<div class='card-hd'><h3>Saúde da lista</h3>" &
+			        "<div class='sub'>Obras em Acompanhando por tempo sem leitura* · " &
+			            FORMAT( DIVIDE( _recentes, _total ), "0%", "pt-BR" ) & " lidas nos últimos 6 meses</div></div>" &
+			        _linhas &
+			        "<div class='note'>Muita obra em ‘mais de 1 ano’ = boa hora para dropar ou retomar.</div>" &
+			    "</div>"
+		displayFolder: 03 HTML\2 Blocos
+		lineageTag: 8f9cf999-4715-4130-982e-3a5f0bd60c12
+
+	/// Top 10 obras por capítulos lidos.
+	measure 'HTML Maratonas' =
+			// =====================================================================
+			// HTML Maratonas - top 10 obras com mais capítulos lidos
+			// =====================================================================
+			VAR _tab =
+			    ADDCOLUMNS(
+			        FILTER( Fato_Leitura, Fato_Leitura[Capitulo] > 0 ),
+			        "@nome",
+			            SUBSTITUTE( SUBSTITUTE( SUBSTITUTE( Fato_Leitura[Nome], "&", "&amp;" ), "<", "&lt;" ), "'", "&#39;" )
+			    )
+			VAR _top = TOPN( 10, _tab, Fato_Leitura[Capitulo], DESC, Fato_Leitura[Nome], ASC )
+			VAR _max = MAXX( _top, Fato_Leitura[Capitulo] )
+			VAR _soma = SUMX( _top, Fato_Leitura[Capitulo] )
+			
+			VAR _linhas =
+			    CONCATENATEX(
+			        _top,
+			        "<div class='hb' title='" & [@nome] & " · " & Fato_Leitura[Origem] & " · nota " & Fato_Leitura[Nota] & "'>" &
+			            "<span class='nm'>" & [@nome] & "</span>" &
+			            "<span class='tr'><i style='width:" & FORMAT( DIVIDE( Fato_Leitura[Capitulo], _max ) * 100, "0.0", "en-US" ) & "%;background:var(--s1)'></i></span>" &
+			            "<span class='v'>" & FORMAT( Fato_Leitura[Capitulo], "#,##0", "pt-BR" ) & "</span>" &
+			        "</div>",
+			        "", Fato_Leitura[Capitulo], DESC, Fato_Leitura[Nome], ASC
+			    )
+			
+			RETURN
+			    "<div class='card c7'>" &
+			        "<div class='card-hd'><h3>Maiores maratonas</h3>" &
+			        "<div class='sub'>Top 10 em capítulos lidos · juntas somam " &
+			            FORMAT( DIVIDE( _soma, [Total Capitulos] ), "0%", "pt-BR" ) & " de tudo que você leu</div></div>" &
+			        _linhas &
+			    "</div>"
+		displayFolder: 03 HTML\2 Blocos
+		lineageTag: 0340868c-eaf4-4382-98fe-1682f09ee199
+
+	/// Tabela: obras bem avaliadas (nota >= 8) em Acompanhando, paradas há mais tempo.
+	measure 'HTML Retomar' =
+			// =====================================================================
+			// HTML Retomar - obras boas (nota >= 8) que ficaram paradas
+			// =====================================================================
+			VAR _ref = [Data Referência]
+			VAR _tab =
+			    ADDCOLUMNS(
+			        FILTER(
+			            Fato_Leitura,
+			            RELATED( Dim_Status[Status] ) = "Acompanhando"
+			                && Fato_Leitura[Nota] >= 8
+			                && NOT ISBLANK( Fato_Leitura[Data] )
+			        ),
+			        "@dias",   DATEDIFF( Fato_Leitura[Data], _ref, DAY ),
+			        "@genero", RELATED( Dim_Genero[Gênero] ),
+			        "@nome",   SUBSTITUTE( SUBSTITUTE( Fato_Leitura[Nome], "&", "&amp;" ), "<", "&lt;" )
+			    )
+			VAR _qtd = COUNTROWS( _tab ) + 0
+			VAR _top = TOPN( 8, _tab, [@dias], DESC, Fato_Leitura[Nota], DESC )
+			
+			VAR _linhas =
+			    CONCATENATEX(
+			        _top,
+			        "<tr>" &
+			            "<td class='t'>" & [@nome] & "</td>" &
+			            "<td>" & [@genero] & "</td>" &
+			            "<td class='n'>" & FORMAT( Fato_Leitura[Capitulo], "#,##0", "pt-BR" ) & "</td>" &
+			            "<td class='n'>" & Fato_Leitura[Nota] & "</td>" &
+			            "<td class='n'>" & FORMAT( [@dias], "#,##0", "pt-BR" ) & " dias</td>" &
+			        "</tr>",
+			        "", [@dias], DESC, Fato_Leitura[Nota], DESC
+			    )
+			
+			RETURN
+			    "<div class='card c8'>" &
+			        "<div class='card-hd'><h3>Vale retomar</h3>" &
+			        "<div class='sub'>" & _qtd & " obras com nota 8+ em Acompanhando · as 8 paradas há mais tempo</div></div>" &
+			        "<table class='tb'>" &
+			            "<tr><th>Obra</th><th>Gênero</th><th class='n'>Cap.</th><th class='n'>Nota</th><th class='n'>Parada há*</th></tr>" &
+			            _linhas &
+			        "</table>" &
+			    "</div>"
+		displayFolder: 03 HTML\2 Blocos
+		lineageTag: b64a0d1a-4cd6-4a16-b1b2-c2d1d2d198e8
+
+	/// Lista das obras com status Pendente (ainda não iniciadas).
+	measure 'HTML Fila' =
+			// =====================================================================
+			// HTML Fila - obras pendentes (ainda não começadas)
+			// =====================================================================
+			VAR _fila =
+			    ADDCOLUMNS(
+			        FILTER( Fato_Leitura, RELATED( Dim_Status[Status] ) = "Pendente" ),
+			        "@nome",   SUBSTITUTE( SUBSTITUTE( Fato_Leitura[Nome], "&", "&amp;" ), "<", "&lt;" ),
+			        "@genero", RELATED( Dim_Genero[Gênero] )
+			    )
+			VAR _qtd = COUNTROWS( _fila ) + 0
+			
+			VAR _chips =
+			    CONCATENATEX(
+			        _fila,
+			        "<span class='chip' title='" & [@genero] & " · " & Fato_Leitura[Origem] & "'>" & [@nome] & "</span>",
+			        "", Fato_Leitura[Nome], ASC
+			    )
+			
+			RETURN
+			    "<div class='card c4'>" &
+			        "<div class='card-hd'><h3>Na fila</h3>" &
+			        "<div class='sub'>" & _qtd & " obras esperando o primeiro capítulo</div></div>" &
+			        IF( _qtd > 0, _chips, "<div class='note'>Fila vazia 🎉</div>" ) &
+			    "</div>"
+		displayFolder: 03 HTML\2 Blocos
+		lineageTag: 20c3a376-00c8-4b5c-9e4c-0108108036f8
+
+	partition Medidas = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Coluna 1", type text}}),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Tipo Alterado",{"Coluna 1"})
+				in
+				    #"Colunas Removidas"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

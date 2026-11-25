@@ -1,0 +1,52 @@
+/// Fato da DRE: lançamentos mensais por grupo (NIVEL1) e conta (NIVEL2). Fonte: Excel em CaminhoBaseDRE (dados fictícios).
+table fDRE
+	lineageTag: f9bdf9af-43ec-4fbb-802f-e41bdb1249b6
+
+	column DATA
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 75b46faf-12ea-4a3f-ac80-e3dc8baa2e19
+		summarizeBy: none
+		sourceColumn: DATA
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Grupo da DRE (ex.: RECEITA BRUTA DE VENDAS).
+	column NIVEL1
+		dataType: string
+		lineageTag: 8e3cd47a-ce2e-4bcb-beb2-52e4600f901a
+		summarizeBy: none
+		sourceColumn: NIVEL1
+
+	/// Conta analítica.
+	column NIVEL2
+		dataType: string
+		lineageTag: cb72d42e-cff3-4acf-af76-5593d1ae4168
+		summarizeBy: none
+		sourceColumn: NIVEL2
+
+	/// Valor em R$ com sinal: receitas (+), deduções/custos/despesas (-).
+	column VALOR
+		dataType: double
+		formatString: R$ #,##0.00
+		lineageTag: 5aace287-d6db-4b86-a6af-d804e0fddec9
+		summarizeBy: sum
+		sourceColumn: VALOR
+
+	partition fDRE = m
+		mode: import
+		source =
+				let
+				    // Abre o Excel indicado no parâmetro CaminhoBaseDRE
+				    Fonte = Excel.Workbook(File.Contents(CaminhoBaseDRE), null, true),
+				    // Pega a tabela formatada fDRE
+				    Tabela = Fonte{[Item="fDRE", Kind="Table"]}[Data],
+				    // Tipagem das colunas
+				    Tipos = Table.TransformColumnTypes(Tabela, {{"DATA", type date}, {"NIVEL1", type text}, {"NIVEL2", type text}, {"VALOR", type number}})
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

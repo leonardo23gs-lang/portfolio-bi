@@ -1,0 +1,141 @@
+table dCalendario
+	lineageTag: 6795f2b5-4f98-4ea1-9c12-ae4da912ddb9
+	dataCategory: Time
+
+	column Data
+		dataType: dateTime
+		isUnique
+		formatString: dd/mm/yyyy
+		lineageTag: 133016ab-b919-4df5-97e7-cb7e1dbcd7bc
+		summarizeBy: none
+		sourceColumn: Data
+
+		variation Variation
+			isDefault
+			relationship: 150d14d8-b696-42c8-a0a8-d2b57a963ef7
+			defaultHierarchy: LocalDateTable_e9e12015-f31f-4bc8-b354-938dbc0338cd.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		lineageTag: c642be32-3558-403f-84c2-98c207678e1a
+		summarizeBy: none
+		sourceColumn: Ano
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nome do Mês'
+		dataType: string
+		lineageTag: cc937aad-8db1-41a2-acd9-9a103e967ce3
+		summarizeBy: none
+		sourceColumn: Nome do Mês
+		sortByColumn: Mês
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mês
+		dataType: int64
+		formatString: 0
+		lineageTag: dcb1ae10-67d7-4494-8fc9-b162faf64a32
+		summarizeBy: none
+		sourceColumn: Mês
+
+		annotation SummarizationSetBy = Automatic
+
+	column Dia
+		dataType: int64
+		formatString: 0
+		lineageTag: 271f8a29-ff22-4bb3-9784-c98664c852f8
+		summarizeBy: none
+		sourceColumn: Dia
+
+		annotation SummarizationSetBy = Automatic
+
+	column Trimestre
+		dataType: string
+		lineageTag: 4186a1f7-4c07-49c2-abc5-bac3c91567f7
+		summarizeBy: none
+		sourceColumn: Trimestre
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nome do Dia'
+		dataType: string
+		lineageTag: 7eef469d-9aa4-4848-b56f-2a6c50221316
+		summarizeBy: none
+		sourceColumn: Nome do Dia
+		sortByColumn: 'Dia da Semana'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dia da Semana'
+		dataType: int64
+		formatString: 0
+		lineageTag: 6f45e03e-4722-482c-b291-241a930acc7d
+		summarizeBy: none
+		sourceColumn: Dia da Semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mês e Ano'
+		dataType: string
+		lineageTag: 5a423774-8fd4-402c-9f8d-b2eafb837b19
+		summarizeBy: none
+		sourceColumn: Mês e Ano
+		sortByColumn: 'Mês e Ano Num'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mês e Ano Num'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 436dfa82-fd37-4b42-872a-c458c2dbb012
+		summarizeBy: none
+		sourceColumn: Mês e Ano Num
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dCalendario = m
+		mode: import
+		source =
+				let
+				    // =====================================================================
+				    // DCALENDARIO - Calendário contínuo
+				    // Início: 1º dia do ano da leitura mais antiga
+				    // Fim:    último dia do ano ATUAL (cobre TODAY() usado nas medidas)
+				    // =====================================================================
+				    Buffer = List.Buffer(Fato_Leitura[Data]),
+				    DataInicial = Date.StartOfYear(List.Min(Buffer)),
+				    DataFinal = Date.EndOfYear(List.Max({List.Max(Buffer), Date.From(DateTime.LocalNow())})),
+				    QtdeDias = Duration.Days(DataFinal - DataInicial) + 1,
+				    Lista = List.Dates(DataInicial, QtdeDias, #duration(1,0,0,0)),
+				    Tabela = #table(type table[Data=date], List.Transform(Lista, each {_})),
+				
+				    // ---------- Atributos de data ----------
+				    #"Ano Inserido" = Table.AddColumn(Tabela, "Ano", each Date.Year([Data]), Int64.Type),
+				    #"Nome do Mês Inserido" = Table.AddColumn(#"Ano Inserido", "Nome do Mês", each Date.MonthName([Data]), type text),
+				    #"Mês Inserido" = Table.AddColumn(#"Nome do Mês Inserido", "Mês", each Date.Month([Data]), Int64.Type),
+				    #"Dia Inserido" = Table.AddColumn(#"Mês Inserido", "Dia", each Date.Day([Data]), Int64.Type),
+				    #"Trimestre Inserido" = Table.AddColumn(#"Dia Inserido", "Trimestre", each Date.QuarterOfYear([Data]), Int64.Type),
+				    #"Nome do Dia Inserido" = Table.AddColumn(#"Trimestre Inserido", "Nome do Dia", each Date.DayOfWeekName([Data]), type text),
+				
+				    // Abrevia mês/dia para 3 letras (jan, fev... / dom, seg...)
+				    #"Primeiros caracteres extraídos" = Table.TransformColumns(#"Nome do Dia Inserido", {{"Nome do Mês", each Text.Start(_, 3), type text}, {"Nome do Dia", each Text.Start(_, 3), type text}}),
+				    #"Prefixo Adicionado" = Table.TransformColumns(#"Primeiros caracteres extraídos", {{"Trimestre", each "T" & Text.From(_, "pt-BR"), type text}}),
+				    #"Dia da Semana Inserido" = Table.AddColumn(#"Prefixo Adicionado", "Dia da Semana", each Date.DayOfWeek([Data]), Int64.Type),
+				
+				    // "jan 2026" + chave numérica 202601 (usada para ordenar)
+				    #"Coluna Mesclada Inserida" = Table.AddColumn(#"Dia da Semana Inserido", "Mês e Ano", each Text.Combine({[Nome do Mês], Text.From([Ano], "pt-BR")}, " "), type text),
+				    #"Personalização Adicionada" = Table.AddColumn(#"Coluna Mesclada Inserida", "Mês e Ano Num", each [Ano] * 100 + [Mês], Int64.Type)
+				in
+				    #"Personalização Adicionada"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

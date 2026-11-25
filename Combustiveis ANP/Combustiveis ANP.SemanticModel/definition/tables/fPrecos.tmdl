@@ -1,0 +1,73 @@
+/// Fato: cada linha = preço de venda de um produto num posto numa semana de coleta da ANP.
+table fPrecos
+	lineageTag: 1da716e1-bd0e-4e57-bad3-b185baa4acc9
+
+	column 'Data da Coleta'
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 65afd64a-98db-4908-9b5e-22ba1574b7e1
+		summarizeBy: none
+		sourceColumn: Data da Coleta
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Chave Local'
+		dataType: string
+		isHidden
+		lineageTag: 315eb26b-2666-418b-8e2b-5e0502efa5fe
+		summarizeBy: none
+		sourceColumn: Chave Local
+
+	column 'CNPJ da Revenda'
+		dataType: string
+		lineageTag: 4eb6abe1-669d-4a1f-99a3-f6f757a95a3f
+		summarizeBy: none
+		sourceColumn: CNPJ da Revenda
+
+	column Revenda
+		dataType: string
+		lineageTag: 28c59f18-5066-4dd2-9f07-5f30c5e9db0b
+		summarizeBy: none
+		sourceColumn: Revenda
+
+	column Produto
+		dataType: string
+		isHidden
+		lineageTag: 86bfe96a-6409-4f7e-8736-cf1851e65240
+		summarizeBy: none
+		sourceColumn: Produto
+
+	column Bandeira
+		dataType: string
+		lineageTag: 2cc763e6-bc04-4501-8c1b-b3c6f1203854
+		summarizeBy: none
+		sourceColumn: Bandeira
+
+	column 'Valor de Venda'
+		dataType: double
+		formatString: R$ #,##0.00
+		lineageTag: 2f7a74f2-dcdc-49e7-9db5-847c2d49aebc
+		summarizeBy: none
+		sourceColumn: Valor de Venda
+
+	column 'Tipo de Bandeira'
+		dataType: string
+		lineageTag: 1a6e152a-f51e-4052-b8fc-a53e74472ba0
+		summarizeBy: none
+		sourceColumn: Tipo de Bandeira
+
+	partition fPrecos = m
+		mode: import
+		source =
+				let
+				    Fonte = #"Base ANP",
+				    #"Outras Colunas Removidas" = Table.SelectColumns(Fonte,{"Data da Coleta", "Chave Local", "CNPJ da Revenda", "Revenda", "Produto", "Bandeira", "Valor de Venda"}),
+				    #"Coluna Condicional Adicionada" = Table.AddColumn(#"Outras Colunas Removidas", "Tipo de Bandeira", each if [Bandeira] = "BRANCA" then "Bandeira Branca" else "Bandeirado"),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Coluna Condicional Adicionada",{{"Tipo de Bandeira", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

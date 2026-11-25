@@ -1,0 +1,22 @@
+relationship AutoDetected_bf58616f-3878-4ab9-851d-6f155e63210d
+	fromColumn: Fato_Leitura.'Dim_Genero.Índice'
+	toColumn: Dim_Genero.Índice
+
+relationship 150d14d8-b696-42c8-a0a8-d2b57a963ef7
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dCalendario.Data
+	toColumn: LocalDateTable_e9e12015-f31f-4bc8-b354-938dbc0338cd.Date
+
+relationship e3208c61-a352-83ea-d2c0-58c1b0673427
+	fromColumn: Fato_Leitura.Data
+	toColumn: dCalendario.Data
+
+relationship b1147278-5dc0-ab93-78c6-9079796d2cce
+	fromColumn: Fato_Leitura.'Dim_Status.Índice'
+	toColumn: Dim_Status.Índice
+
+relationship a8867879-29c6-99a9-763e-bb11933f176a
+	isActive: false
+	fromColumn: Fato_Leitura.'Dim_Genero.Índice.1'
+	toColumn: Dim_Genero.Índice
+

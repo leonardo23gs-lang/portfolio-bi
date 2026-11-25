@@ -1,0 +1,4 @@
+relationship fDRE_DATA_dCalendario_Date
+	fromColumn: fDRE.DATA
+	toColumn: dCalendario.Date
+

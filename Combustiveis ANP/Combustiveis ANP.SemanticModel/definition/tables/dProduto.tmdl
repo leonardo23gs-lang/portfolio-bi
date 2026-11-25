@@ -1,0 +1,43 @@
+/// Dimensão de produto (combustível), criada com Inserir Dados.
+table dProduto
+	lineageTag: 3e3bfd65-643d-4cee-be38-c16dbfb3e41c
+
+	column Produto
+		dataType: string
+		lineageTag: b71980f9-8a75-4125-bbcf-9ac3db72ffcf
+		summarizeBy: none
+		sourceColumn: Produto
+		sortByColumn: Ordem
+
+	column Grupo
+		dataType: string
+		lineageTag: dcdd27d6-0f1e-46bd-9654-ad6bbe19ff2c
+		summarizeBy: none
+		sourceColumn: Grupo
+
+	column Unidade
+		dataType: string
+		lineageTag: a15e148a-99ef-49f3-8360-47ade85e342f
+		summarizeBy: none
+		sourceColumn: Unidade
+
+	column Ordem
+		dataType: int64
+		isHidden
+		lineageTag: de23ff78-2d11-441e-afb0-ebba99cef682
+		summarizeBy: none
+		sourceColumn: Ordem
+
+	partition dProduto = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WcncM9vfx9HNU0lFyTyzOz8nMSwQyg1QU9BVyMkuK8oEcQ6VYHYRCBUcXzxDPMEcXfFqMwFpcQxz9/H2AXNeSxLz8HHRFxmBFLp6uwa4gRS6ZqcWpGIpMkBQpBBsa4FRoCnGlXxjIWWASLJ17aDOQaaYUGwsA", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Produto = _t, Grupo = _t, Unidade = _t, Ordem = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Produto", type text}, {"Grupo", type text}, {"Unidade", type text}, {"Ordem", Int64.Type}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,2206 @@
+table _Medidas
+	lineageTag: 6f92cce9-8205-4153-b078-eeff771b7dfe
+
+	/// Fator aplicado sobre o mesmo mês do ano anterior quando não há valor real lançado na DRE (padrão: +5%).
+	measure 'Fator Previsão' = 1.05
+		formatString: 0%
+		displayFolder: 00 Parâmetros
+		lineageTag: aa0a7136-d6af-45e9-8607-dec3aa1833cf
+
+	/// Soma da Receita Bruta de Vendas (NIVEL1 da DRE).
+	measure 'Receita Bruta de Vendas' =
+			// Soma os lançamentos da fDRE do grupo "RECEITA BRUTA DE VENDAS"
+			// (valor com sinal: receitas +, custos/despesas -)
+			CALCULATE(
+			    SUM(fDRE[VALOR]),
+			    fDRE[NIVEL1] = "RECEITA BRUTA DE VENDAS"
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 01 Receita Bruta
+		lineageTag: 963e9370-d182-4602-b2fa-51ff75ae9bb4
+
+	/// Receita Bruta de Vendas no mesmo período do ano anterior.
+	measure 'Receita Bruta de Vendas LY' = CALCULATE([Receita Bruta de Vendas], SAMEPERIODLASTYEAR(dCalendario[Date]))
+		formatString: R$ #,##0.00
+		displayFolder: 01 Receita Bruta
+		lineageTag: eb28271a-93bf-4686-88d0-65ecbcfb0142
+
+	/// Usa o valor real quando existe; se o mês ainda não tem lançamento, projeta com base no mesmo mês do ano anterior x Fator Previsão.
+	measure 'Receita Bruta de Vendas (Real + Previsão)' =
+			SUMX(
+			    SUMMARIZE(dCalendario, dCalendario[Ano], dCalendario[NumMes]),
+			    VAR _IsFuture = dCalendario[Ano] > YEAR(TODAY()) || (dCalendario[Ano] = YEAR(TODAY()) && dCalendario[NumMes] > MONTH(TODAY()))
+			    VAR _Real = IF(_IsFuture, BLANK(), [Receita Bruta de Vendas])
+			    VAR _LY = [Receita Bruta de Vendas LY]
+			    RETURN IF(ISBLANK(_Real), _LY * [Fator Previsão], _Real)
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 01 Receita Bruta
+		lineageTag: 0e233e37-d662-4a45-ae3a-0722cb164f97
+
+	/// Variação percentual da Receita Bruta vs ano anterior.
+	measure 'Receita Bruta de Vendas Var%' = DIVIDE([Receita Bruta de Vendas] - [Receita Bruta de Vendas LY], [Receita Bruta de Vendas LY])
+		formatString: 0.0%
+		displayFolder: 01 Receita Bruta
+		lineageTag: fbf62dea-e09d-490f-8291-417f26781609
+
+	/// Impostos sobre faturamento e demais deduções (valor negativo).
+	measure 'Deduções da Receita Bruta' =
+			// Soma os lançamentos da fDRE do grupo "DEDUÇÕES DA RECEITA BRUTA"
+			// (valor com sinal: receitas +, custos/despesas -)
+			CALCULATE(
+			    SUM(fDRE[VALOR]),
+			    fDRE[NIVEL1] = "DEDUÇÕES DA RECEITA BRUTA"
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 02 Deduções da Receita Bruta
+		lineageTag: 341ab35a-6720-4930-8ece-124ea4be1bb0
+
+	/// Deduções da Receita Bruta no mesmo período do ano anterior.
+	measure 'Deduções da Receita Bruta LY' = CALCULATE([Deduções da Receita Bruta], SAMEPERIODLASTYEAR(dCalendario[Date]))
+		formatString: R$ #,##0.00
+		displayFolder: 02 Deduções da Receita Bruta
+		lineageTag: e0cf36d0-2347-41bf-b4e9-b378730026dc
+
+	/// Real quando existe; projeção LY x Fator Previsão quando não há lançamento.
+	measure 'Deduções da Receita Bruta (Real + Previsão)' =
+			SUMX(
+			    SUMMARIZE(dCalendario, dCalendario[Ano], dCalendario[NumMes]),
+			    VAR _IsFuture = dCalendario[Ano] > YEAR(TODAY()) || (dCalendario[Ano] = YEAR(TODAY()) && dCalendario[NumMes] > MONTH(TODAY()))
+			    VAR _Real = IF(_IsFuture, BLANK(), [Deduções da Receita Bruta])
+			    VAR _LY = [Deduções da Receita Bruta LY]
+			    RETURN IF(ISBLANK(_Real), _LY * [Fator Previsão], _Real)
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 02 Deduções da Receita Bruta
+		lineageTag: b474a965-7509-4ac1-ac17-7cd624e713dd
+
+	/// Receita Bruta de Vendas menos Deduções da Receita Bruta.
+	measure 'Receita Líquida' = [Receita Bruta de Vendas] + [Deduções da Receita Bruta]
+		formatString: R$ #,##0.00
+		displayFolder: 03 Receita Líquida
+		lineageTag: 509b12f1-38e6-4d91-b2c7-414aa231038b
+
+	/// Receita Líquida no mesmo período do ano anterior.
+	measure 'Receita Líquida LY' = CALCULATE([Receita Líquida], SAMEPERIODLASTYEAR(dCalendario[Date]))
+		formatString: R$ #,##0.00
+		displayFolder: 03 Receita Líquida
+		lineageTag: 9ddbff0a-7726-499b-bcd2-7d6e74d72d24
+
+	/// Receita Líquida combinando valores reais e projeções.
+	measure 'Receita Líquida (Real + Previsão)' = [Receita Bruta de Vendas (Real + Previsão)] + [Deduções da Receita Bruta (Real + Previsão)]
+		formatString: R$ #,##0.00
+		displayFolder: 03 Receita Líquida
+		lineageTag: 411bc4fd-f87d-4e93-84a9-209ba5609c17
+
+	/// Custo das Mercadorias Vendidas (CMV), valor negativo.
+	measure 'Custo das Mercadorias Vendidas' =
+			// Soma os lançamentos da fDRE do grupo "CUSTO DAS MERCADORIAS VENDIDAS"
+			// (valor com sinal: receitas +, custos/despesas -)
+			CALCULATE(
+			    SUM(fDRE[VALOR]),
+			    fDRE[NIVEL1] = "CUSTO DAS MERCADORIAS VENDIDAS"
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 04 CMV
+		lineageTag: 1488432e-c255-4455-9476-a24414efa084
+
+	/// CMV no mesmo período do ano anterior.
+	measure 'CMV LY' = CALCULATE([Custo das Mercadorias Vendidas], SAMEPERIODLASTYEAR(dCalendario[Date]))
+		formatString: R$ #,##0.00
+		displayFolder: 04 CMV
+		lineageTag: ddb1de2c-e697-466e-9853-d042d5a5c01d
+
+	/// CMV real quando existe; projeção LY x Fator Previsão quando não há lançamento.
+	measure 'CMV (Real + Previsão)' =
+			SUMX(
+			    SUMMARIZE(dCalendario, dCalendario[Ano], dCalendario[NumMes]),
+			    VAR _IsFuture = dCalendario[Ano] > YEAR(TODAY()) || (dCalendario[Ano] = YEAR(TODAY()) && dCalendario[NumMes] > MONTH(TODAY()))
+			    VAR _Real = IF(_IsFuture, BLANK(), [Custo das Mercadorias Vendidas])
+			    VAR _LY = [CMV LY]
+			    RETURN IF(ISBLANK(_Real), _LY * [Fator Previsão], _Real)
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 04 CMV
+		lineageTag: 6114dd91-b30a-4175-95e8-542d5355644e
+
+	/// Receita Líquida menos CMV.
+	measure 'Lucro Bruto' = [Receita Líquida] + [Custo das Mercadorias Vendidas]
+		formatString: R$ #,##0.00
+		displayFolder: 05 Lucro Bruto
+		lineageTag: 43ab3d49-dd96-47ea-8786-fcdcf07b10c7
+
+	/// Lucro Bruto combinando valores reais e projeções.
+	measure 'Lucro Bruto (Real + Previsão)' = [Receita Líquida (Real + Previsão)] + [CMV (Real + Previsão)]
+		formatString: R$ #,##0.00
+		displayFolder: 05 Lucro Bruto
+		lineageTag: 1c315c44-383d-4934-a29a-c617e3b3be20
+
+	/// Lucro Bruto / Receita Líquida.
+	measure 'Margem Bruta %' = DIVIDE([Lucro Bruto (Real + Previsão)], [Receita Líquida (Real + Previsão)])
+		formatString: 0.0%
+		displayFolder: 05 Lucro Bruto
+		lineageTag: 2bec4d5b-0213-4ab6-94b2-757400bfe533
+
+	/// Gastos variáveis com vendas.
+	measure 'Gastos Variáveis com Vendas' =
+			// Soma os lançamentos da fDRE do grupo "GASTOS VARIÁVEIS COM VENDAS"
+			// (valor com sinal: receitas +, custos/despesas -)
+			CALCULATE(
+			    SUM(fDRE[VALOR]),
+			    fDRE[NIVEL1] = "GASTOS VARIÁVEIS COM VENDAS"
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 06 Despesas Operacionais\Gastos Variáveis
+		lineageTag: 10bddcd8-261d-42a0-a074-24d5906c0801
+
+	/// Gastos Variáveis no mesmo período do ano anterior.
+	measure 'Gastos Variáveis LY' = CALCULATE([Gastos Variáveis com Vendas], SAMEPERIODLASTYEAR(dCalendario[Date]))
+		formatString: R$ #,##0.00
+		displayFolder: 06 Despesas Operacionais\Gastos Variáveis
+		lineageTag: 8b434ad2-92dd-45dc-8935-81af7750f236
+
+	/// Real quando existe; projeção LY x Fator Previsão quando não há lançamento.
+	measure 'Gastos Variáveis (Real + Previsão)' =
+			SUMX(
+			    SUMMARIZE(dCalendario, dCalendario[Ano], dCalendario[NumMes]),
+			    VAR _IsFuture = dCalendario[Ano] > YEAR(TODAY()) || (dCalendario[Ano] = YEAR(TODAY()) && dCalendario[NumMes] > MONTH(TODAY()))
+			    VAR _Real = IF(_IsFuture, BLANK(), [Gastos Variáveis com Vendas])
+			    VAR _LY = [Gastos Variáveis LY]
+			    RETURN IF(ISBLANK(_Real), _LY * [Fator Previsão], _Real)
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 06 Despesas Operacionais\Gastos Variáveis
+		lineageTag: caec8831-e439-460f-ad9a-e520bf6fa937
+
+	/// Gastos fixos (aluguel, pessoal, ocupação, sistemas, etc.).
+	measure 'Gastos Fixos' =
+			// Soma os lançamentos da fDRE do grupo "GASTOS FIXOS"
+			// (valor com sinal: receitas +, custos/despesas -)
+			CALCULATE(
+			    SUM(fDRE[VALOR]),
+			    fDRE[NIVEL1] = "GASTOS FIXOS"
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 06 Despesas Operacionais\Gastos Fixos
+		lineageTag: 1ff05c5e-d691-4bf3-bc41-c6c986c54157
+
+	/// Gastos Fixos no mesmo período do ano anterior.
+	measure 'Gastos Fixos LY' = CALCULATE([Gastos Fixos], SAMEPERIODLASTYEAR(dCalendario[Date]))
+		formatString: R$ #,##0.00
+		displayFolder: 06 Despesas Operacionais\Gastos Fixos
+		lineageTag: 29563005-f820-4fe3-9b80-dd850700edd7
+
+	/// Real quando existe; projeção LY x Fator Previsão quando não há lançamento.
+	measure 'Gastos Fixos (Real + Previsão)' =
+			SUMX(
+			    SUMMARIZE(dCalendario, dCalendario[Ano], dCalendario[NumMes]),
+			    VAR _IsFuture = dCalendario[Ano] > YEAR(TODAY()) || (dCalendario[Ano] = YEAR(TODAY()) && dCalendario[NumMes] > MONTH(TODAY()))
+			    VAR _Real = IF(_IsFuture, BLANK(), [Gastos Fixos])
+			    VAR _LY = [Gastos Fixos LY]
+			    RETURN IF(ISBLANK(_Real), _LY * [Fator Previsão], _Real)
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 06 Despesas Operacionais\Gastos Fixos
+		lineageTag: 9c571565-e688-4d29-857b-ae3a7d47619c
+
+	/// Lucro Bruto menos despesas operacionais (equivalente ao EBITDA da operação).
+	measure 'Resultado Operacional' = [Lucro Bruto] + [Gastos Variáveis com Vendas] + [Gastos Fixos]
+		formatString: R$ #,##0.00
+		displayFolder: 07 Resultado Operacional
+		lineageTag: 87443660-36b4-4f8e-9d92-39f807cef819
+
+	/// Resultado Operacional combinando valores reais e projeções.
+	measure 'Resultado Operacional (Real + Previsão)' = [Lucro Bruto (Real + Previsão)] + [Gastos Variáveis (Real + Previsão)] + [Gastos Fixos (Real + Previsão)]
+		formatString: R$ #,##0.00
+		displayFolder: 07 Resultado Operacional
+		lineageTag: f18c41f8-ac92-4981-90af-e286d185f517
+
+	/// Resultado Operacional / Receita Líquida.
+	measure 'Margem Operacional %' = DIVIDE([Resultado Operacional (Real + Previsão)], [Receita Líquida (Real + Previsão)])
+		formatString: 0.0%
+		displayFolder: 07 Resultado Operacional
+		lineageTag: a6804058-a2f9-4d17-bd5c-fbaf8b44c4b9
+
+	/// Despesas e receitas financeiras (juros, tarifas, taxas de cartão etc.).
+	measure 'Resultado Financeiro' =
+			// Soma os lançamentos da fDRE do grupo "RESULTADO FINANCEIRO"
+			// (valor com sinal: receitas +, custos/despesas -)
+			CALCULATE(
+			    SUM(fDRE[VALOR]),
+			    fDRE[NIVEL1] = "RESULTADO FINANCEIRO"
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 08 Resultado Financeiro
+		lineageTag: 4763d568-99c8-49c0-b29a-7cb9f3d7c2c6
+
+	/// Resultado Financeiro no mesmo período do ano anterior.
+	measure 'Resultado Financeiro LY' = CALCULATE([Resultado Financeiro], SAMEPERIODLASTYEAR(dCalendario[Date]))
+		formatString: R$ #,##0.00
+		displayFolder: 08 Resultado Financeiro
+		lineageTag: a7e1c64b-aa92-409d-ae6e-4a1059da1927
+
+	/// Real quando existe; projeção LY x Fator Previsão quando não há lançamento.
+	measure 'Resultado Financeiro (Real + Previsão)' =
+			SUMX(
+			    SUMMARIZE(dCalendario, dCalendario[Ano], dCalendario[NumMes]),
+			    VAR _IsFuture = dCalendario[Ano] > YEAR(TODAY()) || (dCalendario[Ano] = YEAR(TODAY()) && dCalendario[NumMes] > MONTH(TODAY()))
+			    VAR _Real = IF(_IsFuture, BLANK(), [Resultado Financeiro])
+			    VAR _LY = [Resultado Financeiro LY]
+			    RETURN IF(ISBLANK(_Real), _LY * [Fator Previsão], _Real)
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 08 Resultado Financeiro
+		lineageTag: 072b6d1f-80bb-4b53-ace8-ebd86dc28895
+
+	/// Investimentos do período.
+	measure Investimentos =
+			// Soma os lançamentos da fDRE do grupo "INVESTIMENTOS"
+			// (valor com sinal: receitas +, custos/despesas -)
+			CALCULATE(
+			    SUM(fDRE[VALOR]),
+			    fDRE[NIVEL1] = "INVESTIMENTOS"
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 09 Investimentos
+		lineageTag: 8906998c-9e7f-425a-a554-4b534932c800
+
+	/// Investimentos no mesmo período do ano anterior.
+	measure 'Investimentos LY' = CALCULATE([Investimentos], SAMEPERIODLASTYEAR(dCalendario[Date]))
+		formatString: R$ #,##0.00
+		displayFolder: 09 Investimentos
+		lineageTag: 90386156-ac16-4bfa-8c08-2d14aa6a6655
+
+	/// Real quando existe; projeção LY x Fator Previsão quando não há lançamento.
+	measure 'Investimentos (Real + Previsão)' =
+			SUMX(
+			    SUMMARIZE(dCalendario, dCalendario[Ano], dCalendario[NumMes]),
+			    VAR _IsFuture = dCalendario[Ano] > YEAR(TODAY()) || (dCalendario[Ano] = YEAR(TODAY()) && dCalendario[NumMes] > MONTH(TODAY()))
+			    VAR _Real = IF(_IsFuture, BLANK(), [Investimentos])
+			    VAR _LY = [Investimentos LY]
+			    RETURN IF(ISBLANK(_Real), _LY * [Fator Previsão], _Real)
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 09 Investimentos
+		lineageTag: 0e058342-1705-4ae9-a3c9-edb52d0add77
+
+	/// Resultado Operacional + Resultado Financeiro + Investimentos.
+	measure 'Resultado Antes do IR' = [Resultado Operacional] + [Resultado Financeiro] + [Investimentos]
+		formatString: R$ #,##0.00
+		displayFolder: 10 Resultado Antes do IR
+		lineageTag: e1fcca76-2648-4f56-8018-aaf76b1dd14a
+
+	/// Resultado Antes do IR combinando valores reais e projeções.
+	measure 'Resultado Antes do IR (Real + Previsão)' = [Resultado Operacional (Real + Previsão)] + [Resultado Financeiro (Real + Previsão)] + [Investimentos (Real + Previsão)]
+		formatString: R$ #,##0.00
+		displayFolder: 10 Resultado Antes do IR
+		lineageTag: 0e02a9ad-4665-4e2c-a208-bd9699aece89
+
+	/// IRPJ, CSLL, Simples Nacional etc.
+	measure 'Impostos sobre o Lucro' =
+			// Soma os lançamentos da fDRE do grupo "IMPOSTOS SOBRE O LUCRO"
+			// (valor com sinal: receitas +, custos/despesas -)
+			CALCULATE(
+			    SUM(fDRE[VALOR]),
+			    fDRE[NIVEL1] = "IMPOSTOS SOBRE O LUCRO"
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 11 Impostos sobre o Lucro
+		lineageTag: dc04b7c1-bb4a-4816-b511-232153146b6a
+
+	/// Impostos sobre o Lucro no mesmo período do ano anterior.
+	measure 'Impostos sobre o Lucro LY' = CALCULATE([Impostos sobre o Lucro], SAMEPERIODLASTYEAR(dCalendario[Date]))
+		formatString: R$ #,##0.00
+		displayFolder: 11 Impostos sobre o Lucro
+		lineageTag: 62c18a9a-d0aa-4095-b9dd-2f0f51b75520
+
+	/// Real quando existe; projeção LY x Fator Previsão quando não há lançamento.
+	measure 'Impostos sobre o Lucro (Real + Previsão)' =
+			SUMX(
+			    SUMMARIZE(dCalendario, dCalendario[Ano], dCalendario[NumMes]),
+			    VAR _IsFuture = dCalendario[Ano] > YEAR(TODAY()) || (dCalendario[Ano] = YEAR(TODAY()) && dCalendario[NumMes] > MONTH(TODAY()))
+			    VAR _Real = IF(_IsFuture, BLANK(), [Impostos sobre o Lucro])
+			    VAR _LY = [Impostos sobre o Lucro LY]
+			    RETURN IF(ISBLANK(_Real), _LY * [Fator Previsão], _Real)
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 11 Impostos sobre o Lucro
+		lineageTag: b57adb2e-8ace-4570-8f6d-47956a8ebdc3
+
+	/// Distribuição de lucros aos sócios.
+	measure 'Distribuição dos Lucros' =
+			// Soma os lançamentos da fDRE do grupo "DISTRIBUIÇÃO DOS LUCROS"
+			// (valor com sinal: receitas +, custos/despesas -)
+			CALCULATE(
+			    SUM(fDRE[VALOR]),
+			    fDRE[NIVEL1] = "DISTRIBUIÇÃO DOS LUCROS"
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 12 Distribuição dos Lucros
+		lineageTag: 01822cec-1f16-4245-a512-fe496cd0c8f4
+
+	/// Real quando existe; projeção LY x Fator Previsão quando não há lançamento.
+	measure 'Distribuição dos Lucros (Real + Previsão)' =
+			SUMX(
+			    SUMMARIZE(dCalendario, dCalendario[Ano], dCalendario[NumMes]),
+			    VAR _IsFuture = dCalendario[Ano] > YEAR(TODAY()) || (dCalendario[Ano] = YEAR(TODAY()) && dCalendario[NumMes] > MONTH(TODAY()))
+			    VAR _Real = IF(_IsFuture, BLANK(), [Distribuição dos Lucros])
+			    VAR _LY = CALCULATE([Distribuição dos Lucros], SAMEPERIODLASTYEAR(dCalendario[Date]))
+			    RETURN IF(ISBLANK(_Real), _LY * [Fator Previsão], _Real)
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 12 Distribuição dos Lucros
+		lineageTag: 70caaa5d-b0a6-4af7-8c6d-f5656193c906
+
+	/// Resultado final do período (lucro ou prejuízo líquido).
+	measure 'Resultado Líquido' = [Resultado Antes do IR] + [Impostos sobre o Lucro] + [Distribuição dos Lucros]
+		formatString: R$ #,##0.00
+		displayFolder: 13 Resultado Líquido
+		lineageTag: ef618ee9-e3b3-4360-9162-90e17b9a8853
+
+	/// Resultado Líquido combinando valores reais e projeções.
+	measure 'Resultado Líquido (Real + Previsão)' = [Resultado Antes do IR (Real + Previsão)] + [Impostos sobre o Lucro (Real + Previsão)] + [Distribuição dos Lucros (Real + Previsão)]
+		formatString: R$ #,##0.00
+		displayFolder: 13 Resultado Líquido
+		lineageTag: c78021f2-48d6-40d7-afac-3200f6c3dae1
+
+	/// Resultado Líquido / Receita Líquida.
+	measure 'Margem Líquida %' = DIVIDE([Resultado Líquido (Real + Previsão)], [Receita Líquida (Real + Previsão)])
+		formatString: 0.0%
+		displayFolder: 13 Resultado Líquido
+		lineageTag: 31db7882-26d6-4945-ad23-9f4770f0d191
+
+	/// Outras receitas operacionais (sem lançamentos até o momento).
+	measure 'Outras Receitas Operacionais' =
+			// Soma os lançamentos da fDRE do grupo "OUTRAS RECEITAS OPERACIONAIS"
+			// (valor com sinal: receitas +, custos/despesas -)
+			CALCULATE(
+			    SUM(fDRE[VALOR]),
+			    fDRE[NIVEL1] = "OUTRAS RECEITAS OPERACIONAIS"
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 99 Outras Linhas da DRE
+		lineageTag: 6794c158-58c4-4cab-894a-b486cf6d9d31
+
+	/// Financiamentos (sem lançamentos até o momento).
+	measure Financiamentos =
+			// Soma os lançamentos da fDRE do grupo "FINANCIAMENTOS"
+			// (valor com sinal: receitas +, custos/despesas -)
+			CALCULATE(
+			    SUM(fDRE[VALOR]),
+			    fDRE[NIVEL1] = "FINANCIAMENTOS"
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 99 Outras Linhas da DRE
+		lineageTag: a8f5697f-b408-45d8-a29a-b1884087c397
+
+	/// Ano exibido no relatório HTML da DRE. Usa o ano da segmentação 'Parâmetro Ano DRE'[Ano]; sem seleção, usa o último ano com dados na fDRE.
+	measure 'Ano Referência DRE' =
+			// Ano exibido no relatório HTML.
+			// 1) Se houver ano selecionado na segmentação 'Parâmetro Ano DRE', usa ele.
+			// 2) Senão, usa o último ano que tem lançamento na fDRE.
+			VAR AnoSelecionado = SELECTEDVALUE('Parâmetro Ano DRE'[Ano])
+			VAR UltimoAnoBase  = YEAR(CALCULATE(MAX(fDRE[DATA]), REMOVEFILTERS()))
+			RETURN
+			    COALESCE(AnoSelecionado, UltimoAnoBase)
+		formatString: 0
+		displayFolder: 00 Parâmetros
+		lineageTag: 772de25f-2f22-49ad-a221-f4ae7c4cbf5f
+
+	/// Bloco <style> reaproveitado por todos os visuais HTML da DRE. Edite aqui para mudar cores/layout em todos de uma vez.
+	measure 'HTML CSS Base' =
+			// =====================================================================
+			// HTML CSS Base
+			// Bloco <style> usado por todo o relatório HTML da DRE.
+			// Edite aqui para mudar cores, fontes e layout de uma vez só.
+			// Cada linha abaixo = 1 regra CSS. Agrupado por parte do relatório.
+			// Paleta (tema escuro): fundo #0b1220 | painel #111a2e | borda #243252
+			//   texto #e8ecf7 | texto suave #8a94b3 | azul #60a5fa | verde #34d399
+			//   amarelo #fbbf24 | vermelho #f87171 | dourado (previsto) #c9974a
+			// =====================================================================
+			"<style>"
+			
+			    // ---- 1. Container principal (fundo escuro, borda, faixa colorida no topo)
+			    & ".dre-report{position:relative;overflow:hidden;font-family:'Segoe UI',Arial,sans-serif;background:#0b1220;color:#e8ecf7;padding:24px 28px 20px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.35);}"
+			    & ".dre-report::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#60a5fa,#34d399,#fbbf24,#f87171);}"
+			
+			    // ---- 2. Cabeçalho: título, subtítulo, data de atualização e legenda (chips)
+			    & ".dre-report .head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #243252;padding-bottom:12px;margin-bottom:14px;}"
+			    & ".dre-report .brand{display:flex;align-items:center;gap:10px;}"
+			    & ".dre-report .title{font-size:22px;font-weight:700;}"
+			    & ".dre-report .title b{background:linear-gradient(90deg,#60a5fa,#34d399);-webkit-background-clip:text;background-clip:text;color:transparent;}"
+			    & ".dre-report .sub{color:#8a94b3;font-size:12px;margin-top:2px;}"
+			    & ".dre-report .meta{text-align:right;color:#8a94b3;font-size:11.5px;line-height:1.5;}"
+			    & ".dre-report .legend{margin-top:6px;}"
+			    & ".dre-report .chip{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:600;margin-left:6px;border:1px solid transparent;}"
+			    & ".dre-report .chip.attention{background:rgba(52,211,153,.15);color:#34d399;border-color:rgba(52,211,153,.35);}"
+			    & ".dre-report .chip.alert{background:rgba(251,191,36,.15);color:#fbbf24;border-color:rgba(251,191,36,.35);}"
+			    & ".dre-report .chip.management{background:rgba(248,113,113,.15);color:#f87171;border-color:rgba(248,113,113,.35);}"
+			
+			    // ---- 3. Cards de KPI (frente/verso com efeito flip no hover) e barra de progresso
+			    & ".dre-report .grid{display:grid;gap:12px;margin-bottom:14px;}"
+			    & ".dre-report .grid.g4{grid-template-columns:repeat(4,1fr);}"
+			    & ".dre-report .card{position:relative;height:142px;perspective:1200px;}"
+			    & ".dre-report .card-inner{position:relative;width:100%;height:100%;transition:transform .5s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d;}"
+			    & ".dre-report .card:hover .card-inner{transform:rotateY(180deg);}"
+			    & ".dre-report .card-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:linear-gradient(180deg,#111a2e,#0f1830);border:1px solid #243252;border-radius:10px;padding:12px 16px;box-shadow:0 2px 10px rgba(0,0,0,.25);box-sizing:border-box;overflow:hidden;}"
+			    & ".dre-report .card-back{transform:rotateY(180deg);display:flex;flex-direction:column;justify-content:center;}"
+			    & ".dre-report .card-back h4{font-size:9px;color:#8a94b3;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;font-weight:600;}"
+			    & ".dre-report .card-back .bline{display:flex;justify-content:space-between;font-size:10px;color:#8a94b3;padding:1.5px 0;border-bottom:1px dashed #243252;line-height:1.35;}"
+			    & ".dre-report .card-back .bline span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:6px;}"
+			    & ".dre-report .card-back .bline b{white-space:nowrap;flex-shrink:0;color:#e8ecf7;font-weight:700;}"
+			    & ".dre-report .card-back .bline.result{border-bottom:none;margin-top:2px;font-size:11px;}"
+			    & ".dre-report .card-back .bline.result span,.dre-report .card-back .bline.result b{color:#34d399;}"
+			    & ".dre-report .card h3{font-size:11.5px;color:#8a94b3;text-transform:uppercase;letter-spacing:.4px;font-weight:600;margin-bottom:6px;}"
+			    & ".dre-report .card .value{font-size:22px;font-weight:700;}"
+			    & ".dre-report .card .compare{display:flex;justify-content:space-between;font-size:11.5px;color:#8a94b3;margin-top:8px;}"
+			    & ".dre-report .card .compare b{color:#e8ecf7;}"
+			    & ".dre-report .track{background:#1b2540;border-radius:6px;height:6px;margin-top:8px;overflow:hidden;}"
+			    & ".dre-report .fill{height:100%;border-radius:6px;}"
+			    & ".dre-report .fill.attention{background:#34d399;}"
+			    & ".dre-report .fill.alert{background:#fbbf24;}"
+			    & ".dre-report .fill.management{background:#f87171;}"
+			
+			    // ---- 4. Barra de ferramentas: seletor de mês e botão de tema
+			    & ".dre-report .toolbar{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-bottom:10px;}"
+			    & ".dre-report .theme-btn{background:#1b2540;color:#e8ecf7;border:1px solid #243252;border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;cursor:pointer;}"
+			    & ".dre-report .theme-btn:hover{background:#243252;}"
+			
+			    // ---- 5. Painel da tabela: título, rolagem horizontal e cabeçalho (meses)
+			    & ".dre-report .panel{background:#111a2e;border:1px solid #243252;border-radius:10px;padding:14px 18px;box-shadow:0 2px 10px rgba(0,0,0,.2);}"
+			    & ".dre-report .panel-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid #243252;}"
+			    & ".dre-report .panel-title h2{font-size:14px;font-weight:600;}"
+			    & ".dre-report .panel-title .hint{font-size:10.5px;color:#8a94b3;}"
+			    & ".dre-report .table-scroll{overflow-x:auto;overflow-y:hidden;border-radius:6px;}"
+			    & ".dre-report .table-scroll::-webkit-scrollbar{height:8px;}"
+			    & ".dre-report .table-scroll::-webkit-scrollbar-thumb{background:#243252;border-radius:6px;}"
+			    & ".dre-report .table-scroll::-webkit-scrollbar-track{background:transparent;}"
+			    & ".dre-report table{width:100%;min-width:1500px;border-collapse:collapse;font-size:11px;}"
+			    & ".dre-report thead th{background:#0b1220;text-align:right;color:#8a94b3;font-weight:600;font-size:10px;text-transform:uppercase;padding:4px 8px 6px;border-bottom:1px solid #243252;vertical-align:bottom;white-space:nowrap;}"
+			    & ".dre-report thead th:first-child{text-align:left;position:sticky;left:0;z-index:3;}"
+			    & ".dre-report thead th.total-h{color:#60a5fa;}"
+			    & ".dre-report thead th .monthsub{display:flex;justify-content:flex-end;gap:8px;font-size:8px;font-weight:500;text-transform:none;margin-top:3px;}"
+			    & ".dre-report thead th .monthsub .sp{color:#c9974a;}"
+			    & ".dre-report thead th .monthsub .sr{color:#8a94b3;}"
+			
+			    // ---- 6. Corpo da tabela: linhas da DRE (início, subtotal, total) e células Prev/Real
+			    & ".dre-report tbody td{padding:6px 8px;text-align:right;border-bottom:1px solid rgba(255,255,255,.04);white-space:nowrap;vertical-align:middle;}"
+			    & ".dre-report tbody td.cat{text-align:left;color:#c3cae0;white-space:normal;min-width:190px;max-width:220px;position:sticky;left:0;z-index:1;background:#0b1220;box-shadow:2px 0 6px rgba(0,0,0,.3);}"
+			    & ".dre-report tr.row-start td{background:rgba(251,191,36,.07);font-weight:700;border-top:2px solid rgba(251,191,36,.5);border-bottom:2px solid rgba(251,191,36,.25);}"
+			    & ".dre-report tr.row-start td.cat{color:#fbbf24;background:#2a2210;}"
+			    & ".dre-report tr.row-subtotal td{background:rgba(96,165,250,.06);font-weight:700;border-top:2px solid rgba(96,165,250,.4);}"
+			    & ".dre-report tr.row-subtotal td.cat{color:#60a5fa;background:#122036;border-left:3px solid transparent;}"
+			    & ".dre-report tr.row-total td{background:rgba(52,211,153,.10);font-weight:800;font-size:12.5px;border-top:2px solid rgba(52,211,153,.5);}"
+			    & ".dre-report tr.row-total td.cat{color:#34d399;background:#0f2a22;border-left:3px solid transparent;}"
+			    & ".dre-report td.total{color:#e8ecf7;font-weight:700;border-left:1px solid #243252;}"
+			    & ".dre-report td.total.prevtotal{color:#c9974a;font-weight:600;}"
+			    & ".dre-report td.total.deltatotal{font-weight:700;font-size:10.5px;}"
+			    & ".dre-report td.mc{white-space:nowrap;}"
+			    & ".dre-report td.mc .prev{display:inline-block;color:#8a94b3;font-size:10px;min-width:26px;text-align:right;margin-right:6px;vertical-align:baseline;}"
+			    & ".dre-report td.mc .real{display:inline-flex;align-items:baseline;gap:3px;color:#e8ecf7;font-weight:700;font-size:11px;text-align:right;white-space:nowrap;vertical-align:baseline;}"
+			    & ".dre-report td.mc .delta{font-size:8.5px;font-weight:700;display:inline-flex;align-items:center;gap:1px;}"
+			    & ".dre-report td.mc .delta.up{color:#34d399;}"
+			    & ".dre-report td.mc .delta.down{color:#f87171;}"
+			    & ".dre-report td.deltatotal.up{color:#34d399;}"
+			    & ".dre-report td.deltatotal.down{color:#f87171;}"
+			
+			    // ---- 7. Tema claro (classe .light no container, ligada pelo botão ☀️/🌙)
+			    & ".dre-report.light{background:#dde3ee;color:#182238;box-shadow:0 8px 24px rgba(20,30,60,.15);}"
+			    & ".dre-report.light .head{border-color:#c3cbdd;}"
+			    & ".dre-report.light .sub,.dre-report.light .meta{color:#4b5573;}"
+			    & ".dre-report.light .title b{background:linear-gradient(90deg,#2563eb,#059669);-webkit-background-clip:text;background-clip:text;color:transparent;}"
+			    & ".dre-report.light .card{background:linear-gradient(180deg,#f4f6fb,#e7ebf4);border-color:#c3cbdd;box-shadow:0 2px 8px rgba(20,30,60,.1);}"
+			    & ".dre-report.light .card h3{color:#4b5573;}"
+			    & ".dre-report.light .card .compare{color:#4b5573;}"
+			    & ".dre-report.light .card .compare b{color:#182238;}"
+			    & ".dre-report.light .track{background:#c9d1e3;}"
+			    & ".dre-report.light .panel{background:#e9edf5;border-color:#c3cbdd;box-shadow:0 2px 10px rgba(20,30,60,.08);}"
+			    & ".dre-report.light .panel-title{border-color:#c3cbdd;}"
+			    & ".dre-report.light .panel-title .hint{color:#4b5573;}"
+			    & ".dre-report.light .theme-btn{background:#f4f6fb;border-color:#c3cbdd;color:#182238;}"
+			    & ".dre-report.light .theme-btn:hover{background:#e2e7f2;}"
+			    & ".dre-report.light .table-scroll::-webkit-scrollbar-thumb{background:#c3cbdd;}"
+			    & ".dre-report.light thead th{background:#dde3ee;color:#4b5573;border-color:#c3cbdd;}"
+			    & ".dre-report.light thead th .monthsub .sp{color:#a9700f;}"
+			    & ".dre-report.light thead th .monthsub .sr{color:#4b5573;}"
+			    & ".dre-report.light tbody td{border-color:rgba(20,30,60,.1);}"
+			    & ".dre-report.light tbody td.cat{color:#182238;background:#e9edf5;box-shadow:2px 0 6px rgba(20,30,60,.12);}"
+			    & ".dre-report.light tr.row-start td{background:rgba(180,130,20,.10);border-top:2px solid rgba(180,130,20,.45);border-bottom:2px solid rgba(180,130,20,.2);}"
+			    & ".dre-report.light tr.row-start td.cat{color:#a9700f;background:#f7ecd9;}"
+			    & ".dre-report.light tr.row-subtotal td{background:rgba(37,99,235,.10);border-top:2px solid rgba(37,99,235,.4);}"
+			    & ".dre-report.light tr.row-subtotal td.cat{color:#2563eb;background:#dbe4f7;}"
+			    & ".dre-report.light tr.row-total td{background:rgba(5,150,105,.14);border-top:2px solid rgba(5,150,105,.5);}"
+			    & ".dre-report.light tr.row-total td.cat{color:#059669;background:#d7f0e6;}"
+			    & ".dre-report.light td.total{color:#182238;border-color:#c3cbdd;}"
+			    & ".dre-report.light td.total.prevtotal{color:#a9700f;}"
+			    & ".dre-report.light td.mc .prev{color:#a9700f;}"
+			    & ".dre-report.light td.mc .real{color:#182238;}"
+			    & ".dre-report.light td.mc .delta.up{color:#059669;}"
+			    & ".dre-report.light td.mc .delta.down{color:#dc2626;}"
+			    & ".dre-report.light td.deltatotal.up{color:#059669;}"
+			    & ".dre-report.light td.deltatotal.down{color:#dc2626;}"
+			    & ".dre-report.light .card-face{background:linear-gradient(180deg,#f4f6fb,#e7ebf4);border-color:#c3cbdd;box-shadow:0 2px 8px rgba(20,30,60,.1);}"
+			    & ".dre-report.light .card-back .bline{color:#4b5573;border-color:#c3cbdd;}"
+			    & ".dre-report.light .card-back .bline b{color:#182238;}"
+			    & ".dre-report.light .card-back .bline.result span,.dre-report.light .card-back .bline.result b{color:#059669;}"
+			    & ".dre-report.light .card-back h4{color:#4b5573;}"
+			
+			    // ---- 8. Destaque ao passar o mouse nos cards (escurece linhas que não compõem o card)
+			    & ".dre-report tbody tr{transition:opacity .25s ease;}"
+			    & ".dre-report.hl-rl tbody tr:not([data-card~='rl']),.dre-report.hl-lb tbody tr:not([data-card~='lb']),.dre-report.hl-ro tbody tr:not([data-card~='ro']),.dre-report.hl-rq tbody tr:not([data-card~='rq']){opacity:.25;}"
+			    & ".dre-report.hl-rl tbody tr[data-card~='rl'] td,.dre-report.hl-lb tbody tr[data-card~='lb'] td,.dre-report.hl-ro tbody tr[data-card~='ro'] td,.dre-report.hl-rq tbody tr[data-card~='rq'] td{box-shadow:inset 0 0 0 9999px rgba(96,165,250,.10);}"
+			    & ".dre-report tbody tr.is-target td{box-shadow:inset 0 0 0 9999px rgba(52,211,153,.16)!important;}"
+			    & ".dre-report tbody tr.is-target td.cat{border-left:3px solid #34d399;}"
+			
+			    // ---- 9. Destaque no tema claro
+			    & ".dre-report.light.hl-rl tbody tr[data-card~='rl'] td,.dre-report.light.hl-lb tbody tr[data-card~='lb'] td,.dre-report.light.hl-ro tbody tr[data-card~='ro'] td,.dre-report.light.hl-rq tbody tr[data-card~='rq'] td{box-shadow:inset 0 0 0 9999px rgba(37,99,235,.10);}"
+			    & ".dre-report.light tbody tr.is-target td{box-shadow:inset 0 0 0 9999px rgba(5,150,105,.18)!important;}"
+			
+			    & "</style>"
+		displayFolder: 00 HTML
+		lineageTag: 50dd96eb-0734-45be-be00-c62e11c4e2ad
+
+	/// Gera a linha HTML (12 meses + total) da DRE para: Receita Bruta de Vendas.
+	measure 'HTML Linha - Receita Bruta de Vendas' =
+			// =====================================================================
+			// HTML Linha - Receita Bruta de Vendas
+			// Monta a linha <tr> da DRE: 12 meses (Previsto x Realizado) + totais.
+			//   Realizado = [Receita Bruta de Vendas] do mês no ano de referência (mês futuro = "-")
+			//   Previsto  = [Receita Bruta de Vendas LY] (mesmo mês do ano anterior) x [Fator Previsão]
+			// Valores exibidos em R$ mil.
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			VAR Sinal  = 1    // exibe com o sinal original
+			
+			// ---- 1. Tabela com os 12 meses e os valores Real / Previsto ----------
+			VAR Meses =
+			    ADDCOLUMNS(
+			        SELECTCOLUMNS(GENERATESERIES(1, 12, 1), "Mes", [Value]),
+			        "@Real",
+			            VAR _Mes    = [Mes]
+			            VAR _Futuro = AnoRef > YEAR(TODAY()) || (AnoRef = YEAR(TODAY()) && _Mes > MONTH(TODAY()))
+			            RETURN
+			                IF(
+			                    _Futuro,
+			                    BLANK(),
+			                    Sinal * (CALCULATE([Receita Bruta de Vendas], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0)
+			                ),
+			        "@Prev",
+			            VAR _Mes = [Mes]
+			            RETURN
+			                Sinal * (CALCULATE([Receita Bruta de Vendas LY], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0) * [Fator Previsão]
+			    )
+			
+			// ---- 2. Totais ---------------------------------------------------------
+			VAR TotalReal     = SUMX(Meses, [@Real])
+			VAR TotalPrev     = SUMX(Meses, [@Prev])                                   // previsto do ano inteiro
+			VAR TotalPrevComp = SUMX(FILTER(Meses, NOT ISBLANK([@Real])), [@Prev])    // previsto só dos meses já realizados (base da variação)
+			VAR SobeTotal     = TotalReal >= TotalPrevComp
+			
+			// ---- 3. Células dos meses (<td class='mc'>) ------------------------
+			//   <div class='prev'> = previsto | <div class='real'> = realizado + seta ▲/▼ e variação %
+			VAR CelulasMeses =
+			    CONCATENATEX(
+			        Meses,
+			        VAR _R    = [@Real]
+			        VAR _P    = [@Prev]
+			        VAR _Sobe = _R >= _P
+			        RETURN
+			            "<td class='mc'>"
+			                & "<div class='prev'>" & FORMAT(DIVIDE(_P, 1000), "#,##0;-#,##0") & "</div>"
+			                & "<div class='real'>"
+			                    & IF(
+			                        ISBLANK(_R),
+			                        "-",
+			                        FORMAT(DIVIDE(_R, 1000), "#,##0;-#,##0")
+			                            & " <span class='delta " & IF(_Sobe, "up", "down") & "'>"
+			                            & IF(_Sobe, UNICHAR(9650), UNICHAR(9660))
+			                            & FORMAT(ABS(DIVIDE(_R - _P, ABS(_P), 0)), "0%")
+			                            & "</span>"
+			                    )
+			                & "</div>"
+			            & "</td>",
+			        "",
+			        [Mes], ASC
+			    )
+			
+			// ---- 4. HTML final da linha -------------------------------------------
+			//   id        = identificador da linha
+			//   data-card = cards que destacam esta linha no hover (rl, lb, ro, rq)
+			//   class     = estilo da linha (row-start, row-line, row-subtotal, row-total)
+			RETURN
+			    "<tr id='row-receita-bruta' data-card='rl lb ro rq' class='row-start'>"
+			        & "<td class='cat'>Receita Bruta de Vendas</td>"
+			        & CelulasMeses
+			        & "<td class='total'>" & FORMAT(DIVIDE(TotalReal, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total prevtotal'>" & FORMAT(DIVIDE(TotalPrev, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total deltatotal " & IF(SobeTotal, "up", "down") & "'>"
+			            & IF(SobeTotal, UNICHAR(9650), UNICHAR(9660))
+			            & FORMAT(ABS(DIVIDE(TotalReal - TotalPrevComp, ABS(TotalPrevComp), 0)), "0%")
+			        & "</td>"
+			    & "</tr>"
+		displayFolder: 00 HTML\Linhas
+		lineageTag: ec6dd7c0-7d40-4e6f-934e-615058fafec5
+
+	/// Gera a linha HTML (12 meses + total) da DRE para: (-) Deduções da Receita Bruta.
+	measure 'HTML Linha - (-) Deduções da Receita Bruta' =
+			// =====================================================================
+			// HTML Linha - (-) Deduções da Receita Bruta
+			// Monta a linha <tr> da DRE: 12 meses (Previsto x Realizado) + totais.
+			//   Realizado = [Deduções da Receita Bruta] do mês no ano de referência (mês futuro = "-")
+			//   Previsto  = [Deduções da Receita Bruta LY] (mesmo mês do ano anterior) x [Fator Previsão]
+			// Valores exibidos em R$ mil.
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			VAR Sinal  = -1   // custo/dedução: inverte o sinal para exibir positivo na tabela
+			
+			// ---- 1. Tabela com os 12 meses e os valores Real / Previsto ----------
+			VAR Meses =
+			    ADDCOLUMNS(
+			        SELECTCOLUMNS(GENERATESERIES(1, 12, 1), "Mes", [Value]),
+			        "@Real",
+			            VAR _Mes    = [Mes]
+			            VAR _Futuro = AnoRef > YEAR(TODAY()) || (AnoRef = YEAR(TODAY()) && _Mes > MONTH(TODAY()))
+			            RETURN
+			                IF(
+			                    _Futuro,
+			                    BLANK(),
+			                    Sinal * (CALCULATE([Deduções da Receita Bruta], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0)
+			                ),
+			        "@Prev",
+			            VAR _Mes = [Mes]
+			            RETURN
+			                Sinal * (CALCULATE([Deduções da Receita Bruta LY], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0) * [Fator Previsão]
+			    )
+			
+			// ---- 2. Totais ---------------------------------------------------------
+			VAR TotalReal     = SUMX(Meses, [@Real])
+			VAR TotalPrev     = SUMX(Meses, [@Prev])                                   // previsto do ano inteiro
+			VAR TotalPrevComp = SUMX(FILTER(Meses, NOT ISBLANK([@Real])), [@Prev])    // previsto só dos meses já realizados (base da variação)
+			VAR SobeTotal     = TotalReal >= TotalPrevComp
+			
+			// ---- 3. Células dos meses (<td class='mc'>) ------------------------
+			//   <div class='prev'> = previsto | <div class='real'> = realizado + seta ▲/▼ e variação %
+			VAR CelulasMeses =
+			    CONCATENATEX(
+			        Meses,
+			        VAR _R    = [@Real]
+			        VAR _P    = [@Prev]
+			        VAR _Sobe = _R >= _P
+			        RETURN
+			            "<td class='mc'>"
+			                & "<div class='prev'>" & FORMAT(DIVIDE(_P, 1000), "#,##0;-#,##0") & "</div>"
+			                & "<div class='real'>"
+			                    & IF(
+			                        ISBLANK(_R),
+			                        "-",
+			                        FORMAT(DIVIDE(_R, 1000), "#,##0;-#,##0")
+			                            & " <span class='delta " & IF(_Sobe, "up", "down") & "'>"
+			                            & IF(_Sobe, UNICHAR(9650), UNICHAR(9660))
+			                            & FORMAT(ABS(DIVIDE(_R - _P, ABS(_P), 0)), "0%")
+			                            & "</span>"
+			                    )
+			                & "</div>"
+			            & "</td>",
+			        "",
+			        [Mes], ASC
+			    )
+			
+			// ---- 4. HTML final da linha -------------------------------------------
+			//   id        = identificador da linha
+			//   data-card = cards que destacam esta linha no hover (rl, lb, ro, rq)
+			//   class     = estilo da linha (row-start, row-line, row-subtotal, row-total)
+			RETURN
+			    "<tr id='row-deducoes' data-card='rl lb ro rq' class='row-line'>"
+			        & "<td class='cat'>(-) Deduções da Receita Bruta</td>"
+			        & CelulasMeses
+			        & "<td class='total'>" & FORMAT(DIVIDE(TotalReal, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total prevtotal'>" & FORMAT(DIVIDE(TotalPrev, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total deltatotal " & IF(SobeTotal, "up", "down") & "'>"
+			            & IF(SobeTotal, UNICHAR(9650), UNICHAR(9660))
+			            & FORMAT(ABS(DIVIDE(TotalReal - TotalPrevComp, ABS(TotalPrevComp), 0)), "0%")
+			        & "</td>"
+			    & "</tr>"
+		displayFolder: 00 HTML\Linhas
+		lineageTag: f35e90f5-8670-49d7-94c0-e20e105f3ebf
+
+	/// Gera a linha HTML (12 meses + total) da DRE para: (=) Receita Líquida.
+	measure 'HTML Linha - (=) Receita Líquida' =
+			// =====================================================================
+			// HTML Linha - (=) Receita Líquida
+			// Monta a linha <tr> da DRE: 12 meses (Previsto x Realizado) + totais.
+			//   Realizado = [Receita Líquida] do mês no ano de referência (mês futuro = "-")
+			//   Previsto  = [Receita Líquida LY] (mesmo mês do ano anterior) x [Fator Previsão]
+			// Valores exibidos em R$ mil.
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			VAR Sinal  = 1    // exibe com o sinal original
+			
+			// ---- 1. Tabela com os 12 meses e os valores Real / Previsto ----------
+			VAR Meses =
+			    ADDCOLUMNS(
+			        SELECTCOLUMNS(GENERATESERIES(1, 12, 1), "Mes", [Value]),
+			        "@Real",
+			            VAR _Mes    = [Mes]
+			            VAR _Futuro = AnoRef > YEAR(TODAY()) || (AnoRef = YEAR(TODAY()) && _Mes > MONTH(TODAY()))
+			            RETURN
+			                IF(
+			                    _Futuro,
+			                    BLANK(),
+			                    Sinal * (CALCULATE([Receita Líquida], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0)
+			                ),
+			        "@Prev",
+			            VAR _Mes = [Mes]
+			            RETURN
+			                Sinal * (CALCULATE([Receita Líquida LY], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0) * [Fator Previsão]
+			    )
+			
+			// ---- 2. Totais ---------------------------------------------------------
+			VAR TotalReal     = SUMX(Meses, [@Real])
+			VAR TotalPrev     = SUMX(Meses, [@Prev])                                   // previsto do ano inteiro
+			VAR TotalPrevComp = SUMX(FILTER(Meses, NOT ISBLANK([@Real])), [@Prev])    // previsto só dos meses já realizados (base da variação)
+			VAR SobeTotal     = TotalReal >= TotalPrevComp
+			
+			// ---- 3. Células dos meses (<td class='mc'>) ------------------------
+			//   <div class='prev'> = previsto | <div class='real'> = realizado + seta ▲/▼ e variação %
+			VAR CelulasMeses =
+			    CONCATENATEX(
+			        Meses,
+			        VAR _R    = [@Real]
+			        VAR _P    = [@Prev]
+			        VAR _Sobe = _R >= _P
+			        RETURN
+			            "<td class='mc'>"
+			                & "<div class='prev'>" & FORMAT(DIVIDE(_P, 1000), "#,##0;-#,##0") & "</div>"
+			                & "<div class='real'>"
+			                    & IF(
+			                        ISBLANK(_R),
+			                        "-",
+			                        FORMAT(DIVIDE(_R, 1000), "#,##0;-#,##0")
+			                            & " <span class='delta " & IF(_Sobe, "up", "down") & "'>"
+			                            & IF(_Sobe, UNICHAR(9650), UNICHAR(9660))
+			                            & FORMAT(ABS(DIVIDE(_R - _P, ABS(_P), 0)), "0%")
+			                            & "</span>"
+			                    )
+			                & "</div>"
+			            & "</td>",
+			        "",
+			        [Mes], ASC
+			    )
+			
+			// ---- 4. HTML final da linha -------------------------------------------
+			//   id        = identificador da linha
+			//   data-card = cards que destacam esta linha no hover (rl, lb, ro, rq)
+			//   class     = estilo da linha (row-start, row-line, row-subtotal, row-total)
+			RETURN
+			    "<tr id='row-receita-liquida' data-card='rl lb ro rq' class='row-subtotal is-target'>"
+			        & "<td class='cat'>(=) Receita Líquida</td>"
+			        & CelulasMeses
+			        & "<td class='total'>" & FORMAT(DIVIDE(TotalReal, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total prevtotal'>" & FORMAT(DIVIDE(TotalPrev, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total deltatotal " & IF(SobeTotal, "up", "down") & "'>"
+			            & IF(SobeTotal, UNICHAR(9650), UNICHAR(9660))
+			            & FORMAT(ABS(DIVIDE(TotalReal - TotalPrevComp, ABS(TotalPrevComp), 0)), "0%")
+			        & "</td>"
+			    & "</tr>"
+		displayFolder: 00 HTML\Linhas
+		lineageTag: 21debad5-968d-495e-bfbe-f281cc6adf34
+
+	/// Gera a linha HTML (12 meses + total) da DRE para: (-) Custo das Mercadorias Vendidas (CMV).
+	measure 'HTML Linha - (-) Custo das Mercadorias Vendidas (CMV)' =
+			// =====================================================================
+			// HTML Linha - (-) Custo das Mercadorias Vendidas (CMV)
+			// Monta a linha <tr> da DRE: 12 meses (Previsto x Realizado) + totais.
+			//   Realizado = [Custo das Mercadorias Vendidas] do mês no ano de referência (mês futuro = "-")
+			//   Previsto  = [CMV LY] (mesmo mês do ano anterior) x [Fator Previsão]
+			// Valores exibidos em R$ mil.
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			VAR Sinal  = -1   // custo/dedução: inverte o sinal para exibir positivo na tabela
+			
+			// ---- 1. Tabela com os 12 meses e os valores Real / Previsto ----------
+			VAR Meses =
+			    ADDCOLUMNS(
+			        SELECTCOLUMNS(GENERATESERIES(1, 12, 1), "Mes", [Value]),
+			        "@Real",
+			            VAR _Mes    = [Mes]
+			            VAR _Futuro = AnoRef > YEAR(TODAY()) || (AnoRef = YEAR(TODAY()) && _Mes > MONTH(TODAY()))
+			            RETURN
+			                IF(
+			                    _Futuro,
+			                    BLANK(),
+			                    Sinal * (CALCULATE([Custo das Mercadorias Vendidas], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0)
+			                ),
+			        "@Prev",
+			            VAR _Mes = [Mes]
+			            RETURN
+			                Sinal * (CALCULATE([CMV LY], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0) * [Fator Previsão]
+			    )
+			
+			// ---- 2. Totais ---------------------------------------------------------
+			VAR TotalReal     = SUMX(Meses, [@Real])
+			VAR TotalPrev     = SUMX(Meses, [@Prev])                                   // previsto do ano inteiro
+			VAR TotalPrevComp = SUMX(FILTER(Meses, NOT ISBLANK([@Real])), [@Prev])    // previsto só dos meses já realizados (base da variação)
+			VAR SobeTotal     = TotalReal >= TotalPrevComp
+			
+			// ---- 3. Células dos meses (<td class='mc'>) ------------------------
+			//   <div class='prev'> = previsto | <div class='real'> = realizado + seta ▲/▼ e variação %
+			VAR CelulasMeses =
+			    CONCATENATEX(
+			        Meses,
+			        VAR _R    = [@Real]
+			        VAR _P    = [@Prev]
+			        VAR _Sobe = _R >= _P
+			        RETURN
+			            "<td class='mc'>"
+			                & "<div class='prev'>" & FORMAT(DIVIDE(_P, 1000), "#,##0;-#,##0") & "</div>"
+			                & "<div class='real'>"
+			                    & IF(
+			                        ISBLANK(_R),
+			                        "-",
+			                        FORMAT(DIVIDE(_R, 1000), "#,##0;-#,##0")
+			                            & " <span class='delta " & IF(_Sobe, "up", "down") & "'>"
+			                            & IF(_Sobe, UNICHAR(9650), UNICHAR(9660))
+			                            & FORMAT(ABS(DIVIDE(_R - _P, ABS(_P), 0)), "0%")
+			                            & "</span>"
+			                    )
+			                & "</div>"
+			            & "</td>",
+			        "",
+			        [Mes], ASC
+			    )
+			
+			// ---- 4. HTML final da linha -------------------------------------------
+			//   id        = identificador da linha
+			//   data-card = cards que destacam esta linha no hover (rl, lb, ro, rq)
+			//   class     = estilo da linha (row-start, row-line, row-subtotal, row-total)
+			RETURN
+			    "<tr id='row-cmv' data-card='lb ro rq' class='row-line'>"
+			        & "<td class='cat'>(-) Custo das Mercadorias Vendidas (CMV)</td>"
+			        & CelulasMeses
+			        & "<td class='total'>" & FORMAT(DIVIDE(TotalReal, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total prevtotal'>" & FORMAT(DIVIDE(TotalPrev, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total deltatotal " & IF(SobeTotal, "up", "down") & "'>"
+			            & IF(SobeTotal, UNICHAR(9650), UNICHAR(9660))
+			            & FORMAT(ABS(DIVIDE(TotalReal - TotalPrevComp, ABS(TotalPrevComp), 0)), "0%")
+			        & "</td>"
+			    & "</tr>"
+		displayFolder: 00 HTML\Linhas
+		lineageTag: 312a8370-6818-4e5a-a99e-c94b197655f3
+
+	/// Gera a linha HTML (12 meses + total) da DRE para: (=) Lucro Bruto.
+	measure 'HTML Linha - (=) Lucro Bruto' =
+			// =====================================================================
+			// HTML Linha - (=) Lucro Bruto
+			// Monta a linha <tr> da DRE: 12 meses (Previsto x Realizado) + totais.
+			//   Realizado = [Lucro Bruto] do mês no ano de referência (mês futuro = "-")
+			//   Previsto  = [Lucro Bruto LY] (mesmo mês do ano anterior) x [Fator Previsão]
+			// Valores exibidos em R$ mil.
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			VAR Sinal  = 1    // exibe com o sinal original
+			
+			// ---- 1. Tabela com os 12 meses e os valores Real / Previsto ----------
+			VAR Meses =
+			    ADDCOLUMNS(
+			        SELECTCOLUMNS(GENERATESERIES(1, 12, 1), "Mes", [Value]),
+			        "@Real",
+			            VAR _Mes    = [Mes]
+			            VAR _Futuro = AnoRef > YEAR(TODAY()) || (AnoRef = YEAR(TODAY()) && _Mes > MONTH(TODAY()))
+			            RETURN
+			                IF(
+			                    _Futuro,
+			                    BLANK(),
+			                    Sinal * (CALCULATE([Lucro Bruto], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0)
+			                ),
+			        "@Prev",
+			            VAR _Mes = [Mes]
+			            RETURN
+			                Sinal * (CALCULATE([Lucro Bruto LY], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0) * [Fator Previsão]
+			    )
+			
+			// ---- 2. Totais ---------------------------------------------------------
+			VAR TotalReal     = SUMX(Meses, [@Real])
+			VAR TotalPrev     = SUMX(Meses, [@Prev])                                   // previsto do ano inteiro
+			VAR TotalPrevComp = SUMX(FILTER(Meses, NOT ISBLANK([@Real])), [@Prev])    // previsto só dos meses já realizados (base da variação)
+			VAR SobeTotal     = TotalReal >= TotalPrevComp
+			
+			// ---- 3. Células dos meses (<td class='mc'>) ------------------------
+			//   <div class='prev'> = previsto | <div class='real'> = realizado + seta ▲/▼ e variação %
+			VAR CelulasMeses =
+			    CONCATENATEX(
+			        Meses,
+			        VAR _R    = [@Real]
+			        VAR _P    = [@Prev]
+			        VAR _Sobe = _R >= _P
+			        RETURN
+			            "<td class='mc'>"
+			                & "<div class='prev'>" & FORMAT(DIVIDE(_P, 1000), "#,##0;-#,##0") & "</div>"
+			                & "<div class='real'>"
+			                    & IF(
+			                        ISBLANK(_R),
+			                        "-",
+			                        FORMAT(DIVIDE(_R, 1000), "#,##0;-#,##0")
+			                            & " <span class='delta " & IF(_Sobe, "up", "down") & "'>"
+			                            & IF(_Sobe, UNICHAR(9650), UNICHAR(9660))
+			                            & FORMAT(ABS(DIVIDE(_R - _P, ABS(_P), 0)), "0%")
+			                            & "</span>"
+			                    )
+			                & "</div>"
+			            & "</td>",
+			        "",
+			        [Mes], ASC
+			    )
+			
+			// ---- 4. HTML final da linha -------------------------------------------
+			//   id        = identificador da linha
+			//   data-card = cards que destacam esta linha no hover (rl, lb, ro, rq)
+			//   class     = estilo da linha (row-start, row-line, row-subtotal, row-total)
+			RETURN
+			    "<tr id='row-lucro-bruto' data-card='lb ro rq' class='row-subtotal is-target'>"
+			        & "<td class='cat'>(=) Lucro Bruto</td>"
+			        & CelulasMeses
+			        & "<td class='total'>" & FORMAT(DIVIDE(TotalReal, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total prevtotal'>" & FORMAT(DIVIDE(TotalPrev, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total deltatotal " & IF(SobeTotal, "up", "down") & "'>"
+			            & IF(SobeTotal, UNICHAR(9650), UNICHAR(9660))
+			            & FORMAT(ABS(DIVIDE(TotalReal - TotalPrevComp, ABS(TotalPrevComp), 0)), "0%")
+			        & "</td>"
+			    & "</tr>"
+		displayFolder: 00 HTML\Linhas
+		lineageTag: fc5ade4d-fb57-41c6-9427-e8a98998bf68
+
+	/// Gera a linha HTML (12 meses + total) da DRE para: (-) Gastos Variáveis com Vendas.
+	measure 'HTML Linha - (-) Gastos Variáveis com Vendas' =
+			// =====================================================================
+			// HTML Linha - (-) Gastos Variáveis com Vendas
+			// Monta a linha <tr> da DRE: 12 meses (Previsto x Realizado) + totais.
+			//   Realizado = [Gastos Variáveis com Vendas] do mês no ano de referência (mês futuro = "-")
+			//   Previsto  = [Gastos Variáveis LY] (mesmo mês do ano anterior) x [Fator Previsão]
+			// Valores exibidos em R$ mil.
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			VAR Sinal  = -1   // custo/dedução: inverte o sinal para exibir positivo na tabela
+			
+			// ---- 1. Tabela com os 12 meses e os valores Real / Previsto ----------
+			VAR Meses =
+			    ADDCOLUMNS(
+			        SELECTCOLUMNS(GENERATESERIES(1, 12, 1), "Mes", [Value]),
+			        "@Real",
+			            VAR _Mes    = [Mes]
+			            VAR _Futuro = AnoRef > YEAR(TODAY()) || (AnoRef = YEAR(TODAY()) && _Mes > MONTH(TODAY()))
+			            RETURN
+			                IF(
+			                    _Futuro,
+			                    BLANK(),
+			                    Sinal * (CALCULATE([Gastos Variáveis com Vendas], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0)
+			                ),
+			        "@Prev",
+			            VAR _Mes = [Mes]
+			            RETURN
+			                Sinal * (CALCULATE([Gastos Variáveis LY], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0) * [Fator Previsão]
+			    )
+			
+			// ---- 2. Totais ---------------------------------------------------------
+			VAR TotalReal     = SUMX(Meses, [@Real])
+			VAR TotalPrev     = SUMX(Meses, [@Prev])                                   // previsto do ano inteiro
+			VAR TotalPrevComp = SUMX(FILTER(Meses, NOT ISBLANK([@Real])), [@Prev])    // previsto só dos meses já realizados (base da variação)
+			VAR SobeTotal     = TotalReal >= TotalPrevComp
+			
+			// ---- 3. Células dos meses (<td class='mc'>) ------------------------
+			//   <div class='prev'> = previsto | <div class='real'> = realizado + seta ▲/▼ e variação %
+			VAR CelulasMeses =
+			    CONCATENATEX(
+			        Meses,
+			        VAR _R    = [@Real]
+			        VAR _P    = [@Prev]
+			        VAR _Sobe = _R >= _P
+			        RETURN
+			            "<td class='mc'>"
+			                & "<div class='prev'>" & FORMAT(DIVIDE(_P, 1000), "#,##0;-#,##0") & "</div>"
+			                & "<div class='real'>"
+			                    & IF(
+			                        ISBLANK(_R),
+			                        "-",
+			                        FORMAT(DIVIDE(_R, 1000), "#,##0;-#,##0")
+			                            & " <span class='delta " & IF(_Sobe, "up", "down") & "'>"
+			                            & IF(_Sobe, UNICHAR(9650), UNICHAR(9660))
+			                            & FORMAT(ABS(DIVIDE(_R - _P, ABS(_P), 0)), "0%")
+			                            & "</span>"
+			                    )
+			                & "</div>"
+			            & "</td>",
+			        "",
+			        [Mes], ASC
+			    )
+			
+			// ---- 4. HTML final da linha -------------------------------------------
+			//   id        = identificador da linha
+			//   data-card = cards que destacam esta linha no hover (rl, lb, ro, rq)
+			//   class     = estilo da linha (row-start, row-line, row-subtotal, row-total)
+			RETURN
+			    "<tr id='row-gastos-variaveis' data-card='ro rq' class='row-line'>"
+			        & "<td class='cat'>(-) Gastos Variáveis com Vendas</td>"
+			        & CelulasMeses
+			        & "<td class='total'>" & FORMAT(DIVIDE(TotalReal, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total prevtotal'>" & FORMAT(DIVIDE(TotalPrev, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total deltatotal " & IF(SobeTotal, "up", "down") & "'>"
+			            & IF(SobeTotal, UNICHAR(9650), UNICHAR(9660))
+			            & FORMAT(ABS(DIVIDE(TotalReal - TotalPrevComp, ABS(TotalPrevComp), 0)), "0%")
+			        & "</td>"
+			    & "</tr>"
+		displayFolder: 00 HTML\Linhas
+		lineageTag: 5a11b358-2afb-4c8c-83b7-371c6b172108
+
+	/// Gera a linha HTML (12 meses + total) da DRE para: (-) Gastos Fixos.
+	measure 'HTML Linha - (-) Gastos Fixos' =
+			// =====================================================================
+			// HTML Linha - (-) Gastos Fixos
+			// Monta a linha <tr> da DRE: 12 meses (Previsto x Realizado) + totais.
+			//   Realizado = [Gastos Fixos] do mês no ano de referência (mês futuro = "-")
+			//   Previsto  = [Gastos Fixos LY] (mesmo mês do ano anterior) x [Fator Previsão]
+			// Valores exibidos em R$ mil.
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			VAR Sinal  = -1   // custo/dedução: inverte o sinal para exibir positivo na tabela
+			
+			// ---- 1. Tabela com os 12 meses e os valores Real / Previsto ----------
+			VAR Meses =
+			    ADDCOLUMNS(
+			        SELECTCOLUMNS(GENERATESERIES(1, 12, 1), "Mes", [Value]),
+			        "@Real",
+			            VAR _Mes    = [Mes]
+			            VAR _Futuro = AnoRef > YEAR(TODAY()) || (AnoRef = YEAR(TODAY()) && _Mes > MONTH(TODAY()))
+			            RETURN
+			                IF(
+			                    _Futuro,
+			                    BLANK(),
+			                    Sinal * (CALCULATE([Gastos Fixos], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0)
+			                ),
+			        "@Prev",
+			            VAR _Mes = [Mes]
+			            RETURN
+			                Sinal * (CALCULATE([Gastos Fixos LY], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0) * [Fator Previsão]
+			    )
+			
+			// ---- 2. Totais ---------------------------------------------------------
+			VAR TotalReal     = SUMX(Meses, [@Real])
+			VAR TotalPrev     = SUMX(Meses, [@Prev])                                   // previsto do ano inteiro
+			VAR TotalPrevComp = SUMX(FILTER(Meses, NOT ISBLANK([@Real])), [@Prev])    // previsto só dos meses já realizados (base da variação)
+			VAR SobeTotal     = TotalReal >= TotalPrevComp
+			
+			// ---- 3. Células dos meses (<td class='mc'>) ------------------------
+			//   <div class='prev'> = previsto | <div class='real'> = realizado + seta ▲/▼ e variação %
+			VAR CelulasMeses =
+			    CONCATENATEX(
+			        Meses,
+			        VAR _R    = [@Real]
+			        VAR _P    = [@Prev]
+			        VAR _Sobe = _R >= _P
+			        RETURN
+			            "<td class='mc'>"
+			                & "<div class='prev'>" & FORMAT(DIVIDE(_P, 1000), "#,##0;-#,##0") & "</div>"
+			                & "<div class='real'>"
+			                    & IF(
+			                        ISBLANK(_R),
+			                        "-",
+			                        FORMAT(DIVIDE(_R, 1000), "#,##0;-#,##0")
+			                            & " <span class='delta " & IF(_Sobe, "up", "down") & "'>"
+			                            & IF(_Sobe, UNICHAR(9650), UNICHAR(9660))
+			                            & FORMAT(ABS(DIVIDE(_R - _P, ABS(_P), 0)), "0%")
+			                            & "</span>"
+			                    )
+			                & "</div>"
+			            & "</td>",
+			        "",
+			        [Mes], ASC
+			    )
+			
+			// ---- 4. HTML final da linha -------------------------------------------
+			//   id        = identificador da linha
+			//   data-card = cards que destacam esta linha no hover (rl, lb, ro, rq)
+			//   class     = estilo da linha (row-start, row-line, row-subtotal, row-total)
+			RETURN
+			    "<tr id='row-gastos-fixos' data-card='ro rq' class='row-line'>"
+			        & "<td class='cat'>(-) Gastos Fixos</td>"
+			        & CelulasMeses
+			        & "<td class='total'>" & FORMAT(DIVIDE(TotalReal, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total prevtotal'>" & FORMAT(DIVIDE(TotalPrev, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total deltatotal " & IF(SobeTotal, "up", "down") & "'>"
+			            & IF(SobeTotal, UNICHAR(9650), UNICHAR(9660))
+			            & FORMAT(ABS(DIVIDE(TotalReal - TotalPrevComp, ABS(TotalPrevComp), 0)), "0%")
+			        & "</td>"
+			    & "</tr>"
+		displayFolder: 00 HTML\Linhas
+		lineageTag: 137dc591-856c-4803-8d5b-4895594055fa
+
+	/// Gera a linha HTML (12 meses + total) da DRE para: (=) Resultado Operacional.
+	measure 'HTML Linha - (=) Resultado Operacional' =
+			// =====================================================================
+			// HTML Linha - (=) Resultado Operacional
+			// Monta a linha <tr> da DRE: 12 meses (Previsto x Realizado) + totais.
+			//   Realizado = [Resultado Operacional] do mês no ano de referência (mês futuro = "-")
+			//   Previsto  = [Resultado Operacional LY] (mesmo mês do ano anterior) x [Fator Previsão]
+			// Valores exibidos em R$ mil.
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			VAR Sinal  = 1    // exibe com o sinal original
+			
+			// ---- 1. Tabela com os 12 meses e os valores Real / Previsto ----------
+			VAR Meses =
+			    ADDCOLUMNS(
+			        SELECTCOLUMNS(GENERATESERIES(1, 12, 1), "Mes", [Value]),
+			        "@Real",
+			            VAR _Mes    = [Mes]
+			            VAR _Futuro = AnoRef > YEAR(TODAY()) || (AnoRef = YEAR(TODAY()) && _Mes > MONTH(TODAY()))
+			            RETURN
+			                IF(
+			                    _Futuro,
+			                    BLANK(),
+			                    Sinal * (CALCULATE([Resultado Operacional], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0)
+			                ),
+			        "@Prev",
+			            VAR _Mes = [Mes]
+			            RETURN
+			                Sinal * (CALCULATE([Resultado Operacional LY], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0) * [Fator Previsão]
+			    )
+			
+			// ---- 2. Totais ---------------------------------------------------------
+			VAR TotalReal     = SUMX(Meses, [@Real])
+			VAR TotalPrev     = SUMX(Meses, [@Prev])                                   // previsto do ano inteiro
+			VAR TotalPrevComp = SUMX(FILTER(Meses, NOT ISBLANK([@Real])), [@Prev])    // previsto só dos meses já realizados (base da variação)
+			VAR SobeTotal     = TotalReal >= TotalPrevComp
+			
+			// ---- 3. Células dos meses (<td class='mc'>) ------------------------
+			//   <div class='prev'> = previsto | <div class='real'> = realizado + seta ▲/▼ e variação %
+			VAR CelulasMeses =
+			    CONCATENATEX(
+			        Meses,
+			        VAR _R    = [@Real]
+			        VAR _P    = [@Prev]
+			        VAR _Sobe = _R >= _P
+			        RETURN
+			            "<td class='mc'>"
+			                & "<div class='prev'>" & FORMAT(DIVIDE(_P, 1000), "#,##0;-#,##0") & "</div>"
+			                & "<div class='real'>"
+			                    & IF(
+			                        ISBLANK(_R),
+			                        "-",
+			                        FORMAT(DIVIDE(_R, 1000), "#,##0;-#,##0")
+			                            & " <span class='delta " & IF(_Sobe, "up", "down") & "'>"
+			                            & IF(_Sobe, UNICHAR(9650), UNICHAR(9660))
+			                            & FORMAT(ABS(DIVIDE(_R - _P, ABS(_P), 0)), "0%")
+			                            & "</span>"
+			                    )
+			                & "</div>"
+			            & "</td>",
+			        "",
+			        [Mes], ASC
+			    )
+			
+			// ---- 4. HTML final da linha -------------------------------------------
+			//   id        = identificador da linha
+			//   data-card = cards que destacam esta linha no hover (rl, lb, ro, rq)
+			//   class     = estilo da linha (row-start, row-line, row-subtotal, row-total)
+			RETURN
+			    "<tr id='row-resultado-operacional' data-card='ro rq' class='row-subtotal is-target'>"
+			        & "<td class='cat'>(=) Resultado Operacional</td>"
+			        & CelulasMeses
+			        & "<td class='total'>" & FORMAT(DIVIDE(TotalReal, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total prevtotal'>" & FORMAT(DIVIDE(TotalPrev, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total deltatotal " & IF(SobeTotal, "up", "down") & "'>"
+			            & IF(SobeTotal, UNICHAR(9650), UNICHAR(9660))
+			            & FORMAT(ABS(DIVIDE(TotalReal - TotalPrevComp, ABS(TotalPrevComp), 0)), "0%")
+			        & "</td>"
+			    & "</tr>"
+		displayFolder: 00 HTML\Linhas
+		lineageTag: 11da9e0f-ff2a-4d27-995b-81532d316b30
+
+	/// Gera a linha HTML (12 meses + total) da DRE para: (+/-) Resultado Financeiro.
+	measure 'HTML Linha - (+/-) Resultado Financeiro' =
+			// =====================================================================
+			// HTML Linha - (+/-) Resultado Financeiro
+			// Monta a linha <tr> da DRE: 12 meses (Previsto x Realizado) + totais.
+			//   Realizado = [Resultado Financeiro] do mês no ano de referência (mês futuro = "-")
+			//   Previsto  = [Resultado Financeiro LY] (mesmo mês do ano anterior) x [Fator Previsão]
+			// Valores exibidos em R$ mil.
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			VAR Sinal  = 1    // exibe com o sinal original
+			
+			// ---- 1. Tabela com os 12 meses e os valores Real / Previsto ----------
+			VAR Meses =
+			    ADDCOLUMNS(
+			        SELECTCOLUMNS(GENERATESERIES(1, 12, 1), "Mes", [Value]),
+			        "@Real",
+			            VAR _Mes    = [Mes]
+			            VAR _Futuro = AnoRef > YEAR(TODAY()) || (AnoRef = YEAR(TODAY()) && _Mes > MONTH(TODAY()))
+			            RETURN
+			                IF(
+			                    _Futuro,
+			                    BLANK(),
+			                    Sinal * (CALCULATE([Resultado Financeiro], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0)
+			                ),
+			        "@Prev",
+			            VAR _Mes = [Mes]
+			            RETURN
+			                Sinal * (CALCULATE([Resultado Financeiro LY], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0) * [Fator Previsão]
+			    )
+			
+			// ---- 2. Totais ---------------------------------------------------------
+			VAR TotalReal     = SUMX(Meses, [@Real])
+			VAR TotalPrev     = SUMX(Meses, [@Prev])                                   // previsto do ano inteiro
+			VAR TotalPrevComp = SUMX(FILTER(Meses, NOT ISBLANK([@Real])), [@Prev])    // previsto só dos meses já realizados (base da variação)
+			VAR SobeTotal     = TotalReal >= TotalPrevComp
+			
+			// ---- 3. Células dos meses (<td class='mc'>) ------------------------
+			//   <div class='prev'> = previsto | <div class='real'> = realizado + seta ▲/▼ e variação %
+			VAR CelulasMeses =
+			    CONCATENATEX(
+			        Meses,
+			        VAR _R    = [@Real]
+			        VAR _P    = [@Prev]
+			        VAR _Sobe = _R >= _P
+			        RETURN
+			            "<td class='mc'>"
+			                & "<div class='prev'>" & FORMAT(DIVIDE(_P, 1000), "#,##0;-#,##0") & "</div>"
+			                & "<div class='real'>"
+			                    & IF(
+			                        ISBLANK(_R),
+			                        "-",
+			                        FORMAT(DIVIDE(_R, 1000), "#,##0;-#,##0")
+			                            & " <span class='delta " & IF(_Sobe, "up", "down") & "'>"
+			                            & IF(_Sobe, UNICHAR(9650), UNICHAR(9660))
+			                            & FORMAT(ABS(DIVIDE(_R - _P, ABS(_P), 0)), "0%")
+			                            & "</span>"
+			                    )
+			                & "</div>"
+			            & "</td>",
+			        "",
+			        [Mes], ASC
+			    )
+			
+			// ---- 4. HTML final da linha -------------------------------------------
+			//   id        = identificador da linha
+			//   data-card = cards que destacam esta linha no hover (rl, lb, ro, rq)
+			//   class     = estilo da linha (row-start, row-line, row-subtotal, row-total)
+			RETURN
+			    "<tr id='row-resultado-financeiro' data-card='rq' class='row-line'>"
+			        & "<td class='cat'>(+/-) Resultado Financeiro</td>"
+			        & CelulasMeses
+			        & "<td class='total'>" & FORMAT(DIVIDE(TotalReal, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total prevtotal'>" & FORMAT(DIVIDE(TotalPrev, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total deltatotal " & IF(SobeTotal, "up", "down") & "'>"
+			            & IF(SobeTotal, UNICHAR(9650), UNICHAR(9660))
+			            & FORMAT(ABS(DIVIDE(TotalReal - TotalPrevComp, ABS(TotalPrevComp), 0)), "0%")
+			        & "</td>"
+			    & "</tr>"
+		displayFolder: 00 HTML\Linhas
+		lineageTag: 9242a43a-4404-4854-b280-9d94e5ce7c0a
+
+	/// Gera a linha HTML (12 meses + total) da DRE para: (-) Investimentos.
+	measure 'HTML Linha - (-) Investimentos' =
+			// =====================================================================
+			// HTML Linha - (-) Investimentos
+			// Monta a linha <tr> da DRE: 12 meses (Previsto x Realizado) + totais.
+			//   Realizado = [Investimentos] do mês no ano de referência (mês futuro = "-")
+			//   Previsto  = [Investimentos LY] (mesmo mês do ano anterior) x [Fator Previsão]
+			// Valores exibidos em R$ mil.
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			VAR Sinal  = -1   // custo/dedução: inverte o sinal para exibir positivo na tabela
+			
+			// ---- 1. Tabela com os 12 meses e os valores Real / Previsto ----------
+			VAR Meses =
+			    ADDCOLUMNS(
+			        SELECTCOLUMNS(GENERATESERIES(1, 12, 1), "Mes", [Value]),
+			        "@Real",
+			            VAR _Mes    = [Mes]
+			            VAR _Futuro = AnoRef > YEAR(TODAY()) || (AnoRef = YEAR(TODAY()) && _Mes > MONTH(TODAY()))
+			            RETURN
+			                IF(
+			                    _Futuro,
+			                    BLANK(),
+			                    Sinal * (CALCULATE([Investimentos], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0)
+			                ),
+			        "@Prev",
+			            VAR _Mes = [Mes]
+			            RETURN
+			                Sinal * (CALCULATE([Investimentos LY], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0) * [Fator Previsão]
+			    )
+			
+			// ---- 2. Totais ---------------------------------------------------------
+			VAR TotalReal     = SUMX(Meses, [@Real])
+			VAR TotalPrev     = SUMX(Meses, [@Prev])                                   // previsto do ano inteiro
+			VAR TotalPrevComp = SUMX(FILTER(Meses, NOT ISBLANK([@Real])), [@Prev])    // previsto só dos meses já realizados (base da variação)
+			VAR SobeTotal     = TotalReal >= TotalPrevComp
+			
+			// ---- 3. Células dos meses (<td class='mc'>) ------------------------
+			//   <div class='prev'> = previsto | <div class='real'> = realizado + seta ▲/▼ e variação %
+			VAR CelulasMeses =
+			    CONCATENATEX(
+			        Meses,
+			        VAR _R    = [@Real]
+			        VAR _P    = [@Prev]
+			        VAR _Sobe = _R >= _P
+			        RETURN
+			            "<td class='mc'>"
+			                & "<div class='prev'>" & FORMAT(DIVIDE(_P, 1000), "#,##0;-#,##0") & "</div>"
+			                & "<div class='real'>"
+			                    & IF(
+			                        ISBLANK(_R),
+			                        "-",
+			                        FORMAT(DIVIDE(_R, 1000), "#,##0;-#,##0")
+			                            & " <span class='delta " & IF(_Sobe, "up", "down") & "'>"
+			                            & IF(_Sobe, UNICHAR(9650), UNICHAR(9660))
+			                            & FORMAT(ABS(DIVIDE(_R - _P, ABS(_P), 0)), "0%")
+			                            & "</span>"
+			                    )
+			                & "</div>"
+			            & "</td>",
+			        "",
+			        [Mes], ASC
+			    )
+			
+			// ---- 4. HTML final da linha -------------------------------------------
+			//   id        = identificador da linha
+			//   data-card = cards que destacam esta linha no hover (rl, lb, ro, rq)
+			//   class     = estilo da linha (row-start, row-line, row-subtotal, row-total)
+			RETURN
+			    "<tr id='row-investimentos' data-card='rq' class='row-line'>"
+			        & "<td class='cat'>(-) Investimentos</td>"
+			        & CelulasMeses
+			        & "<td class='total'>" & FORMAT(DIVIDE(TotalReal, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total prevtotal'>" & FORMAT(DIVIDE(TotalPrev, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total deltatotal " & IF(SobeTotal, "up", "down") & "'>"
+			            & IF(SobeTotal, UNICHAR(9650), UNICHAR(9660))
+			            & FORMAT(ABS(DIVIDE(TotalReal - TotalPrevComp, ABS(TotalPrevComp), 0)), "0%")
+			        & "</td>"
+			    & "</tr>"
+		displayFolder: 00 HTML\Linhas
+		lineageTag: 9e472df9-fe0f-4b16-b6af-42bba133b358
+
+	/// Gera a linha HTML (12 meses + total) da DRE para: (=) Resultado Antes do IR.
+	measure 'HTML Linha - (=) Resultado Antes do IR' =
+			// =====================================================================
+			// HTML Linha - (=) Resultado Antes do IR
+			// Monta a linha <tr> da DRE: 12 meses (Previsto x Realizado) + totais.
+			//   Realizado = [Resultado Antes do IR] do mês no ano de referência (mês futuro = "-")
+			//   Previsto  = [Resultado Antes do IR LY] (mesmo mês do ano anterior) x [Fator Previsão]
+			// Valores exibidos em R$ mil.
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			VAR Sinal  = 1    // exibe com o sinal original
+			
+			// ---- 1. Tabela com os 12 meses e os valores Real / Previsto ----------
+			VAR Meses =
+			    ADDCOLUMNS(
+			        SELECTCOLUMNS(GENERATESERIES(1, 12, 1), "Mes", [Value]),
+			        "@Real",
+			            VAR _Mes    = [Mes]
+			            VAR _Futuro = AnoRef > YEAR(TODAY()) || (AnoRef = YEAR(TODAY()) && _Mes > MONTH(TODAY()))
+			            RETURN
+			                IF(
+			                    _Futuro,
+			                    BLANK(),
+			                    Sinal * (CALCULATE([Resultado Antes do IR], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0)
+			                ),
+			        "@Prev",
+			            VAR _Mes = [Mes]
+			            RETURN
+			                Sinal * (CALCULATE([Resultado Antes do IR LY], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0) * [Fator Previsão]
+			    )
+			
+			// ---- 2. Totais ---------------------------------------------------------
+			VAR TotalReal     = SUMX(Meses, [@Real])
+			VAR TotalPrev     = SUMX(Meses, [@Prev])                                   // previsto do ano inteiro
+			VAR TotalPrevComp = SUMX(FILTER(Meses, NOT ISBLANK([@Real])), [@Prev])    // previsto só dos meses já realizados (base da variação)
+			VAR SobeTotal     = TotalReal >= TotalPrevComp
+			
+			// ---- 3. Células dos meses (<td class='mc'>) ------------------------
+			//   <div class='prev'> = previsto | <div class='real'> = realizado + seta ▲/▼ e variação %
+			VAR CelulasMeses =
+			    CONCATENATEX(
+			        Meses,
+			        VAR _R    = [@Real]
+			        VAR _P    = [@Prev]
+			        VAR _Sobe = _R >= _P
+			        RETURN
+			            "<td class='mc'>"
+			                & "<div class='prev'>" & FORMAT(DIVIDE(_P, 1000), "#,##0;-#,##0") & "</div>"
+			                & "<div class='real'>"
+			                    & IF(
+			                        ISBLANK(_R),
+			                        "-",
+			                        FORMAT(DIVIDE(_R, 1000), "#,##0;-#,##0")
+			                            & " <span class='delta " & IF(_Sobe, "up", "down") & "'>"
+			                            & IF(_Sobe, UNICHAR(9650), UNICHAR(9660))
+			                            & FORMAT(ABS(DIVIDE(_R - _P, ABS(_P), 0)), "0%")
+			                            & "</span>"
+			                    )
+			                & "</div>"
+			            & "</td>",
+			        "",
+			        [Mes], ASC
+			    )
+			
+			// ---- 4. HTML final da linha -------------------------------------------
+			//   id        = identificador da linha
+			//   data-card = cards que destacam esta linha no hover (rl, lb, ro, rq)
+			//   class     = estilo da linha (row-start, row-line, row-subtotal, row-total)
+			RETURN
+			    "<tr id='row-resultado-antes-ir' data-card='rq' class='row-subtotal'>"
+			        & "<td class='cat'>(=) Resultado Antes do IR</td>"
+			        & CelulasMeses
+			        & "<td class='total'>" & FORMAT(DIVIDE(TotalReal, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total prevtotal'>" & FORMAT(DIVIDE(TotalPrev, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total deltatotal " & IF(SobeTotal, "up", "down") & "'>"
+			            & IF(SobeTotal, UNICHAR(9650), UNICHAR(9660))
+			            & FORMAT(ABS(DIVIDE(TotalReal - TotalPrevComp, ABS(TotalPrevComp), 0)), "0%")
+			        & "</td>"
+			    & "</tr>"
+		displayFolder: 00 HTML\Linhas
+		lineageTag: 303aac73-dd14-477e-8d84-64b00ca7d145
+
+	/// Gera a linha HTML (12 meses + total) da DRE para: (-) Impostos sobre o Lucro.
+	measure 'HTML Linha - (-) Impostos sobre o Lucro' =
+			// =====================================================================
+			// HTML Linha - (-) Impostos sobre o Lucro
+			// Monta a linha <tr> da DRE: 12 meses (Previsto x Realizado) + totais.
+			//   Realizado = [Impostos sobre o Lucro] do mês no ano de referência (mês futuro = "-")
+			//   Previsto  = [Impostos sobre o Lucro LY] (mesmo mês do ano anterior) x [Fator Previsão]
+			// Valores exibidos em R$ mil.
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			VAR Sinal  = -1   // custo/dedução: inverte o sinal para exibir positivo na tabela
+			
+			// ---- 1. Tabela com os 12 meses e os valores Real / Previsto ----------
+			VAR Meses =
+			    ADDCOLUMNS(
+			        SELECTCOLUMNS(GENERATESERIES(1, 12, 1), "Mes", [Value]),
+			        "@Real",
+			            VAR _Mes    = [Mes]
+			            VAR _Futuro = AnoRef > YEAR(TODAY()) || (AnoRef = YEAR(TODAY()) && _Mes > MONTH(TODAY()))
+			            RETURN
+			                IF(
+			                    _Futuro,
+			                    BLANK(),
+			                    Sinal * (CALCULATE([Impostos sobre o Lucro], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0)
+			                ),
+			        "@Prev",
+			            VAR _Mes = [Mes]
+			            RETURN
+			                Sinal * (CALCULATE([Impostos sobre o Lucro LY], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0) * [Fator Previsão]
+			    )
+			
+			// ---- 2. Totais ---------------------------------------------------------
+			VAR TotalReal     = SUMX(Meses, [@Real])
+			VAR TotalPrev     = SUMX(Meses, [@Prev])                                   // previsto do ano inteiro
+			VAR TotalPrevComp = SUMX(FILTER(Meses, NOT ISBLANK([@Real])), [@Prev])    // previsto só dos meses já realizados (base da variação)
+			VAR SobeTotal     = TotalReal >= TotalPrevComp
+			
+			// ---- 3. Células dos meses (<td class='mc'>) ------------------------
+			//   <div class='prev'> = previsto | <div class='real'> = realizado + seta ▲/▼ e variação %
+			VAR CelulasMeses =
+			    CONCATENATEX(
+			        Meses,
+			        VAR _R    = [@Real]
+			        VAR _P    = [@Prev]
+			        VAR _Sobe = _R >= _P
+			        RETURN
+			            "<td class='mc'>"
+			                & "<div class='prev'>" & FORMAT(DIVIDE(_P, 1000), "#,##0;-#,##0") & "</div>"
+			                & "<div class='real'>"
+			                    & IF(
+			                        ISBLANK(_R),
+			                        "-",
+			                        FORMAT(DIVIDE(_R, 1000), "#,##0;-#,##0")
+			                            & " <span class='delta " & IF(_Sobe, "up", "down") & "'>"
+			                            & IF(_Sobe, UNICHAR(9650), UNICHAR(9660))
+			                            & FORMAT(ABS(DIVIDE(_R - _P, ABS(_P), 0)), "0%")
+			                            & "</span>"
+			                    )
+			                & "</div>"
+			            & "</td>",
+			        "",
+			        [Mes], ASC
+			    )
+			
+			// ---- 4. HTML final da linha -------------------------------------------
+			//   id        = identificador da linha
+			//   data-card = cards que destacam esta linha no hover (rl, lb, ro, rq)
+			//   class     = estilo da linha (row-start, row-line, row-subtotal, row-total)
+			RETURN
+			    "<tr id='row-impostos' data-card='rq' class='row-line'>"
+			        & "<td class='cat'>(-) Impostos sobre o Lucro</td>"
+			        & CelulasMeses
+			        & "<td class='total'>" & FORMAT(DIVIDE(TotalReal, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total prevtotal'>" & FORMAT(DIVIDE(TotalPrev, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total deltatotal " & IF(SobeTotal, "up", "down") & "'>"
+			            & IF(SobeTotal, UNICHAR(9650), UNICHAR(9660))
+			            & FORMAT(ABS(DIVIDE(TotalReal - TotalPrevComp, ABS(TotalPrevComp), 0)), "0%")
+			        & "</td>"
+			    & "</tr>"
+		displayFolder: 00 HTML\Linhas
+		lineageTag: eb872e28-b426-46ce-a80e-65de254db40f
+
+	/// Gera a linha HTML (12 meses + total) da DRE para: (=) Resultado Líquido do Exercício.
+	measure 'HTML Linha - (=) Resultado Líquido do Exercício' =
+			// =====================================================================
+			// HTML Linha - (=) Resultado Líquido do Exercício
+			// Monta a linha <tr> da DRE: 12 meses (Previsto x Realizado) + totais.
+			//   Realizado = [Resultado Líquido] do mês no ano de referência (mês futuro = "-")
+			//   Previsto  = [Resultado Líquido LY] (mesmo mês do ano anterior) x [Fator Previsão]
+			// Valores exibidos em R$ mil.
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			VAR Sinal  = 1    // exibe com o sinal original
+			
+			// ---- 1. Tabela com os 12 meses e os valores Real / Previsto ----------
+			VAR Meses =
+			    ADDCOLUMNS(
+			        SELECTCOLUMNS(GENERATESERIES(1, 12, 1), "Mes", [Value]),
+			        "@Real",
+			            VAR _Mes    = [Mes]
+			            VAR _Futuro = AnoRef > YEAR(TODAY()) || (AnoRef = YEAR(TODAY()) && _Mes > MONTH(TODAY()))
+			            RETURN
+			                IF(
+			                    _Futuro,
+			                    BLANK(),
+			                    Sinal * (CALCULATE([Resultado Líquido], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0)
+			                ),
+			        "@Prev",
+			            VAR _Mes = [Mes]
+			            RETURN
+			                Sinal * (CALCULATE([Resultado Líquido LY], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes) + 0) * [Fator Previsão]
+			    )
+			
+			// ---- 2. Totais ---------------------------------------------------------
+			VAR TotalReal     = SUMX(Meses, [@Real])
+			VAR TotalPrev     = SUMX(Meses, [@Prev])                                   // previsto do ano inteiro
+			VAR TotalPrevComp = SUMX(FILTER(Meses, NOT ISBLANK([@Real])), [@Prev])    // previsto só dos meses já realizados (base da variação)
+			VAR SobeTotal     = TotalReal >= TotalPrevComp
+			
+			// ---- 3. Células dos meses (<td class='mc'>) ------------------------
+			//   <div class='prev'> = previsto | <div class='real'> = realizado + seta ▲/▼ e variação %
+			VAR CelulasMeses =
+			    CONCATENATEX(
+			        Meses,
+			        VAR _R    = [@Real]
+			        VAR _P    = [@Prev]
+			        VAR _Sobe = _R >= _P
+			        RETURN
+			            "<td class='mc'>"
+			                & "<div class='prev'>" & FORMAT(DIVIDE(_P, 1000), "#,##0;-#,##0") & "</div>"
+			                & "<div class='real'>"
+			                    & IF(
+			                        ISBLANK(_R),
+			                        "-",
+			                        FORMAT(DIVIDE(_R, 1000), "#,##0;-#,##0")
+			                            & " <span class='delta " & IF(_Sobe, "up", "down") & "'>"
+			                            & IF(_Sobe, UNICHAR(9650), UNICHAR(9660))
+			                            & FORMAT(ABS(DIVIDE(_R - _P, ABS(_P), 0)), "0%")
+			                            & "</span>"
+			                    )
+			                & "</div>"
+			            & "</td>",
+			        "",
+			        [Mes], ASC
+			    )
+			
+			// ---- 4. HTML final da linha -------------------------------------------
+			//   id        = identificador da linha
+			//   data-card = cards que destacam esta linha no hover (rl, lb, ro, rq)
+			//   class     = estilo da linha (row-start, row-line, row-subtotal, row-total)
+			RETURN
+			    "<tr id='row-resultado-liquido' data-card='rq' class='row-total is-target'>"
+			        & "<td class='cat'>(=) Resultado Líquido do Exercício</td>"
+			        & CelulasMeses
+			        & "<td class='total'>" & FORMAT(DIVIDE(TotalReal, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total prevtotal'>" & FORMAT(DIVIDE(TotalPrev, 1000), "#,##0;-#,##0") & "</td>"
+			        & "<td class='total deltatotal " & IF(SobeTotal, "up", "down") & "'>"
+			            & IF(SobeTotal, UNICHAR(9650), UNICHAR(9660))
+			            & FORMAT(ABS(DIVIDE(TotalReal - TotalPrevComp, ABS(TotalPrevComp), 0)), "0%")
+			        & "</td>"
+			    & "</tr>"
+		displayFolder: 00 HTML\Linhas
+		lineageTag: 55c5b76b-9f88-4007-869a-253680f3a520
+
+	/// Card HTML dinâmico: Receita Líquida do ano vs ano anterior.
+	measure 'HTML Card - Receita Líquida' =
+			// =====================================================================
+			// HTML Card - Receita Líquida
+			// Card de KPI com efeito flip:
+			//   Frente = valor do ano (Real + Previsão) e comparação com o ano anterior
+			//   Verso  = "Como chegamos nesse valor" (composição do resultado)
+			// Prefixo dos ids: 'rl' (usado pelo JS do seletor de mês e pelo destaque das linhas)
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			
+			// ---- 1. Valores ---------------------------------------------------------
+			VAR ValAtual = CALCULATE([Receita Líquida (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			VAR ValLY    = CALCULATE([Receita Líquida (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef - 1)
+			
+			VAR ReceitaBruta = CALCULATE([Receita Bruta de Vendas (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			VAR Deducoes = ReceitaBruta - ValAtual
+			
+			// ---- 2. Cor da barra: >= 100% do ano anterior = verde | >= 90% = amarelo | abaixo = vermelho
+			VAR Ratio = DIVIDE(ValAtual, ValLY)
+			VAR Cls   = IF(Ratio >= 1, "attention", IF(Ratio >= 0.9, "alert", "management"))
+			
+			// ---- 3. Textos formatados (R$ mi a partir de 50.000.000) ---------------
+			VAR FmtValor = IF(ABS(ValAtual) >= 50000000, FORMAT(ValAtual, "R$ #,##0.0,,""mi"""), FORMAT(ValAtual, "R$ #,##0,""mil"""))
+			VAR FmtValorLY = IF(ABS(ValLY) >= 50000000, FORMAT(ValLY, "R$ #,##0.0,,""mi"""), FORMAT(ValLY, "R$ #,##0,""mil"""))
+			VAR FmtReceitaBruta = IF(ABS(ReceitaBruta) >= 50000000, FORMAT(ReceitaBruta, "R$ #,##0.0,,""mi"""), FORMAT(ReceitaBruta, "R$ #,##0,""mil"""))
+			VAR FmtDeducoes = IF(ABS(Deducoes) >= 50000000, FORMAT(Deducoes, "R$ #,##0.0,,""mi"""), FORMAT(Deducoes, "R$ #,##0,""mil"""))
+			
+			// ---- 4. HTML do card -------------------------------------------------------
+			RETURN
+			    // Container: no hover adiciona a classe hl-rl no relatório (destaca as linhas da tabela)
+			    "<div class='card' id='card-rl'"
+			        & " onmouseenter=""document.getElementById('dre-container').classList.add('hl-rl')"""
+			        & " onmouseleave=""document.getElementById('dre-container').classList.remove('hl-rl')"">"
+			        & "<div class='card-inner'>"
+			
+			            // Frente
+			            & "<div class='card-face card-front'>"
+			                & "<h3 id='rl-h3'>Receita Líquida</h3>"
+			                & "<div class='value'><span id='rl-vnum'>" & FmtValor & "</span>" & "</div>"
+			                & "<div class='compare'>"
+			                    & "<span id='rl-cleft'>" & FORMAT(AnoRef, "0") & "</span>"
+			                    & "<span id='rl-cright'>" & FORMAT(AnoRef - 1, "0") & " <b>" & FmtValorLY & "</b></span>"
+			                & "</div>"
+			                & "<div class='track'><div class='fill " & Cls & "' id='rl-fill' style='width:" & FORMAT(MIN(1, MAX(0, Ratio)), "0%") & "'></div></div>"
+			            & "</div>"
+			
+			            // Verso
+			            & "<div class='card-face card-back'>"
+			                & "<h4 id='rl-bh4'>Como chegamos nesse valor</h4>"
+			                & "<div class='bline'><span>Receita Bruta de Vendas</span><b id='rl-b1'>" & FmtReceitaBruta & "</b></div>"
+			                & "<div class='bline'><span>(-) Deduções</span><b id='rl-b2'>" & FmtDeducoes & "</b></div>"
+			                & "<div class='bline result'><span>(=) Receita Líquida</span><b id='rl-b3'>" & FmtValor & "</b></div>"
+			            & "</div>"
+			
+			        & "</div>"
+			    & "</div>"
+		displayFolder: 00 HTML\Cards
+		lineageTag: 28d085a8-1ed2-4568-b988-9bf9cadb9e8f
+
+	/// Card HTML dinâmico: Lucro Bruto e margem do ano vs ano anterior.
+	measure 'HTML Card - Lucro Bruto' =
+			// =====================================================================
+			// HTML Card - Lucro Bruto
+			// Card de KPI com efeito flip:
+			//   Frente = valor do ano (Real + Previsão), margem e comparação com o ano anterior
+			//   Verso  = "Como chegamos nesse valor" (composição do resultado)
+			// Prefixo dos ids: 'lb' (usado pelo JS do seletor de mês e pelo destaque das linhas)
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			
+			// ---- 1. Valores ---------------------------------------------------------
+			VAR ValAtual = CALCULATE([Lucro Bruto (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			VAR ValLY    = CALCULATE([Lucro Bruto (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef - 1)
+			VAR MargemAtual = CALCULATE([Margem Bruta %], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			VAR MargemLY    = CALCULATE([Margem Bruta %], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef - 1)
+			VAR ReceitaLiquida = CALCULATE([Receita Líquida (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			VAR CMV = ReceitaLiquida - ValAtual
+			
+			// ---- 2. Cor da barra: >= 100% do ano anterior = verde | >= 90% = amarelo | abaixo = vermelho
+			VAR Ratio = DIVIDE(ValAtual, ValLY)
+			VAR Cls   = IF(Ratio >= 1, "attention", IF(Ratio >= 0.9, "alert", "management"))
+			
+			// ---- 3. Textos formatados (R$ mi a partir de 50.000.000) ---------------
+			VAR FmtValor = IF(ABS(ValAtual) >= 50000000, FORMAT(ValAtual, "R$ #,##0.0,,""mi"""), FORMAT(ValAtual, "R$ #,##0,""mil"""))
+			VAR FmtValorLY = IF(ABS(ValLY) >= 50000000, FORMAT(ValLY, "R$ #,##0.0,,""mi"""), FORMAT(ValLY, "R$ #,##0,""mil"""))
+			VAR FmtReceitaLiquida = IF(ABS(ReceitaLiquida) >= 50000000, FORMAT(ReceitaLiquida, "R$ #,##0.0,,""mi"""), FORMAT(ReceitaLiquida, "R$ #,##0,""mil"""))
+			VAR FmtCMV = IF(ABS(CMV) >= 50000000, FORMAT(CMV, "R$ #,##0.0,,""mi"""), FORMAT(CMV, "R$ #,##0,""mil"""))
+			
+			// ---- 4. HTML do card -------------------------------------------------------
+			RETURN
+			    // Container: no hover adiciona a classe hl-lb no relatório (destaca as linhas da tabela)
+			    "<div class='card' id='card-lb'"
+			        & " onmouseenter=""document.getElementById('dre-container').classList.add('hl-lb')"""
+			        & " onmouseleave=""document.getElementById('dre-container').classList.remove('hl-lb')"">"
+			        & "<div class='card-inner'>"
+			
+			            // Frente
+			            & "<div class='card-face card-front'>"
+			                & "<h3 id='lb-h3'>Lucro Bruto</h3>"
+			                & "<div class='value'><span id='lb-vnum'>" & FmtValor & "</span>" & " <span id='lb-vmar' style='font-size:12px;color:#8a94b3'>(" & FORMAT(MargemAtual, "0.0%") & ")</span>" & "</div>"
+			                & "<div class='compare'>"
+			                    & "<span id='lb-cleft'>" & FORMAT(AnoRef, "0") & "</span>"
+			                    & "<span id='lb-cright'>" & FORMAT(AnoRef - 1, "0") & " <b>" & FmtValorLY & " (" & FORMAT(MargemLY, "0.0%") & ")" & "</b></span>"
+			                & "</div>"
+			                & "<div class='track'><div class='fill " & Cls & "' id='lb-fill' style='width:" & FORMAT(MIN(1, MAX(0, Ratio)), "0%") & "'></div></div>"
+			            & "</div>"
+			
+			            // Verso
+			            & "<div class='card-face card-back'>"
+			                & "<h4 id='lb-bh4'>Como chegamos nesse valor</h4>"
+			                & "<div class='bline'><span>Receita Líquida</span><b id='lb-b1'>" & FmtReceitaLiquida & "</b></div>"
+			                & "<div class='bline'><span>(-) CMV</span><b id='lb-b2'>" & FmtCMV & "</b></div>"
+			                & "<div class='bline result'><span>(=) Lucro Bruto</span><b id='lb-b3'>" & FmtValor & "</b></div>"
+			            & "</div>"
+			
+			        & "</div>"
+			    & "</div>"
+		displayFolder: 00 HTML\Cards
+		lineageTag: de9759fb-ec3f-473a-8828-68b55046e668
+
+	/// Card HTML dinâmico: Resultado Operacional e margem do ano vs ano anterior.
+	measure 'HTML Card - Resultado Operacional' =
+			// =====================================================================
+			// HTML Card - Resultado Operacional
+			// Card de KPI com efeito flip:
+			//   Frente = valor do ano (Real + Previsão), margem e comparação com o ano anterior
+			//   Verso  = "Como chegamos nesse valor" (composição do resultado)
+			// Prefixo dos ids: 'ro' (usado pelo JS do seletor de mês e pelo destaque das linhas)
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			
+			// ---- 1. Valores ---------------------------------------------------------
+			VAR ValAtual = CALCULATE([Resultado Operacional (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			VAR ValLY    = CALCULATE([Resultado Operacional (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef - 1)
+			VAR MargemAtual = CALCULATE([Margem Operacional %], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			VAR MargemLY    = CALCULATE([Margem Operacional %], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef - 1)
+			VAR LucroBruto = CALCULATE([Lucro Bruto (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			VAR GastosVariaveis = -CALCULATE([Gastos Variáveis (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			VAR GastosFixos = -CALCULATE([Gastos Fixos (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			
+			// ---- 2. Cor da barra: >= 100% do ano anterior = verde | >= 90% = amarelo | abaixo = vermelho
+			VAR Ratio = DIVIDE(ValAtual, ValLY)
+			VAR Cls   = IF(Ratio >= 1, "attention", IF(Ratio >= 0.9, "alert", "management"))
+			
+			// ---- 3. Textos formatados (R$ mi a partir de 50.000.000) ---------------
+			VAR FmtValor = IF(ABS(ValAtual) >= 50000000, FORMAT(ValAtual, "R$ #,##0.0,,""mi"""), FORMAT(ValAtual, "R$ #,##0,""mil"""))
+			VAR FmtValorLY = IF(ABS(ValLY) >= 50000000, FORMAT(ValLY, "R$ #,##0.0,,""mi"""), FORMAT(ValLY, "R$ #,##0,""mil"""))
+			VAR FmtLucroBruto = IF(ABS(LucroBruto) >= 50000000, FORMAT(LucroBruto, "R$ #,##0.0,,""mi"""), FORMAT(LucroBruto, "R$ #,##0,""mil"""))
+			VAR FmtGastosVariaveis = IF(ABS(GastosVariaveis) >= 50000000, FORMAT(GastosVariaveis, "R$ #,##0.0,,""mi"""), FORMAT(GastosVariaveis, "R$ #,##0,""mil"""))
+			VAR FmtGastosFixos = IF(ABS(GastosFixos) >= 50000000, FORMAT(GastosFixos, "R$ #,##0.0,,""mi"""), FORMAT(GastosFixos, "R$ #,##0,""mil"""))
+			
+			// ---- 4. HTML do card -------------------------------------------------------
+			RETURN
+			    // Container: no hover adiciona a classe hl-ro no relatório (destaca as linhas da tabela)
+			    "<div class='card' id='card-ro'"
+			        & " onmouseenter=""document.getElementById('dre-container').classList.add('hl-ro')"""
+			        & " onmouseleave=""document.getElementById('dre-container').classList.remove('hl-ro')"">"
+			        & "<div class='card-inner'>"
+			
+			            // Frente
+			            & "<div class='card-face card-front'>"
+			                & "<h3 id='ro-h3'>Resultado Operacional</h3>"
+			                & "<div class='value'><span id='ro-vnum'>" & FmtValor & "</span>" & " <span id='ro-vmar' style='font-size:12px;color:#8a94b3'>(" & FORMAT(MargemAtual, "0.0%") & ")</span>" & "</div>"
+			                & "<div class='compare'>"
+			                    & "<span id='ro-cleft'>" & FORMAT(AnoRef, "0") & "</span>"
+			                    & "<span id='ro-cright'>" & FORMAT(AnoRef - 1, "0") & " <b>" & FmtValorLY & " (" & FORMAT(MargemLY, "0.0%") & ")" & "</b></span>"
+			                & "</div>"
+			                & "<div class='track'><div class='fill " & Cls & "' id='ro-fill' style='width:" & FORMAT(MIN(1, MAX(0, Ratio)), "0%") & "'></div></div>"
+			            & "</div>"
+			
+			            // Verso
+			            & "<div class='card-face card-back'>"
+			                & "<h4 id='ro-bh4'>Como chegamos nesse valor</h4>"
+			                & "<div class='bline'><span>Lucro Bruto</span><b id='ro-b1'>" & FmtLucroBruto & "</b></div>"
+			                & "<div class='bline'><span>(-) Gastos Variáveis com Vendas</span><b id='ro-b2'>" & FmtGastosVariaveis & "</b></div>"
+			                & "<div class='bline'><span>(-) Gastos Fixos</span><b id='ro-b3'>" & FmtGastosFixos & "</b></div>"
+			                & "<div class='bline result'><span>(=) Resultado Operacional</span><b id='ro-b4'>" & FmtValor & "</b></div>"
+			            & "</div>"
+			
+			        & "</div>"
+			    & "</div>"
+		displayFolder: 00 HTML\Cards
+		lineageTag: 95fe8ba2-26bc-4568-8796-71f99db04661
+
+	/// Card HTML dinâmico: Resultado Líquido e margem do ano vs ano anterior.
+	measure 'HTML Card - Resultado Líquido' =
+			// =====================================================================
+			// HTML Card - Resultado Líquido
+			// Card de KPI com efeito flip:
+			//   Frente = valor do ano (Real + Previsão), margem e comparação com o ano anterior
+			//   Verso  = "Como chegamos nesse valor" (composição do resultado)
+			// Prefixo dos ids: 'rq' (usado pelo JS do seletor de mês e pelo destaque das linhas)
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			
+			// ---- 1. Valores ---------------------------------------------------------
+			VAR ValAtual = CALCULATE([Resultado Líquido (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			VAR ValLY    = CALCULATE([Resultado Líquido (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef - 1)
+			VAR MargemAtual = CALCULATE([Margem Líquida %], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			VAR MargemLY    = CALCULATE([Margem Líquida %], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef - 1)
+			VAR ResultadoOperacional = CALCULATE([Resultado Operacional (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			VAR ResultadoFinanceiro = CALCULATE([Resultado Financeiro (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			VAR Investimentos = -CALCULATE([Investimentos (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			VAR Impostos = -CALCULATE([Impostos sobre o Lucro (Real + Previsão)], REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef)
+			
+			// ---- 2. Cor da barra: >= 100% do ano anterior = verde | >= 90% = amarelo | abaixo = vermelho
+			VAR Ratio = DIVIDE(ValAtual, ValLY)
+			VAR Cls   = IF(Ratio >= 1, "attention", IF(Ratio >= 0.9, "alert", "management"))
+			
+			// ---- 3. Textos formatados (R$ mi a partir de 1.000.000) ---------------
+			VAR FmtValor = IF(ABS(ValAtual) >= 1000000, FORMAT(ValAtual, "R$ #,##0.0,,""mi"""), FORMAT(ValAtual, "R$ #,##0,""mil"""))
+			VAR FmtValorLY = IF(ABS(ValLY) >= 1000000, FORMAT(ValLY, "R$ #,##0.0,,""mi"""), FORMAT(ValLY, "R$ #,##0,""mil"""))
+			VAR FmtResultadoOperacional = IF(ABS(ResultadoOperacional) >= 1000000, FORMAT(ResultadoOperacional, "R$ #,##0.0,,""mi"""), FORMAT(ResultadoOperacional, "R$ #,##0,""mil"""))
+			VAR FmtResultadoFinanceiro = IF(ABS(ResultadoFinanceiro) >= 1000000, FORMAT(ResultadoFinanceiro, "R$ #,##0.0,,""mi"""), FORMAT(ResultadoFinanceiro, "R$ #,##0,""mil"""))
+			VAR FmtInvestimentos = IF(ABS(Investimentos) >= 1000000, FORMAT(Investimentos, "R$ #,##0.0,,""mi"""), FORMAT(Investimentos, "R$ #,##0,""mil"""))
+			VAR FmtImpostos = IF(ABS(Impostos) >= 1000000, FORMAT(Impostos, "R$ #,##0.0,,""mi"""), FORMAT(Impostos, "R$ #,##0,""mil"""))
+			
+			// ---- 4. HTML do card -------------------------------------------------------
+			RETURN
+			    // Container: no hover adiciona a classe hl-rq no relatório (destaca as linhas da tabela)
+			    "<div class='card' id='card-rq'"
+			        & " onmouseenter=""document.getElementById('dre-container').classList.add('hl-rq')"""
+			        & " onmouseleave=""document.getElementById('dre-container').classList.remove('hl-rq')"">"
+			        & "<div class='card-inner'>"
+			
+			            // Frente
+			            & "<div class='card-face card-front'>"
+			                & "<h3 id='rq-h3'>Resultado Líquido</h3>"
+			                & "<div class='value'><span id='rq-vnum'>" & FmtValor & "</span>" & " <span id='rq-vmar' style='font-size:12px;color:#8a94b3'>(" & FORMAT(MargemAtual, "0.0%") & ")</span>" & "</div>"
+			                & "<div class='compare'>"
+			                    & "<span id='rq-cleft'>" & FORMAT(AnoRef, "0") & "</span>"
+			                    & "<span id='rq-cright'>" & FORMAT(AnoRef - 1, "0") & " <b>" & FmtValorLY & " (" & FORMAT(MargemLY, "0.0%") & ")" & "</b></span>"
+			                & "</div>"
+			                & "<div class='track'><div class='fill " & Cls & "' id='rq-fill' style='width:" & FORMAT(MIN(1, MAX(0, Ratio)), "0%") & "'></div></div>"
+			            & "</div>"
+			
+			            // Verso
+			            & "<div class='card-face card-back'>"
+			                & "<h4 id='rq-bh4'>Como chegamos nesse valor</h4>"
+			                & "<div class='bline'><span>Resultado Operacional</span><b id='rq-b1'>" & FmtResultadoOperacional & "</b></div>"
+			                & "<div class='bline'><span>(+/-) Resultado Financeiro</span><b id='rq-b2'>" & FmtResultadoFinanceiro & "</b></div>"
+			                & "<div class='bline'><span>(-) Investimentos</span><b id='rq-b3'>" & FmtInvestimentos & "</b></div>"
+			                & "<div class='bline'><span>(-) Impostos sobre o Lucro</span><b id='rq-b4'>" & FmtImpostos & "</b></div>"
+			                & "<div class='bline result'><span>(=) Resultado Líquido</span><b id='rq-b5'>" & FmtValor & "</b></div>"
+			            & "</div>"
+			
+			        & "</div>"
+			    & "</div>"
+		displayFolder: 00 HTML\Cards
+		lineageTag: 72d0842e-99d9-49ff-a50c-e1f9d8688607
+
+	/// Medida final: monta o relatório HTML completo da DRE (CSS + cabeçalho + cards + tabela mensal + rodapé). Conecte esta medida ao visual HTML Content do Power BI.
+	measure 'HTML DRE' =
+			// =====================================================================
+			// HTML DRE  (medida final — usar no visual HTML Content)
+			// Estrutura do relatório:
+			//   1. CSS ................. [HTML CSS Base]
+			//   2. Barra de ferramentas: seletor de mês + botão de tema claro/escuro
+			//   3. Cabeçalho: título, ano de referência, data de atualização, legenda
+			//   4. Cards de KPI ........ [HTML Card - ...]
+			//   5. Tabela mensal ....... [HTML Linha - ...] (uma medida por linha da DRE)
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			
+			// ---- Cabeçalho da tabela: "Jan ... Dez", cada um com sub-rótulo Prev | Real
+			VAR CabecalhoMeses =
+			    CONCATENATEX(
+			        SELECTCOLUMNS(GENERATESERIES(1, 12, 1), "Mes", [Value]),
+			        "<th>" & MID("JanFevMarAbrMaiJunJulAgoSetOutNovDez", ([Mes] - 1) * 3 + 1, 3)
+			            & "<div class='monthsub'><span class='sp'>Prev</span><span class='sr'>Real</span></div></th>",
+			        "",
+			        [Mes], ASC
+			    )
+			
+			// ---- Opções do seletor de mês (value = índice 0..11 usado pelo JS)
+			VAR OpcoesMes =
+			    "<option value=''>📅 Ano inteiro</option>"
+			    & "<option value='0'>Janeiro</option>"
+			    & "<option value='1'>Fevereiro</option>"
+			    & "<option value='2'>Março</option>"
+			    & "<option value='3'>Abril</option>"
+			    & "<option value='4'>Maio</option>"
+			    & "<option value='5'>Junho</option>"
+			    & "<option value='6'>Julho</option>"
+			    & "<option value='7'>Agosto</option>"
+			    & "<option value='8'>Setembro</option>"
+			    & "<option value='9'>Outubro</option>"
+			    & "<option value='10'>Novembro</option>"
+			    & "<option value='11'>Dezembro</option>"
+			
+			RETURN
+			    // 1. CSS
+			    [HTML CSS Base]
+			
+			    // Container principal (id usado pelo JS e pelos destaques dos cards)
+			    & "<div class='dre-report' id='dre-container'>"
+			
+			        // 2. Barra de ferramentas
+			        & "<div class='toolbar'>"
+			            // Seletor de mês: o JS está em [HTML JS Filtro Mês]
+			            & "<select class='theme-btn' style='cursor:pointer' onchange=""" & [HTML JS Filtro Mês] & """>"
+			                & OpcoesMes
+			            & "</select>"
+			            // Botão de tema: liga/desliga a classe .light no container
+			            & "<button class='theme-btn' onclick="""
+			                & "document.getElementById('dre-container').classList.toggle('light');"
+			                & "this.textContent=(document.getElementById('dre-container').classList.contains('light')?'🌙 Tema Escuro':'☀️ Tema Claro');"
+			            & """>☀️ Tema Claro</button>"
+			        & "</div>"
+			
+			        // 3. Cabeçalho
+			        & "<div class='head'>"
+			            & "<div class='brand'><div>"
+			                & "<div class='title'>📊 DRE <b>Gerencial</b> — Consolidado</div>"
+			                & "<div class='sub'>Demonstrativo do Resultado do Exercício &middot; Ano " & FORMAT(AnoRef, "0") & "</div>"
+			            & "</div></div>"
+			            & "<div class='meta'>Atualizado em " & FORMAT(TODAY(), "dd/mm/yyyy")
+			                & "<div class='legend'>"
+			                    & "<span class='chip attention'>No alvo</span>"
+			                    & "<span class='chip alert'>Atenção</span>"
+			                    & "<span class='chip management'>Abaixo</span>"
+			                & "</div>"
+			            & "</div>"
+			        & "</div>"
+			
+			        // 4. Cards de KPI (grid de 4 colunas)
+			        & "<div class='grid g4'>"
+			            & [HTML Card - Receita Líquida]
+			            & [HTML Card - Lucro Bruto]
+			            & [HTML Card - Resultado Operacional]
+			            & [HTML Card - Resultado Líquido]
+			        & "</div>"
+			        & "<div style='text-align:right;font-size:10.5px;color:#8a94b3;margin:-4px 0 10px;'>💡 Passe o mouse sobre um card acima para destacar, no quadro abaixo, as linhas que compõem aquele valor.</div>"
+			
+			        // 5. Tabela mensal da DRE
+			        & "<div class='panel'>"
+			            & "<div class='panel-title'>"
+			                & "<h2>DRE Mensal " & FORMAT(AnoRef, "0") & " — valores em R$ mil</h2>"
+			                & "<div class='hint'>Em cada mês: <span style='color:#c9974a'>Previsto</span> e <b>Realizado</b>, com a variação % ao lado · arraste a tabela para o lado para ver todos os meses</div>"
+			            & "</div>"
+			            & "<div class='table-scroll'><table>"
+			                // Cabeçalho: Linha | Jan..Dez | Real | Previsto | Var
+			                & "<thead><tr>"
+			                    & "<th>Linha da DRE</th>"
+			                    & CabecalhoMeses
+			                    & "<th class='total-h'>Real</th><th class='total-h'>Previsto</th><th class='total-h'>Var</th>"
+			                & "</tr></thead>"
+			                // Corpo: uma medida por linha, na ordem da DRE
+			                & "<tbody>"
+			                    & [HTML Linha - Receita Bruta de Vendas]
+			                    & [HTML Linha - (-) Deduções da Receita Bruta]
+			                    & [HTML Linha - (=) Receita Líquida]
+			                    & [HTML Linha - (-) Custo das Mercadorias Vendidas (CMV)]
+			                    & [HTML Linha - (=) Lucro Bruto]
+			                    & [HTML Linha - (-) Gastos Variáveis com Vendas]
+			                    & [HTML Linha - (-) Gastos Fixos]
+			                    & [HTML Linha - (=) Resultado Operacional]
+			                    & [HTML Linha - (+/-) Resultado Financeiro]
+			                    & [HTML Linha - (-) Investimentos]
+			                    & [HTML Linha - (=) Resultado Antes do IR]
+			                    & [HTML Linha - (-) Impostos sobre o Lucro]
+			                    & [HTML Linha - (=) Resultado Líquido do Exercício]
+			                & "</tbody>"
+			            & "</table></div>"
+			        & "</div>"
+			
+			    & "</div>"
+		displayFolder: 00 HTML
+		lineageTag: 1721b386-46f4-49e1-a394-d43595c3e39a
+
+	/// Lucro Bruto no mesmo período do ano anterior.
+	measure 'Lucro Bruto LY' = CALCULATE([Lucro Bruto], SAMEPERIODLASTYEAR(dCalendario[Date]))
+		formatString: R$ #,##0.00
+		displayFolder: 05 Lucro Bruto
+		lineageTag: b7cc1b45-9d42-4e01-b18b-263928105665
+
+	/// Resultado Operacional no mesmo período do ano anterior.
+	measure 'Resultado Operacional LY' = CALCULATE([Resultado Operacional], SAMEPERIODLASTYEAR(dCalendario[Date]))
+		formatString: R$ #,##0.00
+		displayFolder: 07 Resultado Operacional
+		lineageTag: 7c7870bb-55d4-4e1c-815d-7630b1fe8ec6
+
+	/// Resultado Antes do IR no mesmo período do ano anterior.
+	measure 'Resultado Antes do IR LY' = CALCULATE([Resultado Antes do IR], SAMEPERIODLASTYEAR(dCalendario[Date]))
+		formatString: R$ #,##0.00
+		displayFolder: 10 Resultado Antes do IR
+		lineageTag: 4e6eda59-873d-4d6a-b6b4-35331c5499bb
+
+	/// Resultado Líquido no mesmo período do ano anterior.
+	measure 'Resultado Líquido LY' = CALCULATE([Resultado Líquido], SAMEPERIODLASTYEAR(dCalendario[Date]))
+		formatString: R$ #,##0.00
+		displayFolder: 13 Resultado Líquido
+		lineageTag: 7a757877-7b61-4755-9b69-70bcfba99cb8
+
+	/// Array JavaScript com Real e Previsto de cada mês (usado pelo seletor de mês dos cards).
+	measure 'HTML JS Dados Mensais' =
+			// =====================================================================
+			// HTML JS Dados Mensais
+			// Gera o array JavaScript com os números de cada mês, usado pelo
+			// seletor de mês para trocar os valores dos cards. Formato:
+			//   [{n:'Jan', rl:475800, rlp:430490, lb:..., lbp:...}, ...]
+			// Para cada chave: valor Realizado e "<chave>p" = Previsto.
+			// Mês futuro sem realizado sai como null.
+			// Chaves: rl Receita Líquida | lb Lucro Bruto | ro Resultado Operacional
+			//         rq Resultado Líquido | rb Receita Bruta | ded Deduções | cmv CMV
+			//         gv Gastos Variáveis | gf Gastos Fixos | rf Resultado Financeiro
+			//         inv Investimentos | imp Impostos
+			// Sinal -1 = custos/deduções exibidos como valor positivo.
+			// =====================================================================
+			VAR AnoRef = [Ano Referência DRE]
+			VAR Metricas =
+			    DATATABLE(
+			        "Chave", STRING,
+			        "Sinal", INTEGER,
+			        { {"rl", 1}, {"lb", 1}, {"ro", 1}, {"rq", 1}, {"rb", 1}, {"ded", -1}, {"cmv", -1}, {"gv", -1}, {"gf", -1}, {"rf", 1}, {"inv", -1}, {"imp", -1} }
+			    )
+			RETURN
+			    "["
+			    & CONCATENATEX(
+			        SELECTCOLUMNS(GENERATESERIES(1, 12, 1), "Mes", [Value]),
+			        VAR _Mes    = [Mes]
+			        VAR _Futuro = AnoRef > YEAR(TODAY()) || (AnoRef = YEAR(TODAY()) && _Mes > MONTH(TODAY()))
+			        RETURN
+			            "{n:'" & MID("JanFevMarAbrMaiJunJulAgoSetOutNovDez", (_Mes - 1) * 3 + 1, 3) & "'"
+			            & CONCATENATEX(
+			                Metricas,
+			                VAR _Chave = [Chave]
+			                VAR _Sinal = [Sinal]
+			                VAR _Real =
+			                    CALCULATE(
+			                        SWITCH(_Chave,
+			                    "rl", [Receita Líquida],
+			                    "lb", [Lucro Bruto],
+			                    "ro", [Resultado Operacional],
+			                    "rq", [Resultado Líquido],
+			                    "rb", [Receita Bruta de Vendas],
+			                    "ded", [Deduções da Receita Bruta],
+			                    "cmv", [Custo das Mercadorias Vendidas],
+			                    "gv", [Gastos Variáveis com Vendas],
+			                    "gf", [Gastos Fixos],
+			                    "rf", [Resultado Financeiro],
+			                    "inv", [Investimentos],
+			                    "imp", [Impostos sobre o Lucro]),
+			                        REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes
+			                    )
+			                VAR _Prev =
+			                    CALCULATE(
+			                        SWITCH(_Chave,
+			                    "rl", [Receita Líquida LY],
+			                    "lb", [Lucro Bruto LY],
+			                    "ro", [Resultado Operacional LY],
+			                    "rq", [Resultado Líquido LY],
+			                    "rb", [Receita Bruta de Vendas LY],
+			                    "ded", [Deduções da Receita Bruta LY],
+			                    "cmv", [CMV LY],
+			                    "gv", [Gastos Variáveis LY],
+			                    "gf", [Gastos Fixos LY],
+			                    "rf", [Resultado Financeiro LY],
+			                    "inv", [Investimentos LY],
+			                    "imp", [Impostos sobre o Lucro LY]),
+			                        REMOVEFILTERS(dCalendario), dCalendario[Ano] = AnoRef, dCalendario[NumMes] = _Mes
+			                    ) * [Fator Previsão]
+			                RETURN
+			                    "," & _Chave & ":" & IF(_Futuro, "null", FORMAT(_Sinal * (_Real + 0), "0"))
+			                    & "," & _Chave & "p:" & FORMAT(_Sinal * (_Prev + 0), "0"),
+			                ""
+			            )
+			            & "}",
+			        ",",
+			        [Mes], ASC
+			    )
+			    & "]"
+		displayFolder: 00 HTML\JS
+		lineageTag: 022f5b2c-8abb-4ac0-9630-ee3f1972caa6
+
+	/// Código JavaScript do seletor de mês (atributo onchange do <select>).
+	measure 'HTML JS Filtro Mês' =
+			// =====================================================================
+			// HTML JS Filtro Mês
+			// JavaScript do seletor de mês (<select> no topo do relatório).
+			//   - Ao escolher um mês: troca frente e verso dos 4 cards pelos números
+			//     daquele mês (Realizado x Previsto) e recalcula cor/largura da barra.
+			//   - "Ano inteiro" (value=''): restaura os valores originais dos cards.
+			// Os números vêm de [HTML JS Dados Mensais].
+			// O código entra no atributo onchange="..." do <select>, então usa só
+			// aspas simples. Cada linha abaixo é um trecho do script.
+			// =====================================================================
+			"(function(v){"
+			
+			    // Atalho para document.getElementById
+			    & "function g(id){return document.getElementById(id);}"
+			
+			    // Prefixo de cada card: rl Receita Líquida | lb Lucro Bruto | ro Resultado Operacional | rq Resultado Líquido
+			    & "var ids=['rl','lb','ro','rq'];"
+			    // Elementos de texto do card que podem mudar (valor, margem, comparação, verso)
+			    & "var txtSuf=['vnum','vmar','cleft','cright','b1','b2','b3','b4','b5','bh4'];"
+			
+			    // ---- 1. Na 1ª vez, guarda os valores originais (ano inteiro) em data-orig
+			    & "ids.forEach(function(k){"
+			        & "txtSuf.forEach(function(s){var el=g(k+'-'+s);if(el&&el.dataset.orig===undefined){el.dataset.orig=el.innerHTML;}});"
+			        & "var f=g(k+'-fill');if(f&&f.dataset.origClass===undefined){f.dataset.origClass=f.className;f.dataset.origWidth=f.style.width;}"
+			    & "});"
+			
+			    // ---- 2. 'Ano inteiro' selecionado: restaura os originais e encerra
+			    & "if(v===''){"
+			        & "ids.forEach(function(k){"
+			            & "txtSuf.forEach(function(s){var el=g(k+'-'+s);if(el&&el.dataset.orig!==undefined){el.innerHTML=el.dataset.orig;}});"
+			            & "var f=g(k+'-fill');if(f&&f.dataset.origClass!==undefined){f.className=f.dataset.origClass;f.style.width=f.dataset.origWidth;}"
+			        & "});"
+			        & "return;"
+			    & "}"
+			
+			    // ---- 3. Dados dos 12 meses (gerados no DAX)
+			    & "var M=" & [HTML JS Dados Mensais] & ";"
+			
+			    // ---- 4. Funções auxiliares
+			    // fmt: número -> 'R$ 476mil' / 'R$ 1,2mi' ; null -> '-'
+			    & "function fmt(x){if(x===null||x===undefined)return '-';var neg=x<0,a=Math.abs(x),s;"
+			        & "if(a>=1000000){s='R$ '+(a/1000000).toFixed(1).replace('.',',')+'mi';}else{s='R$ '+Math.round(a/1000)+'mil';}"
+			        & "return neg?'-'+s:s;}"
+			    // pct: 0.123 -> '12,3%' ; inválido -> '-'
+			    & "function pct(x){if(x===null||!isFinite(x))return '-';return (x*100).toFixed(1).replace('.',',')+'%';}"
+			    // setFill: cor e largura da barra = realizado / previsto (verde >=100%, amarelo >=90%, vermelho abaixo)
+			    & "function setFill(k,r,p){var f=g(k+'-fill');if(!f)return;var ratio=(p&&r!==null)?Math.min(1,Math.max(0,r/p)):0;"
+			        & "var cls=ratio>=1?'attention':(ratio>=0.9?'alert':'management');f.className='fill '+cls;f.style.width=Math.round(ratio*100)+'%';}"
+			    // ttl: título do verso com o mês
+			    & "function ttl(k,n){g(k+'-bh4').innerHTML='Como chegamos nesse valor — '+n;}"
+			
+			    // ---- 5. Mês escolhido (0 = Jan ... 11 = Dez)
+			    & "var d=M[+v];"
+			
+			    // Card Receita Líquida (rl)
+			    & "g('rl-vnum').innerHTML=fmt(d.rl);g('rl-cleft').innerHTML=d.n;"
+			    & "g('rl-cright').innerHTML='Previsto <b>'+fmt(d.rlp)+'</b>';setFill('rl',d.rl,d.rlp);"
+			    & "g('rl-b1').innerHTML=fmt(d.rb);g('rl-b2').innerHTML=fmt(d.ded);g('rl-b3').innerHTML=fmt(d.rl);ttl('rl',d.n);"
+			
+			    // Card Lucro Bruto (lb)
+			    & "g('lb-vnum').innerHTML=fmt(d.lb);if(g('lb-vmar'))g('lb-vmar').innerHTML='('+pct(d.lb/d.rl)+')';g('lb-cleft').innerHTML=d.n;"
+			    & "g('lb-cright').innerHTML='Previsto <b>'+fmt(d.lbp)+' ('+pct(d.lbp/d.rlp)+')</b>';setFill('lb',d.lb,d.lbp);"
+			    & "g('lb-b1').innerHTML=fmt(d.rl);g('lb-b2').innerHTML=fmt(d.cmv);g('lb-b3').innerHTML=fmt(d.lb);ttl('lb',d.n);"
+			
+			    // Card Resultado Operacional (ro)
+			    & "g('ro-vnum').innerHTML=fmt(d.ro);if(g('ro-vmar'))g('ro-vmar').innerHTML='('+pct(d.ro/d.rl)+')';g('ro-cleft').innerHTML=d.n;"
+			    & "g('ro-cright').innerHTML='Previsto <b>'+fmt(d.rop)+' ('+pct(d.rop/d.rlp)+')</b>';setFill('ro',d.ro,d.rop);"
+			    & "g('ro-b1').innerHTML=fmt(d.lb);g('ro-b2').innerHTML=fmt(d.gv);g('ro-b3').innerHTML=fmt(d.gf);g('ro-b4').innerHTML=fmt(d.ro);ttl('ro',d.n);"
+			
+			    // Card Resultado Líquido (rq)
+			    & "g('rq-vnum').innerHTML=fmt(d.rq);if(g('rq-vmar'))g('rq-vmar').innerHTML='('+pct(d.rq/d.rl)+')';g('rq-cleft').innerHTML=d.n;"
+			    & "g('rq-cright').innerHTML='Previsto <b>'+fmt(d.rqp)+' ('+pct(d.rqp/d.rlp)+')</b>';setFill('rq',d.rq,d.rqp);"
+			    & "g('rq-b1').innerHTML=fmt(d.ro);g('rq-b2').innerHTML=fmt(d.rf);g('rq-b3').innerHTML=fmt(d.inv);g('rq-b4').innerHTML=fmt(d.imp);g('rq-b5').innerHTML=fmt(d.rq);ttl('rq',d.n);"
+			
+			& "})(this.value)"
+		displayFolder: 00 HTML\JS
+		lineageTag: 6e2a82f5-9a6f-4546-9188-e435357929e2
+
+	column 'Coluna 1'
+		dataType: string
+		isHidden
+		lineageTag: b936effa-efb4-42b9-aadb-092975af8f09
+		summarizeBy: none
+		sourceColumn: Coluna 1
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Medidas = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Coluna 1", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_ResultType = Table
+

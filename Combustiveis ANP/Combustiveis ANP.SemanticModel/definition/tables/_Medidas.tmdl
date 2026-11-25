@@ -1,0 +1,321 @@
+/// Tabela só para organizar as medidas.
+table _Medidas
+	lineageTag: d8975d2d-4064-4b95-92eb-1008fa604752
+
+	/// Mediana do preço de venda das coletas no contexto (menos sensível a postos com preço fora da curva). Use sempre com 1 produto selecionado.
+	measure 'Preço Médio' = MEDIAN(fPrecos[Valor de Venda])
+		formatString: R$ #,##0.00
+		displayFolder: 01 Preço
+		lineageTag: 1a5ef35a-7ee2-414b-81bd-7888ab27d3b4
+
+	measure 'Preço Mínimo' = MIN(fPrecos[Valor de Venda])
+		formatString: R$ #,##0.00
+		displayFolder: 01 Preço
+		lineageTag: 56d53254-5544-4ad2-8c64-3f4ae25b258a
+
+	measure 'Preço Máximo' = MAX(fPrecos[Valor de Venda])
+		formatString: R$ #,##0.00
+		displayFolder: 01 Preço
+		lineageTag: 605ec940-9f4e-4dfe-8dcb-046d3bd13bc4
+
+	/// Diferença entre o posto mais caro e o mais barato.
+	measure 'Amplitude de Preço' = [Preço Máximo] - [Preço Mínimo]
+		formatString: R$ #,##0.00
+		displayFolder: 01 Preço
+		lineageTag: 0746c29e-c493-4b9a-9276-809a64bc347b
+
+	/// Desvio padrão / média (definição estatística, por isso usa média e não mediana). Quanto maior, mais os preços variam entre os postos.
+	measure 'Coef. de Variação' = DIVIDE(STDEV.P(fPrecos[Valor de Venda]), AVERAGE(fPrecos[Valor de Venda]))
+		formatString: 0.0%
+		displayFolder: 01 Preço
+		lineageTag: 12861a89-f77e-480d-aae1-30a0ecf3718e
+
+	measure 'Qtd Coletas' = COUNTROWS(fPrecos)
+		formatString: #,##0
+		displayFolder: 02 Volume
+		lineageTag: 9aedd1ec-bcc4-450c-9349-f8805724a3b3
+
+	measure 'Qtd Postos' = DISTINCTCOUNT(fPrecos[CNPJ da Revenda])
+		formatString: #,##0
+		displayFolder: 02 Volume
+		lineageTag: 7d956ab4-cdda-4b09-99df-8696a44bc8ef
+
+	measure 'Qtd Municípios' = DISTINCTCOUNT(fPrecos[Chave Local])
+		formatString: #,##0
+		displayFolder: 02 Volume
+		lineageTag: a6fefc43-4dfd-430a-9f21-54a65e154869
+
+	measure 'Data Última Coleta' = MAX(fPrecos[Data da Coleta])
+		formatString: dd/mm/yyyy
+		displayFolder: 03 Tempo
+		lineageTag: dcd8e077-0ac0-4408-9c47-362461dcb773
+
+	/// Preço médio da semana de coleta mais recente do contexto.
+	measure 'Preço Última Coleta' =
+			VAR _Ultima = [Data Última Coleta]
+			RETURN
+			    CALCULATE([Preço Médio], TREATAS({_Ultima}, dCalendario[Date]))
+		formatString: R$ #,##0.00
+		displayFolder: 03 Tempo
+		lineageTag: a15171a0-bfd2-441c-a309-cebc0d75504c
+
+	/// Preço médio do mês anterior ao último mês com coleta no contexto.
+	measure 'Preço Médio Mês Anterior' =
+			VAR _Ultima = MAX(fPrecos[Data da Coleta])
+			VAR _Ini    = EOMONTH(_Ultima, -2) + 1
+			VAR _Fim    = EOMONTH(_Ultima, -1)
+			RETURN
+			    CALCULATE([Preço Médio], DATESBETWEEN(dCalendario[Date], _Ini, _Fim))
+		formatString: R$ #,##0.00
+		displayFolder: 03 Tempo
+		lineageTag: ba65e0fe-4707-468e-a31f-c64756601e1b
+
+	/// Último mês com coleta vs mês anterior.
+	measure 'Var % Mês' =
+			VAR _Ultima   = MAX(fPrecos[Data da Coleta])
+			VAR _PrecoMes =
+			    CALCULATE(
+			        [Preço Médio],
+			        DATESBETWEEN(dCalendario[Date], EOMONTH(_Ultima, -1) + 1, EOMONTH(_Ultima, 0))
+			    )
+			VAR _PrecoAnt = [Preço Médio Mês Anterior]
+			RETURN
+			    DIVIDE(_PrecoMes - _PrecoAnt, _PrecoAnt)
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: 03 Tempo
+		lineageTag: a6ed34d7-2af0-4caa-9e33-8234dfb4a478
+
+	measure 'Preço Médio Ano Anterior' = CALCULATE([Preço Médio], SAMEPERIODLASTYEAR(dCalendario[Date]))
+		formatString: R$ #,##0.00
+		displayFolder: 03 Tempo
+		lineageTag: 1e495ae1-ba29-4f46-a013-32f97a5747b8
+
+	measure 'Var % Ano' = DIVIDE([Preço Médio] - [Preço Médio Ano Anterior], [Preço Médio Ano Anterior])
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: 03 Tempo
+		lineageTag: 8240e44a-39d3-44e9-8da7-5422bf053020
+
+	measure 'Média Móvel 3 Meses' =
+			IF(
+			    ISBLANK([Preço Médio]),
+			    BLANK(),
+			    CALCULATE(
+			        [Preço Médio],
+			        DATESINPERIOD(dCalendario[Date], MAX(dCalendario[Date]), -3, MONTH)
+			    )
+			)
+		formatString: R$ #,##0.00
+		displayFolder: 03 Tempo
+		lineageTag: 22c57275-3691-4c37-8e00-fc53089f48ca
+
+	/// Preço da última semana de coleta vs a primeira, dentro do período filtrado.
+	measure 'Variação no Período' =
+			VAR _Primeira = MIN(fPrecos[Data da Coleta])
+			VAR _Ultima   = MAX(fPrecos[Data da Coleta])
+			VAR _PrecoIni = CALCULATE([Preço Médio], TREATAS({_Primeira}, dCalendario[Date]))
+			VAR _PrecoFim = CALCULATE([Preço Médio], TREATAS({_Ultima}, dCalendario[Date]))
+			RETURN
+			    DIVIDE(_PrecoFim - _PrecoIni, _PrecoIni)
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: 03 Tempo
+		lineageTag: ffe5ab02-3a05-4dfe-819f-1fc15524908b
+
+	measure 'Preço Médio Brasil' = CALCULATE([Preço Médio], REMOVEFILTERS(dLocal))
+		formatString: R$ #,##0.00
+		displayFolder: 04 Comparativos
+		lineageTag: 76ef40d7-1d11-4c2c-b8ad-2875005712ed
+
+	/// Quanto o local está acima (+) ou abaixo (-) da média nacional.
+	measure 'Dif % vs Brasil' = DIVIDE([Preço Médio], [Preço Médio Brasil]) - 1
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: 04 Comparativos
+		lineageTag: c5e2ccc4-fad2-4791-a929-39da71d6b0fa
+
+	/// 1º = UF mais cara.
+	measure 'Ranking UF' =
+			IF(
+			    HASONEVALUE(dLocal[UF]),
+			    RANKX(ALL(dLocal[UF]), [Preço Médio], , DESC, DENSE)
+			)
+		formatString: 0"º"
+		displayFolder: 04 Comparativos
+		lineageTag: e5a4b7f2-de43-47f7-ba8c-6cca156a33f4
+
+	measure 'Preço Bandeira Branca' = CALCULATE([Preço Médio], fPrecos[Tipo de Bandeira] = "Bandeira Branca")
+		formatString: R$ #,##0.00
+		displayFolder: 04 Comparativos
+		lineageTag: c6d5e7ec-7b04-4599-94ed-885bc8381f87
+
+	measure 'Preço Bandeirado' = CALCULATE([Preço Médio], fPrecos[Tipo de Bandeira] = "Bandeirado")
+		formatString: R$ #,##0.00
+		displayFolder: 04 Comparativos
+		lineageTag: aea0096f-70a8-4b88-a5f5-2d434bbad07e
+
+	/// Negativo = posto bandeira branca é mais barato.
+	measure 'Dif % Branca vs Bandeirado' = DIVIDE([Preço Bandeira Branca] - [Preço Bandeirado], [Preço Bandeirado])
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: 04 Comparativos
+		lineageTag: bb6cb852-8d72-40e8-9b44-00061d210a7f
+
+	/// % dos postos cujo preço médio está abaixo da média do contexto.
+	measure '% Postos Abaixo da Média' =
+			VAR _Media = [Preço Médio]
+			VAR _Abaixo =
+			    COUNTROWS(
+			        FILTER(
+			            VALUES(fPrecos[CNPJ da Revenda]),
+			            CALCULATE([Preço Médio]) < _Media
+			        )
+			    )
+			RETURN
+			    DIVIDE(_Abaixo, [Qtd Postos])
+		formatString: 0.0%
+		displayFolder: 04 Comparativos
+		lineageTag: c1ba515c-d5ec-4782-98d8-8a6fdc396535
+
+	measure 'Preço Etanol' = CALCULATE([Preço Médio], dProduto[Produto] = "ETANOL")
+		formatString: R$ #,##0.00
+		displayFolder: 05 Etanol x Gasolina
+		lineageTag: 86495f81-0601-4f25-bcd3-7706ae4c59da
+
+	measure 'Preço Gasolina' = CALCULATE([Preço Médio], dProduto[Produto] = "GASOLINA")
+		formatString: R$ #,##0.00
+		displayFolder: 05 Etanol x Gasolina
+		lineageTag: f5e5b0f5-8d26-47a3-abed-68ec763a7758
+
+	/// Preço do etanol / gasolina. Até 70% o etanol costuma compensar.
+	measure 'Paridade Etanol/Gasolina' = DIVIDE([Preço Etanol], [Preço Gasolina])
+		formatString: 0.0%
+		displayFolder: 05 Etanol x Gasolina
+		lineageTag: 6b0e1d5a-8d39-4047-b9f1-b492f3dff996
+
+	measure 'Qual Compensa' =
+			VAR _Paridade = [Paridade Etanol/Gasolina]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(_Paridade), BLANK(),
+			        _Paridade <= 0.7, "Etanol compensa",
+			        "Gasolina compensa"
+			    )
+		displayFolder: 05 Etanol x Gasolina
+		lineageTag: bcc587f3-3445-4d9e-9e90-02ddd5f034da
+
+	/// Use em Formatação condicional > Valor do campo.
+	measure 'Cor Paridade' = IF([Paridade Etanol/Gasolina] <= 0.7, "#2E9E6B", "#D9534F")
+		displayFolder: 05 Etanol x Gasolina
+		lineageTag: 12fc8f11-5709-4adb-a898-c8ca0f111975
+
+	/// Verde se o preço caiu, vermelho se subiu. Formatação condicional > Valor do campo.
+	measure 'Cor Variação' =
+			VAR _Var = [Var % Mês]
+			RETURN
+			    SWITCH(TRUE(), ISBLANK(_Var), "#6B7280", _Var > 0, "#D9534F", "#2E9E6B")
+		displayFolder: 06 Visual
+		lineageTag: 2d7b98be-2ebe-4f57-aaa2-65896088f3a4
+
+	measure 'Título Página' = "Preço médio · " & SELECTEDVALUE(dProduto[Produto], "selecione 1 produto") & " · " & SELECTEDVALUE(dLocal[UF], "Brasil")
+		displayFolder: 06 Visual
+		lineageTag: dd611561-6144-45a3-9116-2c4219b98dc5
+
+	measure 'Subtítulo Atualização' = "Fonte: ANP · última coleta em " & FORMAT(CALCULATE([Data Última Coleta], REMOVEFILTERS()), "dd/mm/yyyy")
+		displayFolder: 06 Visual
+		lineageTag: 24849378-9b4b-44c1-9b6a-c6860f8a407c
+
+	/// Quantos filtros do painel 'Mais filtros' estão aplicados.
+	measure 'Filtros Ativos' =
+			INT(ISFILTERED(dLocal[Município]))
+			    + INT(ISFILTERED(fPrecos[Bandeira]))
+			    + INT(ISFILTERED(fPrecos[Tipo de Bandeira]))
+			    + INT(ISFILTERED(fPrecos[Valor de Venda]))
+		formatString: 0
+		displayFolder: 06 Visual
+		lineageTag: a9e6e394-0c62-4cdf-a24a-c0231b7f973e
+
+	/// Texto do botão 'Mais filtros' mostrando quantos estão ativos. Use em Botão > Texto > fx.
+	measure 'Texto Botão Filtros' =
+			VAR _Qtd = [Filtros Ativos]
+			RETURN
+			    "☰ Mais filtros" & IF(_Qtd > 0, " (" & _Qtd & ")")
+		displayFolder: 06 Visual
+		lineageTag: 6132be80-9070-4f57-938f-1a37d99a8f61
+
+	/// Vermelho = acima da média Brasil, verde = abaixo.
+	measure 'Cor Dif Brasil' = IF([Dif % vs Brasil] > 0, "#D9534F", "#2E9E6B")
+		displayFolder: 06 Visual
+		lineageTag: 7a7847c0-38ea-4f26-bf96-ec785b1c4e53
+
+	/// Preço médio só dos 10 municípios mais caros (os demais ficam em branco e somem da tabela).
+	measure 'Preço Top 10 Municípios Caros' =
+			VAR _Rank =
+			    RANKX(
+			        ALLSELECTED(dLocal[Município], dLocal[UF]),
+			        [Preço Médio], , DESC, DENSE
+			    )
+			RETURN
+			    IF(NOT ISBLANK([Preço Médio]) && _Rank <= 10, [Preço Médio])
+		formatString: R$ #,##0.00
+		displayFolder: 07 Top N
+		lineageTag: 1814ba1f-0c7d-42bc-ba3b-20b4db500f9d
+
+	/// Preço da última coleta só dos 10 postos mais baratos.
+	measure 'Preço Top 10 Postos Baratos' =
+			VAR _Preco = [Preço Última Coleta]
+			VAR _Rank =
+			    RANKX(
+			        FILTER(
+			            ALLSELECTED(fPrecos[Revenda], fPrecos[Chave Local], fPrecos[Bandeira]),
+			            NOT ISBLANK([Preço Última Coleta])
+			        ),
+			        [Preço Última Coleta], _Preco, ASC, DENSE
+			    )
+			RETURN
+			    IF(NOT ISBLANK(_Preco) && _Rank <= 10, _Preco)
+		formatString: R$ #,##0.00
+		displayFolder: 07 Top N
+		lineageTag: 148b1a9b-96aa-4bea-b9e6-1279924c62e0
+
+	/// Preço médio só das 15 bandeiras com mais coletas.
+	measure 'Preço Top 15 Bandeiras' =
+			VAR _Rank =
+			    RANKX(ALLSELECTED(fPrecos[Bandeira]), [Qtd Coletas], , DESC, DENSE)
+			RETURN
+			    IF(_Rank <= 15, [Preço Médio])
+		formatString: R$ #,##0.00
+		displayFolder: 07 Top N
+		lineageTag: 5f0f25ac-ee6c-4130-8768-a078345259bd
+
+	/// Var % Mês formatada para card; mostra 'sem histórico' quando não há mês anterior.
+	measure 'Var % Mês Texto' =
+			VAR _Var = [Var % Mês]
+			RETURN
+			    IF(ISBLANK(_Var), "sem histórico", FORMAT(_Var, "+0.0%;-0.0%;0.0%"))
+		displayFolder: 06 Visual
+		lineageTag: 404dad9c-fc38-484f-8746-370dc9c9cf6b
+
+	/// Var % Ano formatada para card; mostra 'sem histórico' quando não há ano anterior.
+	measure 'Var % Ano Texto' =
+			VAR _Var = [Var % Ano]
+			RETURN
+			    IF(ISBLANK(_Var), "sem histórico", FORMAT(_Var, "+0.0%;-0.0%;0.0%"))
+		displayFolder: 06 Visual
+		lineageTag: cfbd1ef7-c98a-4661-bfc0-17f546afa7bd
+
+	/// Cinza sem histórico, vermelho se subiu vs ano anterior, verde se caiu.
+	measure 'Cor Variação Ano' =
+			VAR _Var = [Var % Ano]
+			RETURN
+			    SWITCH(TRUE(), ISBLANK(_Var), "#6B7280", _Var > 0, "#D9534F", "#2E9E6B")
+		displayFolder: 06 Visual
+		lineageTag: 15ed3e01-7531-40ed-ba8e-773cf66c1cc0
+
+	column Coluna
+		isHidden
+		lineageTag: 01d36a43-886e-4726-9724-16323a8c599e
+		isNameInferred
+		sourceColumn: [Coluna]
+
+	partition _Medidas = calculated
+		mode: import
+		source = ROW("Coluna", BLANK())
+

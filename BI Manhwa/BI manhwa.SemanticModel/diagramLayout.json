@@ -1,0 +1,86 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 415.67655718062974,
+            "y": 19.701816822658124
+          },
+          "nodeIndex": "Dim_Genero",
+          "nodeLineageTag": "645eb499-bf67-4796-a4ac-dfe5ae2ec28a",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 464.23583241535971,
+            "y": 229.67008045509331
+          },
+          "nodeIndex": "Dim_Status",
+          "nodeLineageTag": "b3ef540f-c2a6-43de-823b-254bc6b66d86",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": -11
+          },
+          "nodeIndex": "Fato_Leitura",
+          "nodeLineageTag": "b7a63b6c-13fc-4e1f-be60-6fb19343c5ec",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 150.82348341535953,
+            "y": 450.17464000000007
+          },
+          "nodeIndex": "dCalendario",
+          "nodeLineageTag": "6795f2b5-4f98-4ea1-9c12-ae4da912ddb9",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1086.3616394153596,
+            "y": 116
+          },
+          "nodeIndex": "Medidas",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "Todas as tabelas",
+      "zoomValue": 56.447393005377734,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Todas as tabelas",
+  "defaultDiagram": "Todas as tabelas"
+}

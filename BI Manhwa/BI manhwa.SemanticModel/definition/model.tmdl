@@ -1,0 +1,24 @@
+model Model
+	culture: pt-BR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: pt-BR
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["Fonte","Dim_Genero aux","Dim_Genero","Dim_Status","Fato_Leitura","dCalendario","Medidas"]
+
+annotation PBI_ProTooling = ["MCP-PBIModeling","DevMode"]
+
+ref table Dim_Genero
+ref table Dim_Status
+ref table Fato_Leitura
+ref table DateTableTemplate_f0f70dec-11d7-4b0e-8852-348a558b0d09
+ref table dCalendario
+ref table LocalDateTable_e9e12015-f31f-4bc8-b354-938dbc0338cd
+ref table Medidas
+
+ref cultureInfo pt-BR
+

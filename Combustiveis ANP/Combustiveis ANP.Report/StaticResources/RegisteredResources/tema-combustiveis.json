@@ -1,0 +1,110 @@
+{
+  "name": "Combustíveis ANP",
+  "dataColors": [
+    "#F28C28",
+    "#1F4E79",
+    "#2E9E6B",
+    "#D9534F",
+    "#7A8CA3",
+    "#F6B26B",
+    "#4F81BD",
+    "#9BBB59"
+  ],
+  "foreground": "#1F2A37",
+  "foregroundNeutralSecondary": "#6B7280",
+  "background": "#FFFFFF",
+  "backgroundLight": "#F3F5F8",
+  "tableAccent": "#F28C28",
+  "good": "#2E9E6B",
+  "bad": "#D9534F",
+  "neutral": "#F6B26B",
+  "maximum": "#D9534F",
+  "center": "#F6E3C6",
+  "minimum": "#2E9E6B",
+  "textClasses": {
+    "callout": {
+      "fontSize": 26,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#1F2A37"
+    },
+    "title": {
+      "fontSize": 12,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#1F2A37"
+    },
+    "header": {
+      "fontSize": 11,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#1F2A37"
+    },
+    "label": {
+      "fontSize": 10,
+      "fontFace": "Segoe UI",
+      "color": "#6B7280"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [
+          {
+            "show": false
+          }
+        ],
+        "border": [
+          {
+            "show": false
+          }
+        ],
+        "dropShadow": [
+          {
+            "show": false
+          }
+        ],
+        "visualHeader": [
+          {
+            "show": false
+          }
+        ],
+        "title": [
+          {
+            "show": false
+          }
+        ]
+      }
+    },
+    "card": {
+      "*": {
+        "labels": [
+          {
+            "fontSize": 24,
+            "color": {
+              "solid": {
+                "color": "#1F2A37"
+              }
+            }
+          }
+        ],
+        "categoryLabels": [
+          {
+            "show": false
+          }
+        ]
+      }
+    },
+    "slicer": {
+      "*": {
+        "header": [
+          {
+            "show": false
+          }
+        ],
+        "items": [
+          {
+            "fontSize": 11
+          }
+        ]
+      }
+    }
+  }
+}
