@@ -10,6 +10,7 @@ Este repositório reúne dashboards que montei para praticar e mostrar o ciclo c
 |---|---|---|
 | ⛽ [**Combustíveis ANP**](./Combustiveis%20ANP) | Quanto custa abastecer em cada UF, qual bandeira é mais barata e quando o etanol compensa | Dados abertos da ANP (~1,5 milhão de coletas), Power Query que lê os links direto do site, modelo estrela, ~40 medidas DAX, painel de filtros retrátil com indicadores |
 | 💰 [**DRE**](./DRE) | Resultado da empresa linha a linha: real x previsão x ano anterior | Demonstrativo inteiro em **HTML/CSS/JS gerado por DAX**, base em Excel parametrizada, inteligência de tempo |
+| 🚚 [**Logística & Entregas**](./Logistica) | Estamos entregando no prazo? Qual transportadora entrega melhor e custa menos? | **Banco SQL Server criado do zero** (script com tabelas, carga de ~40 mil pedidos e views), Power BI conectado nas views, modelo estrela, 22 medidas DAX |
 | 📚 [**Nardo's Reading**](./BI%20Manhwa) | Painel pessoal de leitura de manhwa, mangá e manhua | A mesma análise em duas versões: **página nativa do Power BI** e **página inteira em HTML** montada por blocos de medidas |
 
 ## Como abrir
@@ -22,6 +23,7 @@ Este repositório reúne dashboards que montei para praticar e mostrar o ciclo c
 ## O que pratiquei
 
 - **Power Query:** consultas com nomes de etapas padrão, funções personalizadas, parâmetros, combinação de vários arquivos e leitura de páginas da web.
+- **SQL Server:** criação de banco, schemas, tabelas com chaves, carga de dados com regras de negócio, funções geográficas e views para o BI.
 - **Modelagem:** esquema estrela, tabela calendário e relacionamentos 1:N.
 - **DAX:** inteligência de tempo (mês anterior, ano anterior, média móvel), RANKX/Top N, medidas de cor para formatação condicional e medidas que geram HTML.
 - **Visual:** templates de fundo, temas JSON, indicadores e botões, painel de filtros, e o visual **HTML Content** para layouts livres.
