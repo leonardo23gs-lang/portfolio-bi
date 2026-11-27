@@ -1,0 +1,213 @@
+table fEntregas
+	lineageTag: ee9a9325-c99a-48c6-b0e2-8debd78f6175
+
+	column EntregaID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 137aa839-44f1-41b1-8f7f-5ed974aaefd0
+		summarizeBy: none
+		sourceColumn: EntregaID
+
+		annotation SummarizationSetBy = Automatic
+
+	column PedidoID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1754cc01-2246-4c78-a124-574e21255306
+		summarizeBy: none
+		sourceColumn: PedidoID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ClienteID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: abd62d7f-06c0-4d33-9512-03d32146c3a8
+		summarizeBy: none
+		sourceColumn: ClienteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CDID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 04ab3ff9-8cd0-4ae8-a9f4-178cffcee5bc
+		summarizeBy: none
+		sourceColumn: CDID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CategoriaID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 2a0a6264-12dc-4626-b0ef-7a222f71c01d
+		summarizeBy: none
+		sourceColumn: CategoriaID
+
+		annotation SummarizationSetBy = Automatic
+
+	column TransportadoraID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 6c3b2ccd-e32a-4394-9fd7-8570840fd509
+		summarizeBy: count
+		sourceColumn: TransportadoraID
+
+		annotation SummarizationSetBy = Automatic
+
+	column DataPedido
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: de39567c-ab29-4a0a-a9ac-fbfb50a70a60
+		summarizeBy: none
+		sourceColumn: DataPedido
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column DataColeta
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 2154e36e-60d0-4edd-86cf-6f33e8c716a1
+		summarizeBy: none
+		sourceColumn: DataColeta
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column DataPrevista
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 8269a792-3a89-4014-90db-e0a6d8faca69
+		summarizeBy: none
+		sourceColumn: DataPrevista
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column DataEntrega
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: d51651e1-41e5-4ccf-9df3-ba02905e616e
+		summarizeBy: none
+		sourceColumn: DataEntrega
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column StatusEntrega
+		dataType: string
+		lineageTag: ea646d3c-a0c0-4183-b94e-c3f3c39d75bc
+		summarizeBy: none
+		sourceColumn: StatusEntrega
+
+		annotation SummarizationSetBy = Automatic
+
+	column ValorMercadoria
+		dataType: double
+		lineageTag: b84a735f-4b7b-4680-a9c3-1983eeac7562
+		summarizeBy: sum
+		sourceColumn: ValorMercadoria
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column PesoKg
+		dataType: double
+		lineageTag: 4f4cc178-9137-4510-bdcd-ef65f9455a0c
+		summarizeBy: sum
+		sourceColumn: PesoKg
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Volumes
+		dataType: int64
+		formatString: 0
+		lineageTag: abe2ea4d-1f26-4ae4-a775-aaeda2584d1a
+		summarizeBy: sum
+		sourceColumn: Volumes
+
+		annotation SummarizationSetBy = Automatic
+
+	column DistanciaKm
+		dataType: double
+		lineageTag: 724a3899-8aef-486e-ae23-022ddd9cb5b1
+		summarizeBy: sum
+		sourceColumn: DistanciaKm
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CustoFrete
+		dataType: double
+		lineageTag: bb4f79c4-92be-4364-9876-7a5cf2379e2f
+		summarizeBy: sum
+		sourceColumn: CustoFrete
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column LeadTimeDias
+		dataType: int64
+		formatString: 0
+		lineageTag: a4aa14b5-b423-4d5c-a935-763e0da04bde
+		summarizeBy: sum
+		sourceColumn: LeadTimeDias
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiasAtraso
+		dataType: int64
+		formatString: 0
+		lineageTag: 773e0498-288b-4e76-b374-2eeb87626be7
+		summarizeBy: sum
+		sourceColumn: DiasAtraso
+
+		annotation SummarizationSetBy = Automatic
+
+	column EntregueNoPrazo
+		dataType: int64
+		formatString: 0
+		lineageTag: 8e8f57c2-a676-48df-adcb-b7250c884377
+		summarizeBy: sum
+		sourceColumn: EntregueNoPrazo
+
+		annotation SummarizationSetBy = Automatic
+
+	column QtdOcorrencias
+		dataType: int64
+		formatString: 0
+		lineageTag: fa618bbe-f555-45a9-b16e-17e2a3bcc90d
+		summarizeBy: sum
+		sourceColumn: QtdOcorrencias
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fEntregas = m
+		mode: import
+		source =
+				let
+				    Fonte = Sql.Database("localhost", "LogisticaBI"),
+				    bi_vw_fEntregas = Fonte{[Schema="bi",Item="vw_fEntregas"]}[Data]
+				in
+				    bi_vw_fEntregas
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

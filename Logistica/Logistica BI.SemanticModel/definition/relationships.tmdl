@@ -1,0 +1,29 @@
+relationship AutoDetected_ebbd0937-5e9e-425a-bb85-7065dea9abe4
+	fromColumn: fOcorrencias.EntregaID
+	toColumn: fEntregas.EntregaID
+
+relationship AutoDetected_b96a5103-37ff-4c23-836c-3c95f7ecdad4
+	fromColumn: fEntregas.TransportadoraID
+	toColumn: dTransportadora.TransportadoraID
+
+relationship AutoDetected_6513f5ca-2a8b-4764-a7af-c0d3de6e1b13
+	fromColumn: fEntregas.ClienteID
+	toColumn: dCliente.ClienteID
+
+relationship AutoDetected_fc51e49d-c83d-4b15-acbe-ea9737756e9b
+	fromColumn: fEntregas.CDID
+	toColumn: dCentroDistribuicao.CDID
+
+relationship AutoDetected_29da78c8-c522-4c25-a845-01142bbbaae1
+	fromColumn: fEntregas.CategoriaID
+	toColumn: dCategoria.CategoriaID
+
+relationship fEntregas_DataPedido_dCalendario
+	fromColumn: fEntregas.DataPedido
+	toColumn: dCalendario.Data
+
+relationship fEntregas_DataEntrega_dCalendario
+	isActive: false
+	fromColumn: fEntregas.DataEntrega
+	toColumn: dCalendario.Data
+

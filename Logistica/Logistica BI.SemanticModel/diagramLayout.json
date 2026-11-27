@@ -1,0 +1,126 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 402,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 1236.2560802207504,
+            "y": 240.95314632183204
+          },
+          "nodeIndex": "dCalendario",
+          "nodeLineageTag": "a7b4cbfd-11bf-4f92-ab6a-d671a4fbc7ac",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 814.19794727287854,
+            "y": -50
+          },
+          "nodeIndex": "dCategoria",
+          "nodeLineageTag": "27774017-f977-446c-8a74-3602473f7adb",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1002.2560802207505,
+            "y": 154.64003606373819
+          },
+          "nodeIndex": "dCentroDistribuicao",
+          "nodeLineageTag": "eaa5a6ce-a61d-43e8-93ab-506765c96f55",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 886.16734688542147,
+            "y": 431.906292643664
+          },
+          "nodeIndex": "dCliente",
+          "nodeLineageTag": "38757fea-3edc-4d97-be29-ae7885af6807",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": 228.94404142444984
+          },
+          "nodeIndex": "dTransportadora",
+          "nodeLineageTag": "210c76d8-4eaa-4814-aced-9bbe2fef6420",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 596.83007113179133,
+            "y": 154.73008858247249
+          },
+          "nodeIndex": "fEntregas",
+          "nodeLineageTag": "ee9a9325-c99a-48c6-b0e2-8debd78f6175",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 312.24577486463579,
+            "y": -23.226882720258573
+          },
+          "nodeIndex": "fOcorrencias",
+          "nodeLineageTag": "46c26d7e-a529-419b-a34e-5214d20b197c",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1470.2560802207504,
+            "y": 338.95314632183204
+          },
+          "nodeIndex": "_Medidas",
+          "nodeLineageTag": "3d5c9620-c9c3-4caa-8eda-99a9698d93a9",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "Todas as tabelas",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Todas as tabelas",
+  "defaultDiagram": "Todas as tabelas"
+}

@@ -1,0 +1,117 @@
+table dCliente
+	lineageTag: 38757fea-3edc-4d97-be29-ae7885af6807
+
+	column ClienteID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: c04e4543-6d7e-4dda-a353-562578ee5193
+		summarizeBy: none
+		sourceColumn: ClienteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column NomeCliente
+		dataType: string
+		lineageTag: 97427d0c-eacf-43d2-8bb7-9304973b8d2c
+		summarizeBy: none
+		sourceColumn: NomeCliente
+
+		annotation SummarizationSetBy = Automatic
+
+	column Segmento
+		dataType: string
+		lineageTag: ef953fcc-e1be-4654-b620-fad5fa98ad3e
+		summarizeBy: none
+		sourceColumn: Segmento
+
+		annotation SummarizationSetBy = Automatic
+
+	column DataCadastro
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 27a713d8-7468-46f1-a09c-8d81d5fcecce
+		summarizeBy: none
+		sourceColumn: DataCadastro
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Cidade
+		dataType: string
+		lineageTag: 9652a027-5513-4a79-b2de-bb5ac65dbe60
+		summarizeBy: none
+		sourceColumn: Cidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column UF
+		dataType: string
+		lineageTag: 139eddd7-96b3-48fd-8e8b-179ceacdcc1b
+		dataCategory: StateOrProvince
+		summarizeBy: none
+		sourceColumn: UF
+
+		annotation SummarizationSetBy = Automatic
+
+	column Regiao
+		dataType: string
+		lineageTag: d07731cf-fcb4-4710-b386-0b0edc5dd18b
+		summarizeBy: none
+		sourceColumn: Regiao
+
+		annotation SummarizationSetBy = Automatic
+
+	column CidadeUF
+		dataType: string
+		lineageTag: 1db33527-03d6-47fb-85bc-156287b3eaf8
+		summarizeBy: none
+		sourceColumn: CidadeUF
+
+		annotation SummarizationSetBy = Automatic
+
+	column Latitude
+		dataType: double
+		lineageTag: 6fa33592-c133-47d6-bf6b-c68a130df861
+		dataCategory: Latitude
+		summarizeBy: none
+		sourceColumn: Latitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Longitude
+		dataType: double
+		lineageTag: 5cb1173a-8062-4899-9b24-6cdcb2ca0c64
+		dataCategory: Longitude
+		summarizeBy: none
+		sourceColumn: Longitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column PrazoDias
+		dataType: int64
+		formatString: 0
+		lineageTag: c458bb80-dea1-41de-b338-18d9b9fb6244
+		summarizeBy: none
+		sourceColumn: PrazoDias
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dCliente = m
+		mode: import
+		source =
+				let
+				    Fonte = Sql.Database("localhost", "LogisticaBI"),
+				    bi_vw_dCliente = Fonte{[Schema="bi",Item="vw_dCliente"]}[Data]
+				in
+				    bi_vw_dCliente
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

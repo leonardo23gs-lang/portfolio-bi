@@ -1,0 +1,111 @@
+table dCalendario
+	lineageTag: a7b4cbfd-11bf-4f92-ab6a-d671a4fbc7ac
+	dataCategory: Time
+
+	column Data
+		dataType: dateTime
+		isUnique
+		formatString: dd/mm/yyyy
+		lineageTag: ea97cd86-12b7-4fec-a283-3543248f11dc
+		summarizeBy: none
+		sourceColumn: Data
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Ano
+		dataType: int64
+		formatString: 0
+		lineageTag: c7a82e85-a531-41e9-8955-387d13c62f17
+		summarizeBy: none
+		sourceColumn: Ano
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mes
+		dataType: int64
+		formatString: 0
+		lineageTag: 040a0d31-9db4-4fd8-b399-e3eda2da430e
+		summarizeBy: none
+		sourceColumn: Mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column NomeMes
+		dataType: string
+		lineageTag: 7d48fda7-8abe-47e1-8366-509e86ddf74b
+		summarizeBy: none
+		sourceColumn: NomeMes
+		sortByColumn: Mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column MesAno
+		dataType: string
+		lineageTag: 4dfafa7c-a769-4f89-9b5d-b706c4b42bd9
+		summarizeBy: none
+		sourceColumn: MesAno
+		sortByColumn: AnoMes
+
+		annotation SummarizationSetBy = Automatic
+
+	column AnoMes
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: c002194e-2ad7-479a-90bc-80052ba941ab
+		summarizeBy: none
+		sourceColumn: AnoMes
+
+		annotation SummarizationSetBy = Automatic
+
+	column Trimestre
+		dataType: string
+		lineageTag: 89b61f31-e7e3-4ef8-8f1d-0d5f970016a3
+		summarizeBy: none
+		sourceColumn: Trimestre
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiaSemanaNum
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 62323551-222c-444d-9427-5f9daca02aca
+		summarizeBy: none
+		sourceColumn: DiaSemanaNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiaSemana
+		dataType: string
+		lineageTag: 9c51419f-eaa3-4dc0-860b-39a6493c180f
+		summarizeBy: none
+		sourceColumn: DiaSemana
+		sortByColumn: DiaSemanaNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column FimDeSemana
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 763a824b-1f0f-4884-a0fd-5d814e9ab28a
+		summarizeBy: none
+		sourceColumn: FimDeSemana
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dCalendario = m
+		mode: import
+		source =
+				let
+				    Fonte = Sql.Database("localhost", "LogisticaBI"),
+				    bi_vw_dCalendario = Fonte{[Schema="bi",Item="vw_dCalendario"]}[Data]
+				in
+				    bi_vw_dCalendario
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

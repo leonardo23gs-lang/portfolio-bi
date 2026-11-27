@@ -1,0 +1,67 @@
+table dCentroDistribuicao
+	lineageTag: eaa5a6ce-a61d-43e8-93ab-506765c96f55
+
+	column CDID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: ead380c7-1c23-44b3-9682-c841878e7a42
+		summarizeBy: none
+		sourceColumn: CDID
+
+		annotation SummarizationSetBy = Automatic
+
+	column NomeCD
+		dataType: string
+		lineageTag: 8c16d05f-5aa0-42b9-959f-77565f4393f5
+		summarizeBy: none
+		sourceColumn: NomeCD
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cidade
+		dataType: string
+		lineageTag: a9257e04-25ef-4b56-b9fc-ff839ecc5099
+		summarizeBy: none
+		sourceColumn: Cidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column UF
+		dataType: string
+		lineageTag: 964c1bca-02cf-4889-a202-9290f08de442
+		summarizeBy: none
+		sourceColumn: UF
+
+		annotation SummarizationSetBy = Automatic
+
+	column Regiao
+		dataType: string
+		lineageTag: ad526de7-5614-4da5-b66b-5197790e0a1d
+		summarizeBy: none
+		sourceColumn: Regiao
+
+		annotation SummarizationSetBy = Automatic
+
+	column CapacidadeDiaria
+		dataType: int64
+		formatString: 0
+		lineageTag: 873e595b-3f70-4928-8b4d-e1a090b6c434
+		summarizeBy: none
+		sourceColumn: CapacidadeDiaria
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dCentroDistribuicao = m
+		mode: import
+		source =
+				let
+				    Fonte = Sql.Database("localhost", "LogisticaBI"),
+				    bi_vw_dCentroDistribuicao = Fonte{[Schema="bi",Item="vw_dCentroDistribuicao"]}[Data]
+				in
+				    bi_vw_dCentroDistribuicao
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,153 @@
+table _Medidas
+	lineageTag: 3d5c9620-c9c3-4caa-8eda-99a9698d93a9
+
+	/// Total de entregas (1 por pedido), em qualquer status.
+	measure 'Qtd Entregas' = COUNTROWS ( fEntregas )
+		formatString: #,##0
+		displayFolder: 01 Volume
+		lineageTag: d119bd08-8d1f-446d-877e-c255f881b1ff
+
+	/// Entregas concluídas (base do % no prazo).
+	measure 'Qtd Entregues' = CALCULATE ( COUNTROWS ( fEntregas ), fEntregas[StatusEntrega] = "Entregue" )
+		formatString: #,##0
+		displayFolder: 01 Volume
+		lineageTag: 22bfafd4-8cda-4c49-b42e-4b0c6a5c89ea
+
+	measure 'Clientes Atendidos' = DISTINCTCOUNT ( fEntregas[ClienteID] )
+		formatString: #,##0
+		displayFolder: 01 Volume
+		lineageTag: 220250b2-d488-4bbe-bdf6-ebe2fb7718b6
+
+	measure 'Valor Mercadoria' = SUM ( fEntregas[ValorMercadoria] )
+		formatString: "R$" #,##0
+		displayFolder: 01 Volume
+		lineageTag: 2396b639-b4c0-4bb5-bff6-766d4d4455ac
+
+	/// Valor médio de mercadoria por pedido.
+	measure 'Ticket Médio' = DIVIDE ( [Valor Mercadoria], [Qtd Entregas] )
+		formatString: "R$" #,##0
+		displayFolder: 01 Volume
+		lineageTag: d776184e-a3c4-4db8-a65f-921e29b63d55
+
+	measure 'Peso Transportado (t)' = SUM ( fEntregas[PesoKg] ) / 1000
+		formatString: #,##0" t"
+		displayFolder: 01 Volume
+		lineageTag: 243957ee-e522-4176-bf95-9cc368265483
+
+	/// Distância média de estrada entre o CD e o cliente.
+	measure 'Distância Média' = AVERAGE ( fEntregas[DistanciaKm] )
+		formatString: #,##0" km"
+		displayFolder: 01 Volume
+		lineageTag: d6d63327-dc37-49fd-bfdf-436ac84f42cc
+
+	measure 'Entregas no Prazo' = SUM ( fEntregas[EntregueNoPrazo] )
+		formatString: #,##0
+		displayFolder: 02 Prazo
+		lineageTag: f3a83ae8-237a-4bea-9478-40ca032bcaea
+
+	measure 'Entregas Atrasadas' = [Qtd Entregues] - [Entregas no Prazo]
+		formatString: #,##0
+		displayFolder: 02 Prazo
+		lineageTag: 4942ccf8-6217-4f5d-adb3-24b3d6a51cc1
+
+	/// OTD (on-time delivery): entregas concluídas até a data prevista / entregas concluídas.
+	measure '% No Prazo' = DIVIDE ( [Entregas no Prazo], [Qtd Entregues] )
+		formatString: 0.0%
+		displayFolder: 02 Prazo
+		lineageTag: 0e45a3e5-bace-4d83-8e4a-c7fc337e97f5
+
+	measure 'Meta % No Prazo' = 0.95
+		formatString: 0%
+		displayFolder: 02 Prazo
+		lineageTag: b61776a5-3248-4c71-ad84-d81290269d5a
+
+	/// Dias entre o pedido e a entrega (só entregas concluídas).
+	measure 'Lead Time Médio' = AVERAGE ( fEntregas[LeadTimeDias] )
+		formatString: 0.0" dias"
+		displayFolder: 02 Prazo
+		lineageTag: 36b65a17-908a-499e-9afe-31b57186b841
+
+	/// Média de dias de atraso considerando só as entregas atrasadas.
+	measure 'Atraso Médio' = CALCULATE ( AVERAGE ( fEntregas[DiasAtraso] ), fEntregas[DiasAtraso] > 0 )
+		formatString: 0.0" dias"
+		displayFolder: 02 Prazo
+		lineageTag: b34cb872-b21c-462e-aa76-8bb8170ce8c0
+
+	/// Prazo médio prometido ao cliente (SLA da região de destino).
+	measure 'Prazo Prometido' = AVERAGEX ( fEntregas, RELATED ( dCliente[PrazoDias] ) )
+		formatString: 0.0" dias"
+		displayFolder: 02 Prazo
+		lineageTag: 178e4390-2c90-4316-a5b7-a732a89cf9fb
+
+	measure 'Custo de Frete' = SUM ( fEntregas[CustoFrete] )
+		formatString: "R$" #,##0
+		displayFolder: 03 Custo
+		lineageTag: b58265d8-702d-4a2f-b8db-aeeb221f8406
+
+	measure 'Custo Médio por Entrega' = DIVIDE ( [Custo de Frete], [Qtd Entregas] )
+		formatString: "R$" #,##0.00
+		displayFolder: 03 Custo
+		lineageTag: 9886f323-1a5d-46d9-9776-616abf8c3e0a
+
+	measure 'Custo por Kg' = DIVIDE ( [Custo de Frete], SUM ( fEntregas[PesoKg] ) )
+		formatString: "R$" #,##0.00
+		displayFolder: 03 Custo
+		lineageTag: 3bd84e3a-5a27-4c15-9f23-d420b3ba1d37
+
+	/// Quanto o frete representa do valor da mercadoria transportada.
+	measure 'Frete % Mercadoria' = DIVIDE ( [Custo de Frete], [Valor Mercadoria] )
+		formatString: 0.0%
+		displayFolder: 03 Custo
+		lineageTag: 398d010b-1328-444e-ae52-0430e1da56ce
+
+	measure '% Frota Própria' = DIVIDE ( CALCULATE ( [Qtd Entregas], dTransportadora[TipoFrota] = "Própria" ), [Qtd Entregas] )
+		formatString: 0.0%
+		displayFolder: 03 Custo
+		lineageTag: 5290e528-3cda-4bbd-89e1-a1aa31ab30c7
+
+	measure 'Qtd Ocorrências' = COUNTROWS ( fOcorrencias )
+		formatString: #,##0
+		displayFolder: 04 Ocorrências
+		lineageTag: 7a2b7f8a-4911-4b57-8f73-18a017b3c2ab
+
+	measure 'Ocorrências por 100 Entregas' = DIVIDE ( [Qtd Ocorrências], [Qtd Entregas] ) * 100
+		formatString: 0.0
+		displayFolder: 04 Ocorrências
+		lineageTag: 2e3a3c79-453c-435f-9d0d-a16a68acaa39
+
+	/// Verde >= meta (95%), amarelo >= 90%, vermelho abaixo. Use em formatação condicional > Valor do campo.
+	measure 'Cor % No Prazo' =
+			VAR _Pct = [% No Prazo]
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( _Pct ), "#9CA3AF",
+			        _Pct >= [Meta % No Prazo], "#16A34A",   -- bateu a meta
+			        _Pct >= 0.90, "#F59E0B",                -- perto da meta
+			        "#DC2626"                                -- abaixo de 90%
+			    )
+		displayFolder: 05 Visual
+		lineageTag: 03ab5973-e749-4c20-93dc-ec71156c8097
+
+	column 'Coluna 1'
+		dataType: string
+		isHidden
+		lineageTag: 790fb9ab-b392-4f70-8f9c-d0ab65e4cccb
+		summarizeBy: none
+		sourceColumn: Coluna 1
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Medidas = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Coluna 1", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_ResultType = Table
+

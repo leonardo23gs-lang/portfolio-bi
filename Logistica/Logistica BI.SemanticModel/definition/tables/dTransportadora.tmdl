@@ -1,0 +1,62 @@
+table dTransportadora
+	lineageTag: 210c76d8-4eaa-4814-aced-9bbe2fef6420
+
+	column TransportadoraID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: c34ed463-6db0-4f00-8636-0a1095ffd6f1
+		summarizeBy: none
+		sourceColumn: TransportadoraID
+
+		annotation SummarizationSetBy = Automatic
+
+	column NomeTransportadora
+		dataType: string
+		lineageTag: d732c682-fa08-42c6-9b12-535ff2761f01
+		summarizeBy: none
+		sourceColumn: NomeTransportadora
+
+		annotation SummarizationSetBy = Automatic
+
+	column TipoFrota
+		dataType: string
+		lineageTag: de9f359c-229f-4313-b61c-1014cea43696
+		summarizeBy: none
+		sourceColumn: TipoFrota
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustoFixo
+		dataType: double
+		lineageTag: f144f6d2-4d83-4863-ae8f-cbd24ca99353
+		summarizeBy: none
+		sourceColumn: CustoFixo
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CustoKm
+		dataType: double
+		lineageTag: 22026b19-ca99-4204-8832-c42169f31635
+		summarizeBy: none
+		sourceColumn: CustoKm
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition dTransportadora = m
+		mode: import
+		source =
+				let
+				    Fonte = Sql.Database("localhost", "LogisticaBI"),
+				    bi_vw_dTransportadora = Fonte{[Schema="bi",Item="vw_dTransportadora"]}[Data]
+				in
+				    bi_vw_dTransportadora
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Logistica BI"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "7a437131-06d5-4d5e-a1e0-11d44192fcc6"
+  }
+}

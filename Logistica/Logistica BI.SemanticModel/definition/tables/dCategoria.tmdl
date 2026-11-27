@@ -1,0 +1,42 @@
+table dCategoria
+	lineageTag: 27774017-f977-446c-8a74-3602473f7adb
+
+	column CategoriaID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: d13292e9-9b8c-4cd4-8edf-bb7e345fcac7
+		summarizeBy: none
+		sourceColumn: CategoriaID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Categoria
+		dataType: string
+		lineageTag: b4d65e8c-47d0-4c5c-a042-5dbe6a18d11f
+		summarizeBy: none
+		sourceColumn: Categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column TipoCarga
+		dataType: string
+		lineageTag: fd9522e5-c2f1-440a-bc14-e8b9bd81f7be
+		summarizeBy: none
+		sourceColumn: TipoCarga
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dCategoria = m
+		mode: import
+		source =
+				let
+				    Fonte = Sql.Database("localhost", "LogisticaBI"),
+				    bi_vw_dCategoria = Fonte{[Schema="bi",Item="vw_dCategoria"]}[Data]
+				in
+				    bi_vw_dCategoria
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,65 @@
+table fOcorrencias
+	lineageTag: 46c26d7e-a529-419b-a34e-5214d20b197c
+
+	column OcorrenciaID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: e230600f-beef-4984-934b-bbaf4820e50a
+		summarizeBy: count
+		sourceColumn: OcorrenciaID
+
+		annotation SummarizationSetBy = Automatic
+
+	column EntregaID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 6ee9734c-b041-43c0-841b-d6d837a06420
+		summarizeBy: none
+		sourceColumn: EntregaID
+
+		annotation SummarizationSetBy = Automatic
+
+	column TransportadoraID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: f2cda27a-fc57-462b-b059-e362dc33a006
+		summarizeBy: none
+		sourceColumn: TransportadoraID
+
+		annotation SummarizationSetBy = Automatic
+
+	column DataOcorrencia
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 7187116d-e6ce-4a0c-bf61-67c8de0ddcbc
+		summarizeBy: none
+		sourceColumn: DataOcorrencia
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column TipoOcorrencia
+		dataType: string
+		lineageTag: e9546f8a-ddd6-40f9-9f74-bab7c4ac1524
+		summarizeBy: none
+		sourceColumn: TipoOcorrencia
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fOcorrencias = m
+		mode: import
+		source =
+				let
+				    Fonte = Sql.Database("localhost", "LogisticaBI"),
+				    bi_vw_fOcorrencias = Fonte{[Schema="bi",Item="vw_fOcorrencias"]}[Data]
+				in
+				    bi_vw_fOcorrencias
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
